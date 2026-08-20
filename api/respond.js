@@ -28,7 +28,17 @@ module.exports = async function handler(req, res) {
   // sitting in the Vercel function logs instead of being lost entirely.
   console.log('[respond]', text);
 
-  const hook = process.env.WEBHOOK_URL;
+  // WEBHOOK_URL is meant to be a full URL, but the easy mistake is to paste just
+  // the ntfy topic name. That failed twice over: /ntfy\./ did not match a bare
+  // topic, so it fell through to the generic-webhook branch, and fetch() then
+  // threw "Failed to parse URL" — caught below, logged, and invisible to
+  // everyone including me. For the one message that has to work, a sensible
+  // guess beats a silent failure: anything without a scheme is an ntfy topic.
+  const raw = (process.env.WEBHOOK_URL || '').trim();
+  const hook = raw && !/^https?:\/\//i.test(raw)
+    ? 'https://ntfy.sh/' + raw.replace(/^\/+/, '')
+    : raw;
+  if (raw && raw !== hook) console.log('[respond] read WEBHOOK_URL as a topic ->', hook);
 
   try {
     if (hook && /ntfy\./.test(hook)) {
