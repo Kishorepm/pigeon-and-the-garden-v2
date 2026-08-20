@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--ink:#241a10;--shadow:#16241a;--forest:#26492f;--forestHi:#35603c;--moss:#4f8040;--leaf:#7cb14f;
+--sky:#a8d8e0;--skyHi:#c6e8ec;--cream:#f6e7c4;--cream2:#e0c99b;--white:#fdf6e6;--stone:#b39a72;
+--stoneDark:#5f5340;--terra:#c25f2e;--rose:#dc8f79;--honey:#eeb63c;--wood:#7a4a26;--woodHi:#96603a;--mist:#e7eee8;
+--skin:#f0d0ac;--hair:#4a2f1a;--escA:#c25f2e;--escB:#e8a882;
+}
+html,body{margin:0;background:#14120e;-webkit-font-smoothing:antialiased}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--terra)}a:hover{color:var(--wood)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+@keyframes in{from{opacity:0}to{opacity:1}}
+@keyframes sway{0%{transform:translateX(0)}100%{transform:translateX(3px)}}
+@keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-4px)}}
+@keyframes nod{0%{transform:translateY(0)}100%{transform:translateY(-3px)}}
+@keyframes peck{0%{transform:translateY(0)}100%{transform:translateY(5px)}}
+@keyframes flick{0%{transform:rotate(0)}100%{transform:rotate(-22deg)}}
+@keyframes drift{0%{transform:translateX(-8px)}100%{transform:translateX(8px)}}
+@keyframes glow{0%{opacity:.5}100%{opacity:1}}
+@keyframes petal{0%{transform:translate(0,-30px)}50%{transform:translate(16px,42vh)}100%{transform:translate(-8px,96vh)}}
+@keyframes mote{0%{transform:translate(0,0);opacity:0}30%{opacity:.9}100%{transform:translate(28px,-130px);opacity:0}}
+@keyframes rain{0%{transform:translate(0,-40px)}100%{transform:translate(-20px,104vh)}}
+@keyframes drip{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(46px);opacity:0}}
+@keyframes fly{0%{transform:translate(-50px,10vh)}100%{transform:translate(58vw,34vh)}}
+@keyframes flap{0%{transform:scaleY(1)}100%{transform:scaleY(.45)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<div style="min-height:100dvh;display:flex;justify-content:center;background:#14120e">
+<div style="position:relative;width:100%;max-width:430px;height:100dvh;overflow:hidden;background:var(--sky);font-family:'Pixelify Sans',system-ui;color:var(--ink)" onClick="{{ onTap }}">
+
+<!-- PERSISTENT WORLD -->
+<div style="position:absolute;inset:0;overflow:hidden">
+  <div style="position:absolute;left:0;right:0;top:0;height:30%;background:var(--skyHi)"></div>
+  <div style="position:absolute;left:0;right:0;top:26%;height:12px;background:repeating-conic-gradient(var(--skyHi) 0 25%,var(--sky) 0 50%) 0 0/4px 4px"></div>
+  <div style="position:absolute;left:0;right:0;top:30%;height:16%;background:var(--sky)"></div>
+  <div style="position:absolute;left:0;right:0;top:44%;bottom:0;background:var(--moss)"></div>
+  <div style="position:absolute;left:0;right:0;top:44%;height:14px;background:repeating-conic-gradient(var(--leaf) 0 25%,var(--moss) 0 50%) 0 0/4px 4px"></div>
+  <div style="position:absolute;left:0;right:0;top:62%;height:16px;background:repeating-conic-gradient(var(--leaf) 0 25%,var(--moss) 0 50%) 0 0/6px 6px;opacity:.8"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:22%;background:var(--leaf);opacity:.28"></div>
+
+  <div style="position:absolute;left:0;top:0;width:860px;height:100%;transition:transform .42s linear;transform:translateX({{ camX }}px)">
+    <div style="position:absolute;left:0;top:34%;width:160px;height:112px;background:var(--forest);animation:sway 2.4s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:0;right:0;top:0;height:14px;background:var(--forestHi)"></div>
+      <div style="position:absolute;left:0;right:0;top:14px;height:10px;background:repeating-conic-gradient(var(--forestHi) 0 25%,var(--forest) 0 50%) 0 0/4px 4px"></div>
+      <div style="position:absolute;left:22px;top:40px;width:6px;height:6px;background:var(--terra)"></div>
+      <div style="position:absolute;left:52px;top:66px;width:6px;height:6px;background:var(--terra)"></div>
+      <div style="position:absolute;left:104px;top:48px;width:6px;height:6px;background:var(--rose)"></div>
+    </div>
+    <div style="position:absolute;left:196px;top:36%;width:120px;height:96px;background:var(--forest);animation:sway 3.1s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:0;right:0;top:0;height:12px;background:var(--forestHi)"></div>
+      <div style="position:absolute;left:0;right:0;top:12px;height:8px;background:repeating-conic-gradient(var(--forestHi) 0 25%,var(--forest) 0 50%) 0 0/4px 4px"></div>
+    </div>
+    <div style="position:absolute;left:352px;top:33%;width:150px;height:120px;background:var(--forest);animation:sway 2.7s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:0;right:0;top:0;height:14px;background:var(--forestHi)"></div>
+      <div style="position:absolute;left:0;right:0;top:14px;height:10px;background:repeating-conic-gradient(var(--forestHi) 0 25%,var(--forest) 0 50%) 0 0/4px 4px"></div>
+      <div style="position:absolute;left:40px;top:52px;width:6px;height:6px;background:var(--honey)"></div>
+    </div>
+    <div style="position:absolute;left:544px;top:36%;width:130px;height:100px;background:var(--forest);animation:sway 3.4s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:0;right:0;top:0;height:12px;background:var(--forestHi)"></div>
+    </div>
+    <div style="position:absolute;left:700px;top:34%;width:150px;height:112px;background:var(--forest);animation:sway 2.2s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:0;right:0;top:0;height:14px;background:var(--forestHi)"></div>
+    </div>
+
+    <div style="position:absolute;left:100px;top:46%;width:5px;height:30px;background:var(--woodHi)"></div>
+    <div style="position:absolute;left:140px;top:46%;width:5px;height:30px;background:var(--woodHi)"></div>
+    <div style="position:absolute;left:100px;top:47.5%;width:45px;height:5px;background:var(--wood)"></div>
+    <div style="position:absolute;left:452px;top:46%;width:5px;height:30px;background:var(--woodHi)"></div>
+    <div style="position:absolute;left:492px;top:46%;width:5px;height:30px;background:var(--woodHi)"></div>
+    <div style="position:absolute;left:452px;top:47.5%;width:45px;height:5px;background:var(--wood)"></div>
+
+    <div style="position:absolute;left:56px;top:58%;width:8px;height:8px;background:var(--rose);animation:nod 1.9s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:52px;top:62%;width:4px;height:14px;background:var(--forest)"></div>
+    <div style="position:absolute;left:82px;top:64%;width:8px;height:8px;background:var(--honey);animation:nod 2.4s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:78px;top:68%;width:4px;height:12px;background:var(--forest)"></div>
+    <div style="position:absolute;left:172px;top:70%;width:8px;height:8px;background:var(--white);animation:nod 2.1s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:168px;top:74%;width:4px;height:12px;background:var(--forest)"></div>
+    <div style="position:absolute;left:296px;top:60%;width:8px;height:8px;background:var(--rose);animation:nod 2.8s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:292px;top:64%;width:4px;height:14px;background:var(--forest)"></div>
+    <div style="position:absolute;left:414px;top:68%;width:8px;height:8px;background:var(--honey);animation:nod 1.7s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:410px;top:72%;width:4px;height:12px;background:var(--forest)"></div>
+    <div style="position:absolute;left:566px;top:62%;width:8px;height:8px;background:var(--white);animation:nod 2.6s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:690px;top:70%;width:8px;height:8px;background:var(--rose);animation:nod 2.2s steps(2,end) infinite alternate"></div>
+
+    <div style="position:absolute;left:236px;top:78%;width:52px;height:12px;background:var(--stone)"></div>
+    <div style="position:absolute;left:238px;top:78%;width:8px;height:4px;background:var(--stoneDark);opacity:.5"></div>
+    <div style="position:absolute;left:492px;top:82%;width:58px;height:12px;background:var(--stone)"></div>
+
+    <div style="position:absolute;left:0;top:84%;width:860px;height:14px;background:repeating-conic-gradient(var(--leaf) 0 25%,var(--moss) 0 50%) 0 0/6px 6px;opacity:.55"></div>
+    <div style="position:absolute;left:24px;top:88%;width:70px;height:10px;background:var(--forest);opacity:.7"></div>
+    <div style="position:absolute;left:150px;top:92%;width:96px;height:10px;background:var(--forest);opacity:.7"></div>
+    <div style="position:absolute;left:300px;top:88%;width:80px;height:10px;background:var(--forest);opacity:.7"></div>
+    <div style="position:absolute;left:430px;top:93%;width:110px;height:10px;background:var(--forest);opacity:.7"></div>
+    <div style="position:absolute;left:600px;top:89%;width:88px;height:10px;background:var(--forest);opacity:.7"></div>
+    <div style="position:absolute;left:60px;top:80%;width:8px;height:8px;background:var(--white);animation:nod 2.5s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:56px;top:84%;width:4px;height:14px;background:var(--forest)"></div>
+    <div style="position:absolute;left:214px;top:86%;width:8px;height:8px;background:var(--rose);animation:nod 2s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:210px;top:90%;width:4px;height:14px;background:var(--forest)"></div>
+    <div style="position:absolute;left:396px;top:82%;width:8px;height:8px;background:var(--honey);animation:nod 2.9s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:392px;top:86%;width:4px;height:14px;background:var(--forest)"></div>
+    <div style="position:absolute;left:560px;top:87%;width:8px;height:8px;background:var(--white);animation:nod 2.3s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:700px;top:84%;width:8px;height:8px;background:var(--rose);animation:nod 2.7s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:120px;top:96%;width:44px;height:10px;background:var(--stone);opacity:.8"></div>
+    <div style="position:absolute;left:520px;top:96%;width:52px;height:10px;background:var(--stone);opacity:.8"></div>
+
+    <div style="position:absolute;left:330px;top:74%;width:26px;height:18px;background:var(--white);animation:peck 1.3s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:18px;top:-8px;width:10px;height:10px;background:var(--white)"></div>
+      <div style="position:absolute;left:19px;top:-13px;width:6px;height:5px;background:var(--terra)"></div>
+      <div style="position:absolute;left:28px;top:-4px;width:5px;height:3px;background:var(--honey)"></div>
+    </div>
+    <div style="position:absolute;left:614px;top:76%;width:24px;height:16px;background:var(--cream2);animation:peck 1.7s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:16px;top:-7px;width:9px;height:9px;background:var(--cream2)"></div>
+      <div style="position:absolute;left:25px;top:-3px;width:5px;height:3px;background:var(--honey)"></div>
+    </div>
+  </div>
+
+  <sc-if value="{{ isSunny }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;inset:0;pointer-events:none">
+    <div style="position:absolute;left:44px;top:70%;width:5px;height:5px;background:var(--white);animation:mote 7s linear infinite"></div>
+    <div style="position:absolute;left:150px;top:74%;width:5px;height:5px;background:var(--white);animation:mote 9s linear infinite;animation-delay:-3s"></div>
+    <div style="position:absolute;left:262px;top:68%;width:5px;height:5px;background:var(--white);animation:mote 8s linear infinite;animation-delay:-5s"></div>
+    <div style="position:absolute;left:344px;top:76%;width:5px;height:5px;background:var(--white);animation:mote 10s linear infinite;animation-delay:-7s"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRain }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;pointer-events:none;opacity:.6">
+    <div style="position:absolute;left:20px;top:0;width:2px;height:16px;background:var(--white);animation:rain 1.1s linear infinite"></div>
+    <div style="position:absolute;left:78px;top:0;width:2px;height:14px;background:var(--white);animation:rain 1.3s linear infinite;animation-delay:-.4s"></div>
+    <div style="position:absolute;left:132px;top:0;width:2px;height:18px;background:var(--white);animation:rain 1s linear infinite;animation-delay:-.7s"></div>
+    <div style="position:absolute;left:196px;top:0;width:2px;height:15px;background:var(--white);animation:rain 1.2s linear infinite;animation-delay:-.2s"></div>
+    <div style="position:absolute;left:252px;top:0;width:2px;height:17px;background:var(--white);animation:rain 1.05s linear infinite;animation-delay:-.9s"></div>
+    <div style="position:absolute;left:314px;top:0;width:2px;height:14px;background:var(--white);animation:rain 1.25s linear infinite;animation-delay:-.55s"></div>
+    <div style="position:absolute;left:372px;top:0;width:2px;height:16px;background:var(--white);animation:rain 1.15s linear infinite;animation-delay:-1s"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isOvercast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:0;right:0;top:0;height:46%;background:var(--stone);opacity:.32;pointer-events:none;animation:drift 9s ease-in-out infinite alternate"></div>
+  </sc-if>
+</div>
+
+<sc-if value="{{ inJourney }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;right:9px;top:120px;display:flex;flex-direction:column;gap:7px;z-index:40">
+  <sc-for list="{{ stones }}" as="st" hint-placeholder-count="11">
+    <div style="width:10px;height:10px;border:2px solid rgba(36,26,16,.55);background:{{ st.bg }}"></div>
+  </sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ showGate }}" hint-placeholder-val="{{ true }}">
+<div data-go="leave" style="position:absolute;left:0;bottom:32%;width:44px;height:76px;background:var(--wood);border:3px solid var(--ink);border-left:none;cursor:pointer;z-index:45">
+  <div style="position:absolute;left:0;right:0;top:10px;height:5px;background:var(--woodHi)"></div>
+  <div style="position:absolute;left:0;right:0;top:34px;height:5px;background:var(--woodHi)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:11px;color:var(--cream)">gate</div>
+</div>
+</sc-if>
+
+<!-- 0 DELIVERY -->
+<sc-if value="{{ s0 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-go="next" data-screen-label="00 Delivery">
+  <div style="position:absolute;left:26px;bottom:32%;width:52px;height:74px">
+    <div style="position:absolute;left:13px;top:0;width:26px;height:10px;background:var(--hair)"></div>
+    <div style="position:absolute;left:11px;top:8px;width:30px;height:8px;background:var(--hair)"></div>
+    <div style="position:absolute;left:16px;top:14px;width:20px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:20px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:29px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:13px;top:30px;width:26px;height:26px;background:var(--escOutfit,#4a6f8a)"></div>
+    <div style="position:absolute;left:13px;top:52px;width:26px;height:4px;background:rgba(36,26,16,.25)"></div>
+    <div style="position:absolute;left:7px;top:32px;width:6px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:39px;top:32px;width:6px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:17px;top:56px;width:7px;height:12px;background:var(--stoneDark)"></div>
+    <div style="position:absolute;left:28px;top:56px;width:7px;height:12px;background:var(--stoneDark)"></div>
+    <div style="position:absolute;left:15px;top:68px;width:11px;height:6px;background:var(--hair)"></div>
+    <div style="position:absolute;left:26px;top:68px;width:11px;height:6px;background:var(--hair)"></div>
+  </div>
+  <div style="position:absolute;right:26px;bottom:32%;width:52px;height:76px">
+    <div style="position:absolute;left:11px;top:0;width:30px;height:12px;background:#6b4326"></div>
+    <div style="position:absolute;left:8px;top:10px;width:10px;height:22px;background:#6b4326"></div>
+    <div style="position:absolute;left:34px;top:10px;width:10px;height:22px;background:#6b4326"></div>
+    <div style="position:absolute;left:17px;top:14px;width:20px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:21px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:30px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:13px;top:30px;width:26px;height:28px;background:var(--rose)"></div>
+    <div style="position:absolute;left:11px;top:44px;width:30px;height:14px;background:var(--rose)"></div>
+    <div style="position:absolute;left:11px;top:54px;width:30px;height:4px;background:rgba(36,26,16,.22)"></div>
+    <div style="position:absolute;left:7px;top:32px;width:6px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:39px;top:32px;width:6px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:18px;top:58px;width:6px;height:12px;background:var(--skin)"></div>
+    <div style="position:absolute;left:28px;top:58px;width:6px;height:12px;background:var(--skin)"></div>
+    <div style="position:absolute;left:16px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
+    <div style="position:absolute;left:26px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
+  </div>
+  <div style="position:absolute;left:0;top:0;animation:fly 3.6s steps(9,end) infinite">
+    <div style="position:relative;width:40px;height:24px;background:#8d93a1;border:2px solid var(--ink)">
+      <div style="position:absolute;left:8px;top:-9px;width:22px;height:11px;background:#b0b6c2;border:2px solid var(--ink);animation:flap .18s steps(2,end) infinite alternate"></div>
+      <div style="position:absolute;left:-8px;top:4px;width:8px;height:8px;background:#8d93a1;border:2px solid var(--ink)"></div>
+      <div style="position:absolute;right:-14px;top:6px;width:14px;height:7px;background:var(--cream)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:56px;text-align:center;font-size:15px;color:rgba(36,26,16,.55)">tap anywhere</div>
+</div>
+</sc-if>
+
+<!-- 1 THE NOTE -->
+<sc-if value="{{ s1 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="01 The note">
+  <div style="position:absolute;left:26px;right:26px;top:110px;background:var(--white);border:3px solid var(--ink)">
+    <div style="height:10px;background:repeating-conic-gradient(var(--cream2) 0 25%,var(--white) 0 50%) 0 0/6px 6px;border-bottom:3px solid var(--ink)"></div>
+    <div style="padding:24px 22px 26px">
+      <h1 style="margin:0;font-size:30px;font-weight:600;line-height:1.15;text-wrap:pretty">Will you go on a date with me?</h1>
+      <p style="margin:14px 0 0;font-family:system-ui;font-size:13.5px;color:rgba(36,26,16,.55)">delivered by pigeon, slightly creased</p>
+    </div>
+    <div style="height:10px;background:repeating-conic-gradient(var(--cream2) 0 25%,var(--white) 0 50%) 0 0/6px 6px;border-top:3px solid var(--ink)"></div>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:96px;display:flex;gap:14px;align-items:center">
+    <button type="button" data-go="2" style="flex:1;min-height:60px;border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:22px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">Yes</button>
+    <button type="button" data-act="no" style="flex:1;min-height:60px;border:3px solid var(--ink);background:var(--cream2);font-family:'Pixelify Sans';font-size:22px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer;transition:transform .13s ease-out;transform:translate({{ noX }}px, {{ noY }}px) rotate({{ noR }}deg)" style-active="box-shadow:none">{{ noLabel }}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 2 CORRECT -->
+<sc-if value="{{ s2 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="02 Correct">
+  <div style="position:absolute;left:30px;top:0;width:9px;height:9px;background:var(--rose);animation:petal 3.6s linear infinite"></div>
+  <div style="position:absolute;left:126px;top:0;width:9px;height:9px;background:var(--white);animation:petal 4.2s linear infinite;animation-delay:-1.4s"></div>
+  <div style="position:absolute;left:246px;top:0;width:9px;height:9px;background:var(--rose);animation:petal 3.9s linear infinite;animation-delay:-2.6s"></div>
+  <div style="position:absolute;left:340px;top:0;width:9px;height:9px;background:var(--rose);animation:petal 4.6s linear infinite;animation-delay:-.7s"></div>
+  <div style="position:absolute;left:22px;right:22px;top:150px;background:var(--cream);border:3px solid var(--ink);padding:22px 20px">
+    <p style="margin:0;font-size:58px;font-weight:700;line-height:.95;letter-spacing:.02em">CORRECT.</p>
+    <div style="height:8px;margin:14px 0;background:repeating-conic-gradient(var(--cream2) 0 25%,var(--cream) 0 50%) 0 0/6px 6px"></div>
+    <p style="margin:0;font-family:system-ui;font-size:16.5px;line-height:1.5;color:rgba(36,26,16,.82)">The pigeon is relieved. It has been waiting a month.</p>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:86px">
+    <button type="button" data-go="next" style="width:100%;min-height:58px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:19px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">Set off</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 3 ESCORT -->
+<sc-if value="{{ s3 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="03 Escort">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:64px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;text-align:center">Who is coming with you?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+      <div style="position:absolute;left:4px;top:4px;width:4px;height:4px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;right:4px;top:4px;width:4px;height:4px;background:var(--stoneDark)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:10px;right:10px;bottom:152px;display:flex;justify-content:center;gap:6px">
+    <button type="button" data-go="next" data-set="escort:the ginger cat" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:70px;height:56px;display:block">
+        <span style="position:absolute;left:8px;bottom:12px;width:44px;height:22px;background:var(--terra)"></span>
+        <span style="position:absolute;left:38px;bottom:26px;width:22px;height:20px;background:var(--terra)"></span>
+        <span style="position:absolute;left:39px;bottom:44px;width:6px;height:8px;background:var(--terra)"></span>
+        <span style="position:absolute;left:53px;bottom:44px;width:6px;height:8px;background:var(--terra)"></span>
+        <span style="position:absolute;left:43px;bottom:32px;width:3px;height:3px;background:var(--ink)"></span>
+        <span style="position:absolute;left:53px;bottom:32px;width:3px;height:3px;background:var(--ink)"></span>
+        <span style="position:absolute;left:0;bottom:26px;width:10px;height:6px;background:var(--terra);transform-origin:right center;animation:flick 1.4s steps(2,end) infinite alternate"></span>
+        <span style="position:absolute;left:12px;bottom:2px;width:7px;height:12px;background:var(--terra)"></span>
+        <span style="position:absolute;left:40px;bottom:2px;width:7px;height:12px;background:var(--terra)"></span>
+        <span style="position:absolute;left:8px;bottom:12px;width:44px;height:4px;background:rgba(36,26,16,.18)"></span>
+      </span>
+      <span style="padding:3px 7px;background:var(--cream);border:2px solid var(--ink);font-size:12px">cat</span>
+    </button>
+    <button type="button" data-go="next" data-set="escort:the dog" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:70px;height:56px;display:block">
+        <span style="position:absolute;left:6px;bottom:12px;width:46px;height:24px;background:var(--wood)"></span>
+        <span style="position:absolute;left:38px;bottom:28px;width:24px;height:20px;background:var(--wood)"></span>
+        <span style="position:absolute;left:36px;bottom:34px;width:8px;height:16px;background:#5c3620"></span>
+        <span style="position:absolute;left:46px;bottom:34px;width:3px;height:3px;background:var(--ink)"></span>
+        <span style="position:absolute;left:56px;bottom:34px;width:3px;height:3px;background:var(--ink)"></span>
+        <span style="position:absolute;left:0;bottom:30px;width:10px;height:7px;background:var(--wood);transform-origin:right center;animation:flick 1s steps(2,end) infinite alternate"></span>
+        <span style="position:absolute;left:10px;bottom:2px;width:8px;height:12px;background:var(--wood)"></span>
+        <span style="position:absolute;left:40px;bottom:2px;width:8px;height:12px;background:var(--wood)"></span>
+        <span style="position:absolute;left:6px;bottom:12px;width:46px;height:4px;background:rgba(36,26,16,.2)"></span>
+      </span>
+      <span style="padding:3px 7px;background:var(--cream);border:2px solid var(--ink);font-size:12px">dog</span>
+    </button>
+    <button type="button" data-go="next" data-set="escort:the duck" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:70px;height:56px;display:block;animation:bob 1.5s steps(2,end) infinite alternate">
+        <span style="position:absolute;left:10px;bottom:10px;width:40px;height:22px;background:var(--white)"></span>
+        <span style="position:absolute;left:36px;bottom:26px;width:18px;height:18px;background:var(--white)"></span>
+        <span style="position:absolute;left:44px;bottom:32px;width:3px;height:3px;background:var(--ink)"></span>
+        <span style="position:absolute;left:52px;bottom:30px;width:12px;height:6px;background:var(--honey)"></span>
+        <span style="position:absolute;left:10px;bottom:10px;width:40px;height:5px;background:rgba(36,26,16,.14)"></span>
+        <span style="position:absolute;left:18px;bottom:2px;width:6px;height:9px;background:var(--honey)"></span>
+        <span style="position:absolute;left:32px;bottom:2px;width:6px;height:9px;background:var(--honey)"></span>
+      </span>
+      <span style="padding:3px 7px;background:var(--cream);border:2px solid var(--ink);font-size:12px">duck</span>
+    </button>
+    <button type="button" data-go="next" data-set="escort:the chicken" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:70px;height:56px;display:block;animation:peck 1.8s steps(2,end) infinite alternate">
+        <span style="position:absolute;left:12px;bottom:10px;width:38px;height:24px;background:var(--cream2)"></span>
+        <span style="position:absolute;left:36px;bottom:28px;width:18px;height:16px;background:var(--cream2)"></span>
+        <span style="position:absolute;left:40px;bottom:42px;width:12px;height:6px;background:var(--terra)"></span>
+        <span style="position:absolute;left:44px;bottom:32px;width:3px;height:3px;background:var(--ink)"></span>
+        <span style="position:absolute;left:52px;bottom:30px;width:9px;height:5px;background:var(--honey)"></span>
+        <span style="position:absolute;left:12px;bottom:10px;width:38px;height:5px;background:rgba(36,26,16,.16)"></span>
+        <span style="position:absolute;left:20px;bottom:2px;width:5px;height:9px;background:var(--honey)"></span>
+        <span style="position:absolute;left:34px;bottom:2px;width:5px;height:9px;background:var(--honey)"></span>
+      </span>
+      <span style="padding:3px 7px;background:var(--cream);border:2px solid var(--ink);font-size:12px">chicken</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:86px;display:flex;gap:10px">
+    <button type="button" data-go="next" data-set="escort:all of them" style="flex:1;min-height:50px;border:3px solid var(--ink);background:var(--leaf);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">all of them</button>
+    <button type="button" data-go="next" data-set="escort:no one, just her" style="flex:1;min-height:50px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">just me</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 4 WEATHER -->
+<sc-if value="{{ s4 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="04 Weather">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:64px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">What is the sky doing?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:16px;right:16px;bottom:150px;display:flex;justify-content:center;gap:12px">
+    <button type="button" data-act="weather" data-set="weather:sunny" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:82px;height:82px;background:var(--skyHi);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:24px;top:18px;width:32px;height:32px;background:var(--honey)"></span>
+        <span style="position:absolute;left:18px;top:24px;width:44px;height:20px;background:var(--honey)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--moss)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:16px;height:6px;background:repeating-conic-gradient(var(--leaf) 0 25%,var(--moss) 0 50%) 0 0/4px 4px"></span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">sunny</span>
+    </button>
+    <button type="button" data-act="weather" data-set="weather:overcast" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:82px;height:82px;background:#cdd6d4;border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:12px;top:20px;width:50px;height:18px;background:var(--stone)"></span>
+        <span style="position:absolute;left:24px;top:12px;width:34px;height:14px;background:var(--stone)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--moss)"></span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">overcast</span>
+    </button>
+    <button type="button" data-act="weather" data-set="weather:light rain" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:82px;height:82px;background:#b9c6cc;border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:14px;top:14px;width:48px;height:18px;background:var(--stoneDark);opacity:.7"></span>
+        <span style="position:absolute;left:22px;top:38px;width:3px;height:12px;background:var(--white)"></span>
+        <span style="position:absolute;left:38px;top:34px;width:3px;height:12px;background:var(--white)"></span>
+        <span style="position:absolute;left:54px;top:40px;width:3px;height:12px;background:var(--white)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--moss)"></span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">light rain</span>
+    </button>
+  </div>
+  <p style="position:absolute;left:0;right:0;bottom:110px;text-align:center;font-family:system-ui;font-size:13px;font-style:italic;color:rgba(36,26,16,.62)">this is not binding.</p>
+</div>
+</sc-if>
+
+<!-- 5 JOURNEY MAP -->
+<sc-if value="{{ s5 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both;background:var(--sky);display:flex;flex-direction:column;justify-content:flex-end" data-screen-label="05 Journey map">
+  <div style="position:absolute;left:0;right:0;top:0;height:150px;background:var(--skyHi)"></div>
+  <div style="position:absolute;left:0;right:0;top:150px;bottom:0;background:var(--moss)"></div>
+  <div style="position:absolute;left:0;right:0;top:138px;height:16px;background:var(--forest)"></div>
+  <div style="position:absolute;left:0;right:0;top:154px;height:10px;background:repeating-conic-gradient(var(--leaf) 0 25%,var(--moss) 0 50%) 0 0/4px 4px"></div>
+  <div style="position:absolute;left:50%;top:48px;transform:translateX(-50%);width:120px;height:86px">
+    <div style="position:absolute;left:0;bottom:0;width:120px;height:46px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:0;bottom:40px;width:120px;height:6px;background:var(--stoneDark);opacity:.5"></div>
+    <div style="position:absolute;left:10px;bottom:46px;width:24px;height:28px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:46px;bottom:46px;width:26px;height:38px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;right:8px;bottom:46px;width:24px;height:28px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:54px;bottom:84px;width:9px;height:13px;background:var(--terra)"></div>
+    <div style="position:absolute;left:22px;bottom:12px;width:10px;height:16px;background:var(--stoneDark)"></div>
+    <div style="position:absolute;right:20px;bottom:12px;width:10px;height:16px;background:var(--stoneDark)"></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:150px;bottom:186px;padding:10px 0 4px;display:flex;flex-direction:column;justify-content:space-between;align-items:center">
+    <div style="position:absolute;right:20px;bottom:64px;width:74px;height:46px;background:var(--forest);animation:sway 2.6s steps(2,end) infinite alternate"><div style="position:absolute;left:0;right:0;top:0;height:9px;background:var(--forestHi)"></div></div>
+    <div style="position:absolute;right:14px;bottom:40px;width:80px;height:46px;background:var(--forest);animation:sway 3.2s steps(2,end) infinite alternate"><div style="position:absolute;left:0;right:0;top:0;height:9px;background:var(--forestHi)"></div></div>
+    <div style="position:absolute;left:150px;bottom:6px;width:8px;height:8px;background:var(--rose);animation:nod 2.2s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:210px;bottom:4px;width:8px;height:8px;background:var(--honey);animation:nod 1.8s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:-24px;right:-24px;top:0;height:64px;background:var(--mist);opacity:.78;animation:drift 5.2s ease-in-out infinite alternate"></div>
+    <div style="position:absolute;left:-24px;right:-24px;top:64px;height:11px;background:repeating-linear-gradient(90deg,var(--mist) 0 14px,transparent 14px 28px);opacity:.78;animation:drift 5.2s ease-in-out infinite alternate"></div>
+    <div style="position:absolute;left:-24px;right:-24px;top:75px;height:11px;background:repeating-linear-gradient(90deg,var(--mist) 0 28px,transparent 28px 56px);opacity:.45;animation:drift 7s ease-in-out infinite alternate"></div>
+    <div style="position:relative;align-self:flex-start;margin-left:168px;width:66px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:116px;width:66px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:150px;width:64px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+      <div style="position:absolute;left:calc(100% + 14px);bottom:-4px;display:flex;align-items:center;gap:10px;white-space:nowrap">
+        <span style="width:36px;height:36px;background:var(--honey);border:3px solid var(--ink);animation:glow 1.2s steps(2,end) infinite alternate"></span>
+        <span style="font-size:14px;letter-spacing:.08em">STOP 01</span>
+      </div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:104px;width:70px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:158px;width:74px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:112px;width:78px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:absolute;left:22px;bottom:8px;width:52px;height:76px">
+      <div style="position:absolute;left:11px;top:0;width:30px;height:12px;background:#6b4326"></div>
+      <div style="position:absolute;left:8px;top:10px;width:10px;height:22px;background:#6b4326"></div>
+      <div style="position:absolute;left:34px;top:10px;width:10px;height:22px;background:#6b4326"></div>
+      <div style="position:absolute;left:17px;top:14px;width:20px;height:16px;background:var(--skin)"></div>
+      <div style="position:absolute;left:21px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+      <div style="position:absolute;left:30px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+      <div style="position:absolute;left:13px;top:30px;width:26px;height:28px;background:var(--rose)"></div>
+      <div style="position:absolute;left:11px;top:44px;width:30px;height:14px;background:var(--rose)"></div>
+      <div style="position:absolute;left:18px;top:58px;width:6px;height:12px;background:var(--skin)"></div>
+      <div style="position:absolute;left:28px;top:58px;width:6px;height:12px;background:var(--skin)"></div>
+      <div style="position:absolute;left:16px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
+      <div style="position:absolute;left:26px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
+    </div>
+    <sc-if value="{{ hasEscort }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:74px;bottom:8px;width:52px;height:40px">
+      <div style="position:absolute;left:6px;bottom:6px;width:36px;height:18px;background:var(--escA)"></div>
+      <div style="position:absolute;left:28px;bottom:18px;width:18px;height:16px;background:var(--escA)"></div>
+      <div style="position:absolute;left:34px;bottom:22px;width:3px;height:3px;background:var(--ink)"></div>
+      <div style="position:absolute;left:0;bottom:18px;width:9px;height:5px;background:var(--escA);transform-origin:right center;animation:flick 1.3s steps(2,end) infinite alternate"></div>
+      <div style="position:absolute;left:10px;bottom:0;width:6px;height:8px;background:var(--escB)"></div>
+      <div style="position:absolute;left:30px;bottom:0;width:6px;height:8px;background:var(--escB)"></div>
+    </div>
+    </sc-if>
+  </div>
+  <div style="position:relative;margin:0 32px 24px 22px;padding:14px 16px;background:var(--cream);border:3px solid var(--ink)">
+    <p style="margin:0;font-size:19px;font-weight:600">The road goes to the castle.</p>
+    <p style="margin:6px 0 12px;font-family:system-ui;font-size:13.5px;line-height:1.45;color:rgba(36,26,16,.72)">The rest of it is under mist. That is on purpose.</p>
+    <button type="button" data-go="next" style="width:100%;min-height:54px;border:3px solid var(--ink);background:var(--leaf);font-family:'Pixelify Sans';font-size:18px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">Walk to stop 01</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 6 TERMS -->
+<sc-if value="{{ s6 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="06 Terms">
+  <div style="position:absolute;left:56px;right:24px;top:100px;bottom:140px;background:var(--white);border:3px solid var(--ink);display:flex;flex-direction:column">
+    <div style="height:16px;background:var(--cream2);border-bottom:3px solid var(--ink)"></div>
+    <div style="flex:1;overflow:hidden;padding:18px 18px 0;position:relative">
+      <p style="margin:0 0 14px;font-size:13px;letter-spacing:.18em;color:rgba(36,26,16,.55)">TERMS, UNROLLED</p>
+      <p style="margin:0 0 12px;font-family:system-ui;font-size:16.5px;line-height:1.5">You may leave at any time.</p>
+      <p style="margin:0 0 12px;font-family:system-ui;font-size:16.5px;line-height:1.5">You may veto the plan.</p>
+      <p style="margin:0 0 18px;font-family:system-ui;font-size:16.5px;line-height:1.5">The builder will be early.</p>
+      <div style="height:34vh;background:repeating-linear-gradient(var(--white) 0 20px,rgba(36,26,16,.07) 20px 22px)"></div>
+      <p style="position:absolute;left:18px;bottom:12px;font-family:system-ui;font-size:12.5px;color:rgba(36,26,16,.45)">it kept going for a while</p>
+    </div>
+    <div style="height:16px;background:var(--cream2);border-top:3px solid var(--ink)"></div>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:70px">
+    <button type="button" data-go="next" style="width:100%;min-height:56px;border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:19px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">Agreed</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 7 KIND OF PLACE -->
+<sc-if value="{{ s7 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="07 Kind of place">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">What sort of place?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
+    <button type="button" data-go="next" data-set="place:one with a garden" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:124px;background:var(--skyHi);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:0;right:0;bottom:0;height:22px;background:var(--moss)"></span>
+        <span style="position:absolute;left:8px;bottom:22px;right:8px;height:62px;background:var(--mist);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;left:8px;bottom:74px;right:8px;height:10px;background:var(--stone)"></span>
+        <span style="position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:4px;height:62px;background:var(--stoneDark);opacity:.5"></span>
+        <span style="position:absolute;left:16px;bottom:26px;width:16px;height:20px;background:var(--forest)"></span>
+        <span style="position:absolute;right:16px;bottom:26px;width:14px;height:16px;background:var(--leaf)"></span>
+        <span style="position:absolute;left:26px;bottom:44px;width:5px;height:5px;background:var(--rose)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">a garden</span>
+    </button>
+    <button type="button" data-go="next" data-set="place:one with animals nearby" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:124px;background:var(--skyHi);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:0;right:0;bottom:0;height:34px;background:var(--moss)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:34px;height:6px;background:repeating-conic-gradient(var(--leaf) 0 25%,var(--moss) 0 50%) 0 0/4px 4px"></span>
+        <span style="position:absolute;left:0;right:0;bottom:40px;height:5px;background:var(--woodHi)"></span>
+        <span style="position:absolute;left:10px;bottom:40px;width:5px;height:26px;background:var(--woodHi)"></span>
+        <span style="position:absolute;right:10px;bottom:40px;width:5px;height:26px;background:var(--woodHi)"></span>
+        <span style="position:absolute;left:14px;bottom:10px;width:22px;height:14px;background:var(--white);animation:peck 1.5s steps(2,end) infinite alternate"></span>
+        <span style="position:absolute;right:14px;bottom:10px;width:20px;height:12px;background:var(--cream2);animation:peck 1.9s steps(2,end) infinite alternate"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">animals nearby</span>
+    </button>
+    <button type="button" data-go="next" data-set="place:quiet and indoors" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:124px;background:var(--wood);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:10px;top:10px;right:10px;height:54px;background:var(--skyHi);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;left:50%;top:10px;transform:translateX(-50%);width:3px;height:54px;background:var(--ink)"></span>
+        <span style="position:absolute;left:12px;bottom:14px;right:12px;height:24px;background:var(--terra);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;left:18px;bottom:38px;width:14px;height:10px;background:var(--cream)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:8px;background:rgba(0,0,0,.2)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">quiet, indoors</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:84px">
+    <button type="button" data-go="next" data-set="place:his choice" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">you choose</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 8 WHEN -->
+<sc-if value="{{ s8 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="08 When">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Which day?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px">
+    <button type="button" data-go="next" data-set="day:Friday" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:110px;background:var(--white);border:3px solid var(--ink);display:block">
+        <span style="position:absolute;left:0;right:0;top:0;height:22px;background:var(--terra);border-bottom:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:12px;top:-6px;width:6px;height:12px;background:var(--stoneDark)"></span>
+        <span style="position:absolute;right:12px;top:-6px;width:6px;height:12px;background:var(--stoneDark)"></span>
+        <span style="position:absolute;left:0;right:0;top:34px;text-align:center;font-size:30px;font-weight:600">FR</span>
+        <span style="position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:11px;color:rgba(36,26,16,.5)">after work</span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">Friday</span>
+    </button>
+    <button type="button" data-go="next" data-set="day:Saturday" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:110px;background:var(--white);border:3px solid var(--ink);display:block">
+        <span style="position:absolute;left:0;right:0;top:0;height:22px;background:var(--terra);border-bottom:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:12px;top:-6px;width:6px;height:12px;background:var(--stoneDark)"></span>
+        <span style="position:absolute;right:12px;top:-6px;width:6px;height:12px;background:var(--stoneDark)"></span>
+        <span style="position:absolute;left:0;right:0;top:34px;text-align:center;font-size:30px;font-weight:600">SA</span>
+        <span style="position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:11px;color:rgba(36,26,16,.5)">no rush</span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">Saturday</span>
+    </button>
+    <button type="button" data-go="next" data-set="day:any day you like" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:110px;background:var(--white);border:3px solid var(--ink);display:block">
+        <span style="position:absolute;left:0;right:0;top:0;height:22px;background:var(--leaf);border-bottom:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:12px;top:-6px;width:6px;height:12px;background:var(--stoneDark)"></span>
+        <span style="position:absolute;right:12px;top:-6px;width:6px;height:12px;background:var(--stoneDark)"></span>
+        <span style="position:absolute;left:0;right:0;top:36px;text-align:center;font-size:26px;font-weight:600">ANY</span>
+        <span style="position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:11px;color:rgba(36,26,16,.5)">you say</span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">any day</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:84px">
+    <button type="button" data-go="next" data-set="day:his choice" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">you choose</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 9 WHAT HOUR -->
+<sc-if value="{{ s9 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="09 What hour">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">What hour?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
+    <button type="button" data-go="next" data-set="hour:morning" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:104px;background:#dcefe6;border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);width:36px;height:36px;background:var(--honey)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:18px;background:var(--moss)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:18px;height:6px;background:repeating-conic-gradient(var(--leaf) 0 25%,var(--moss) 0 50%) 0 0/4px 4px"></span>
+        <span style="position:absolute;left:10px;bottom:20px;width:5px;height:14px;background:var(--forest)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px">morning</span>
+    </button>
+    <button type="button" data-go="next" data-set="hour:early afternoon" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:104px;background:var(--skyHi);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:36px;height:36px;background:var(--honey)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:18px;background:var(--moss)"></span>
+        <span style="position:absolute;left:14px;bottom:18px;width:26px;height:6px;background:rgba(36,26,16,.16)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">early afternoon</span>
+    </button>
+    <button type="button" data-go="next" data-set="hour:late afternoon" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:104px;background:var(--rose);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:0;right:0;top:0;height:22px;background:#e8a06c"></span>
+        <span style="position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:36px;height:36px;background:var(--terra)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:18px;background:var(--forest)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">late afternoon</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:84px">
+    <button type="button" data-go="next" data-set="hour:his choice" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">you choose</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 10 HOW LONG -->
+<sc-if value="{{ s10 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="10 How long">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">How long?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <p style="position:absolute;left:26px;right:26px;top:132px;margin:0;text-align:center;font-family:system-ui;font-size:13.5px;color:rgba(36,26,16,.7)">You set the end before it starts.</p>
+  <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
+    <button type="button" data-go="next" data-set="duration:forty-five minutes" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:56px;height:108px;display:block">
+        <span style="position:absolute;left:0;right:0;top:0;height:8px;background:var(--wood)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--wood)"></span>
+        <span style="position:absolute;left:6px;right:6px;top:8px;bottom:8px;background:var(--white);border:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:9px;right:9px;bottom:11px;height:36%;background:var(--honey)"></span>
+        <span style="position:absolute;left:9px;right:9px;top:11px;height:34%;background:var(--honey);opacity:.55"></span>
+        <span style="position:absolute;left:22px;top:46%;width:10px;height:10px;background:var(--ink)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">forty-five minutes</span>
+    </button>
+    <button type="button" data-go="next" data-set="duration:an hour or two" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:56px;height:108px;display:block">
+        <span style="position:absolute;left:0;right:0;top:0;height:8px;background:var(--wood)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--wood)"></span>
+        <span style="position:absolute;left:6px;right:6px;top:8px;bottom:8px;background:var(--white);border:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:9px;right:9px;bottom:11px;height:18%;background:var(--honey)"></span>
+        <span style="position:absolute;left:9px;right:9px;top:11px;height:52%;background:var(--honey);opacity:.55"></span>
+        <span style="position:absolute;left:22px;top:46%;width:10px;height:10px;background:var(--ink)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">an hour or two</span>
+    </button>
+    <button type="button" data-go="next" data-set="duration:until one of us has to go" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:56px;height:108px;display:block">
+        <span style="position:absolute;left:0;right:0;top:0;height:8px;background:var(--wood)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--wood)"></span>
+        <span style="position:absolute;left:6px;right:6px;top:8px;bottom:8px;background:var(--white);border:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:9px;right:9px;top:11px;height:70%;background:var(--honey);opacity:.55"></span>
+        <span style="position:absolute;left:22px;top:46%;width:10px;height:10px;background:var(--ink)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">until one of us has to go</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:84px">
+    <button type="button" data-go="next" data-set="duration:his choice" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">you choose</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 11 FOOD -->
+<sc-if value="{{ s11 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="11 Food">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Something to eat?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:20px;right:32px;top:136px;padding:10px 12px;background:rgba(224,201,155,.55);border:3px dashed rgba(36,26,16,.32);display:flex;align-items:center;justify-content:center;gap:8px;color:rgba(36,26,16,.42)" aria-disabled="true">
+    <span style="width:22px;height:22px;background:rgba(253,246,230,.8);border:2px solid rgba(36,26,16,.3)"></span>
+    <span style="text-decoration:line-through;font-size:17px">white chocolate</span>
+    <span style="font-size:12.5px">(not chocolate)</span>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
+    <button type="button" data-go="next" data-set="food:something sweet" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:106px;background:var(--cream);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:14px;right:14px;bottom:16px;height:30px;background:var(--white);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;left:18px;right:18px;bottom:44px;height:20px;background:var(--rose)"></span>
+        <span style="position:absolute;left:22px;right:22px;bottom:62px;height:12px;background:var(--white)"></span>
+        <span style="position:absolute;left:50%;bottom:74px;transform:translateX(-50%);width:10px;height:10px;background:var(--terra)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--cream2)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px">sweet</span>
+    </button>
+    <button type="button" data-go="next" data-set="food:something savoury" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:106px;background:var(--cream);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:12px;right:12px;bottom:44px;height:14px;background:var(--woodHi)"></span>
+        <span style="position:absolute;left:12px;right:12px;bottom:34px;height:10px;background:var(--leaf)"></span>
+        <span style="position:absolute;left:12px;right:12px;bottom:20px;height:14px;background:var(--woodHi)"></span>
+        <span style="position:absolute;left:12px;right:12px;bottom:58px;height:10px;background:var(--honey)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--cream2)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px">savoury</span>
+    </button>
+    <button type="button" data-go="next" data-set="food:both, obviously" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:106px;background:var(--cream);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:8px;bottom:52px;width:34px;height:26px;background:var(--rose);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;right:8px;bottom:20px;width:34px;height:26px;background:var(--woodHi);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--cream2)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">both, obviously</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:84px">
+    <button type="button" data-go="next" data-set="food:his choice" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">you choose</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 12 THE DRINK -->
+<sc-if value="{{ s12 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="12 The drink">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Iced or hot?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:150px;display:flex;justify-content:center">
+    <div style="position:relative;width:112px;height:160px">
+      <div style="position:absolute;left:0;right:0;top:0;bottom:0;background:var(--white);border:3px solid var(--ink)"></div>
+      <div style="position:absolute;left:3px;right:3px;bottom:3px;height:62%;background:#6b4326"></div>
+      <div style="position:absolute;left:3px;right:3px;bottom:62%;height:14px;background:#c9a982"></div>
+      <div style="position:absolute;left:14px;top:34px;width:26px;height:26px;background:var(--skyHi);opacity:.9"></div>
+      <div style="position:absolute;right:16px;top:62px;width:22px;height:22px;background:var(--skyHi);opacity:.9"></div>
+      <div style="position:absolute;left:44px;top:78px;width:20px;height:20px;background:var(--skyHi);opacity:.75"></div>
+      <div style="position:absolute;left:24px;top:16px;width:5px;height:10px;background:var(--skyHi);animation:drip 2.6s linear infinite"></div>
+      <div style="position:absolute;right:32px;top:24px;width:5px;height:10px;background:var(--skyHi);animation:drip 3.4s linear infinite;animation-delay:-1.4s"></div>
+      <div style="position:absolute;left:3px;right:3px;top:3px;height:12px;background:var(--cream2)"></div>
+      <div style="position:absolute;right:-16px;top:34px;width:16px;height:44px;border:3px solid var(--ink);border-left:none"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:104px;display:flex;flex-direction:column;gap:12px">
+    <button type="button" data-go="next" data-set="drink:iced" style="min-height:62px;border:3px solid var(--ink);background:var(--skyHi);font-family:'Pixelify Sans';font-size:22px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">iced</button>
+    <div aria-disabled="true" style="min-height:62px;border:3px dashed rgba(36,26,16,.3);background:rgba(224,201,155,.4);color:rgba(36,26,16,.4);font-family:'Pixelify Sans';font-size:22px;display:flex;align-items:center;justify-content:center;cursor:not-allowed">hot</div>
+  </div>
+</div>
+</sc-if>
+
+<!-- 13 BAN A TOPIC -->
+<sc-if value="{{ s13 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="13 Ban a topic">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Ban one topic.
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <p style="position:absolute;left:26px;right:26px;top:132px;margin:0;text-align:center;font-family:system-ui;font-size:13.5px;color:rgba(36,26,16,.7)">It gets printed on the card.</p>
+  <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px">
+    <button type="button" data-go="next" data-set="banned:work" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:100px;background:var(--cream);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:16px;right:16px;bottom:22px;height:40px;background:var(--wood);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;left:50%;bottom:60px;transform:translateX(-50%);width:26px;height:10px;border:3px solid var(--ink);border-bottom:none"></span>
+        <span style="position:absolute;left:16px;right:16px;bottom:38px;height:5px;background:var(--stoneDark)"></span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">work</span>
+    </button>
+    <button type="button" data-go="next" data-set="banned:exes" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:100px;background:var(--cream);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:50%;top:16px;transform:translateX(-50%);width:24px;height:24px;background:var(--stone)"></span>
+        <span style="position:absolute;left:50%;top:42px;transform:translateX(-50%);width:34px;height:34px;background:var(--stone)"></span>
+        <span style="position:absolute;left:14px;top:14px;width:64px;height:5px;background:var(--terra);transform:rotate(42deg);transform-origin:left center"></span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px">exes</span>
+    </button>
+    <button type="button" data-go="next" data-set="banned:the weather" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:100px;background:var(--cream);border:3px solid var(--ink);display:block;overflow:hidden">
+        <span style="position:absolute;left:14px;top:20px;width:56px;height:20px;background:var(--stone)"></span>
+        <span style="position:absolute;left:26px;top:12px;width:34px;height:14px;background:var(--stone)"></span>
+        <span style="position:absolute;left:26px;top:48px;width:3px;height:16px;background:var(--skyHi)"></span>
+        <span style="position:absolute;left:44px;top:52px;width:3px;height:16px;background:var(--skyHi)"></span>
+        <span style="position:absolute;left:60px;top:48px;width:3px;height:16px;background:var(--skyHi)"></span>
+      </span>
+      <span style="padding:4px 8px;background:var(--cream);border:2px solid var(--ink);font-size:13px;text-align:center;line-height:1.2">the weather</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:84px">
+    <button type="button" data-go="next" data-set="banned:nothing is off limits" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--leaf);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">nothing is off limits</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 14 CONSTRUCTION -->
+<sc-if value="{{ s14 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="14 Construction">
+  <div style="position:absolute;left:24px;top:150px;width:200px;height:260px">
+    <div style="position:absolute;left:0;bottom:0;width:200px;height:124px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:0;bottom:110px;width:200px;height:8px;background:var(--stoneDark);opacity:.4"></div>
+    <div style="position:absolute;left:14px;bottom:124px;width:54px;height:72px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:98px;bottom:124px;width:46px;height:46px;background:var(--stone);border:3px solid var(--ink);transform:rotate(5deg)"></div>
+    <div style="position:absolute;left:24px;bottom:40px;width:22px;height:34px;background:var(--shadow);opacity:.5"></div>
+    <div style="position:absolute;left:0;bottom:0;width:7px;height:240px;background:var(--woodHi)"></div>
+    <div style="position:absolute;left:0;bottom:152px;width:156px;height:7px;background:var(--woodHi)"></div>
+    <div style="position:absolute;left:0;bottom:72px;width:124px;height:7px;background:var(--woodHi)"></div>
+    <div style="position:absolute;left:152px;bottom:100px;width:7px;height:114px;background:var(--woodHi);transform:rotate(7deg)"></div>
+    <div style="position:absolute;left:60px;bottom:159px;width:10px;height:10px;background:var(--terra)"></div>
+  </div>
+  <div style="position:absolute;right:20px;bottom:266px;width:52px;height:76px">
+    <div style="position:absolute;left:11px;top:0;width:30px;height:12px;background:#6b4326"></div>
+    <div style="position:absolute;left:17px;top:12px;width:20px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:21px;top:19px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:30px;top:19px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:13px;top:28px;width:26px;height:26px;background:var(--escOutfit,#4a6f8a)"></div>
+    <div style="position:absolute;left:7px;top:30px;width:6px;height:16px;background:var(--skin);animation:nod .6s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:-6px;top:24px;width:16px;height:5px;background:var(--woodHi);animation:nod .6s steps(2,end) infinite alternate"></div>
+    <div style="position:absolute;left:39px;top:30px;width:6px;height:16px;background:var(--skin)"></div>
+    <div style="position:absolute;left:17px;top:54px;width:7px;height:14px;background:var(--stoneDark)"></div>
+    <div style="position:absolute;left:28px;top:54px;width:7px;height:14px;background:var(--stoneDark)"></div>
+    <div style="position:absolute;left:15px;top:68px;width:11px;height:6px;background:#6b4326"></div>
+    <div style="position:absolute;left:26px;top:68px;width:11px;height:6px;background:#6b4326"></div>
+  </div>
+  <div style="position:absolute;left:24px;top:96px;padding:8px 14px;border:3px solid var(--ink);background:var(--white);font-size:17px;white-space:nowrap">Progress: 4%</div>
+  <div style="position:absolute;left:22px;right:22px;bottom:92px;display:flex;flex-direction:column;gap:12px">
+    <button type="button" data-go="next" data-set="build:approved" style="min-height:56px;border:3px solid var(--ink);background:var(--leaf);font-family:'Pixelify Sans';font-size:19px;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">Approve</button>
+    <button type="button" data-go="next" data-set="build:concerns noted" style="min-height:56px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:19px;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">Concerns noted</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 15 THRONE -->
+<sc-if value="{{ s15 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="15 Throne">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Pick your throne.
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
+    <button type="button" data-go="next" data-set="throne:the gilded one" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:136px;display:block">
+        <span style="position:absolute;left:12px;right:12px;top:0;bottom:14px;background:var(--honey);border:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:22px;right:22px;top:14px;height:56px;background:var(--terra);border:2px solid var(--ink)"></span>
+        <span style="position:absolute;left:12px;right:12px;bottom:26px;height:6px;background:rgba(36,26,16,.2)"></span>
+        <span style="position:absolute;left:14px;bottom:0;width:10px;height:16px;background:var(--stoneDark)"></span>
+        <span style="position:absolute;right:14px;bottom:0;width:10px;height:16px;background:var(--stoneDark)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px">gilded</span>
+    </button>
+    <button type="button" data-go="next" data-set="throne:the beanbag" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:136px;display:block">
+        <span style="position:absolute;left:4px;right:4px;bottom:0;height:76px;background:var(--rose);border:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:16px;right:16px;bottom:70px;height:30px;background:var(--rose);border:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:16px;right:16px;bottom:8px;height:6px;background:rgba(36,26,16,.16)"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px">beanbag</span>
+    </button>
+    <button type="button" data-go="next" data-set="throne:the one with a cat on it" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" style-active="transform:translateY(4px)">
+      <span style="position:relative;width:100%;height:136px;display:block">
+        <span style="position:absolute;left:12px;right:12px;top:30px;bottom:0;background:var(--stone);border:3px solid var(--ink)"></span>
+        <span style="position:absolute;left:22px;right:22px;top:44px;height:40px;background:var(--stoneDark);opacity:.35"></span>
+        <span style="position:absolute;left:20px;top:6px;width:36px;height:18px;background:var(--terra);animation:bob 2.4s steps(2,end) infinite alternate"></span>
+        <span style="position:absolute;left:44px;top:-4px;width:18px;height:16px;background:var(--terra);animation:bob 2.4s steps(2,end) infinite alternate"></span>
+        <span style="position:absolute;left:48px;top:2px;width:3px;height:3px;background:var(--ink);animation:bob 2.4s steps(2,end) infinite alternate"></span>
+      </span>
+      <span style="padding:4px 6px;background:var(--cream);border:2px solid var(--ink);font-size:12px;text-align:center;line-height:1.2">cat already on it</span>
+    </button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:84px">
+    <button type="button" data-go="next" data-set="throne:his choice" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">you choose</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 16 DRESS -->
+<sc-if value="{{ s16 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="16 Dress">
+  <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+    <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
+    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Dress the builder.
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:150px;display:flex;justify-content:center">
+    <div style="position:relative;width:104px;height:152px">
+      <div style="position:absolute;left:22px;top:0;width:60px;height:24px;background:#6b4326"></div>
+      <div style="position:absolute;left:34px;top:24px;width:40px;height:32px;background:var(--skin)"></div>
+      <div style="position:absolute;left:42px;top:38px;width:6px;height:6px;background:var(--ink)"></div>
+      <div style="position:absolute;left:60px;top:38px;width:6px;height:6px;background:var(--ink)"></div>
+      <div style="position:absolute;left:26px;top:56px;width:52px;height:52px;background:var(--escOutfit,#4a6f8a)"></div>
+      <div style="position:absolute;left:26px;top:100px;width:52px;height:8px;background:rgba(36,26,16,.25)"></div>
+      <div style="position:absolute;left:14px;top:60px;width:12px;height:32px;background:var(--skin)"></div>
+      <div style="position:absolute;left:78px;top:60px;width:12px;height:32px;background:var(--skin)"></div>
+      <div style="position:absolute;left:34px;top:108px;width:14px;height:30px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:56px;top:108px;width:14px;height:30px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:30px;top:138px;width:22px;height:12px;background:#6b4326"></div>
+      <div style="position:absolute;left:52px;top:138px;width:22px;height:12px;background:#6b4326"></div>
+      <div style="position:absolute;left:0;right:0;bottom:-14px;text-align:center;font-size:12px;color:rgba(36,26,16,.6)">{{ dressLabel }}</div>
+    </div>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:146px;display:flex;gap:12px">
+    <button type="button" data-act="cut" data-set="cut:casual" style="flex:1;min-height:52px;border:3px solid var(--ink);background:var(--white);font-family:'Pixelify Sans';font-size:17px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">casual</button>
+    <button type="button" data-act="cut" data-set="cut:formal" style="flex:1;min-height:52px;border:3px solid var(--ink);background:var(--white);font-family:'Pixelify Sans';font-size:17px;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">formal</button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:86px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+    <button type="button" data-act="colour" data-set="colour:black" style="min-height:52px;border:3px solid var(--ink);background:#2a2724;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none"></button>
+    <button type="button" data-act="colour" data-set="colour:red" style="min-height:52px;border:3px solid var(--ink);background:var(--terra);box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none"></button>
+    <button type="button" data-act="colour" data-set="colour:blue" style="min-height:52px;border:3px solid var(--ink);background:#4a6f8a;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none"></button>
+    <button type="button" data-act="colour" data-set="colour:green" style="min-height:52px;border:3px solid var(--ink);background:var(--forest);box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none"></button>
+  </div>
+  <div style="position:absolute;left:22px;right:22px;bottom:30px">
+    <button type="button" data-go="next" style="width:100%;min-height:48px;border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:17px;font-weight:600;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(5px);box-shadow:none">That will do</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 17 DECREE -->
+<sc-if value="{{ s17 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both;background:var(--forest);padding:26px 14px 20px" data-screen-label="17 Decree">
+  <div style="height:100%;background:var(--white);border:4px solid var(--ink);padding:6px;display:flex;flex-direction:column">
+    <div style="flex:1;border:2px solid var(--honey);padding:14px 15px 12px;display:flex;flex-direction:column;min-height:0">
+      <div style="display:flex;align-items:center;gap:8px;justify-content:center">
+        <span style="width:24px;height:3px;background:var(--terra)"></span>
+        <p style="margin:0;font-size:12px;letter-spacing:.2em;color:rgba(36,26,16,.6)">STOP 01 — THE DECREE</p>
+        <span style="width:24px;height:3px;background:var(--terra)"></span>
+      </div>
+      <p style="margin:6px 0 10px;text-align:center;font-size:29px;font-weight:600;line-height:1.05">Coffee, then.</p>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-family:system-ui;font-size:13px;line-height:1.3;border-top:2px solid var(--cream2);border-bottom:2px solid var(--cream2);padding:10px 0">
+        <span style="color:rgba(36,26,16,.5)">place</span><span>{{ vPlace }}</span>
+        <span style="color:rgba(36,26,16,.5)">day</span><span>{{ vDay }}</span>
+        <span style="color:rgba(36,26,16,.5)">hour</span><span>{{ vHour }}</span>
+        <span style="color:rgba(36,26,16,.5)">length</span><span>{{ vDuration }}</span>
+        <span style="color:rgba(36,26,16,.5)">drink</span><span>{{ vDrink }}</span>
+        <span style="color:rgba(36,26,16,.5)">food</span><span>{{ vFood }}</span>
+        <span style="color:rgba(36,26,16,.5)">banned</span><span>{{ vBanned }}</span>
+        <span style="color:rgba(36,26,16,.5)">escort</span><span>{{ vEscort }}</span>
+        <span style="color:rgba(36,26,16,.5)">throne</span><span>{{ vThrone }}</span>
+        <span style="color:rgba(36,26,16,.5)">builder</span><span>{{ vDress }}</span>
+        <span style="color:rgba(36,26,16,.5)">weather</span><span>{{ vWeather }}</span>
+      </div>
+      <p style="margin:10px 0 0;font-family:system-ui;font-size:13.5px;line-height:1.45;color:rgba(36,26,16,.85)">Plainly: I have built a whole castle out of a joke. The part that is not a joke is that I would like to meet you, and I have wanted to for a while.</p>
+      <div style="flex:1;min-height:8px"></div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <button type="button" data-act="seal" style="flex:none;width:88px;height:88px;border:4px solid var(--ink);border-radius:50%;background:var(--terra);color:var(--cream);font-family:'Pixelify Sans';font-size:14px;line-height:1.1;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer;transform:scale({{ sealScale }})" style-active="box-shadow:none">{{ sealLabel }}</button>
+        <p style="margin:0;font-family:system-ui;font-size:13px;color:rgba(36,26,16,.6)">{{ sealHint }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- 18 THE ROAD ON -->
+<sc-if value="{{ s18 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both;background:var(--sky);display:flex;flex-direction:column;justify-content:flex-end" data-screen-label="18 The road on">
+  <div style="position:absolute;left:0;right:0;top:0;height:140px;background:var(--skyHi)"></div>
+  <div style="position:absolute;left:0;right:0;top:140px;bottom:0;background:var(--moss)"></div>
+  <div style="position:absolute;left:0;right:0;top:128px;height:16px;background:var(--forest)"></div>
+  <div style="position:absolute;left:50%;top:38px;transform:translateX(-50%);width:140px;height:96px">
+    <div style="position:absolute;left:0;bottom:0;width:140px;height:54px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:0;bottom:46px;width:140px;height:7px;background:var(--stoneDark);opacity:.5"></div>
+    <div style="position:absolute;left:12px;bottom:54px;width:28px;height:32px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:54px;bottom:54px;width:30px;height:42px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;right:10px;bottom:54px;width:28px;height:32px;background:var(--stone);border:3px solid var(--ink)"></div>
+    <div style="position:absolute;left:64px;bottom:96px;width:9px;height:14px;background:var(--terra)"></div>
+    <div style="position:absolute;left:26px;bottom:14px;width:12px;height:20px;background:var(--stoneDark)"></div>
+    <div style="position:absolute;right:24px;bottom:14px;width:12px;height:20px;background:var(--stoneDark)"></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;top:144px;bottom:214px;padding:10px 0 4px;display:flex;flex-direction:column;justify-content:space-between;align-items:center">
+    <div style="position:absolute;right:16px;bottom:34px;width:76px;height:44px;background:var(--forest);animation:sway 3s steps(2,end) infinite alternate"><div style="position:absolute;left:0;right:0;top:0;height:9px;background:var(--forestHi)"></div></div>
+    <div style="position:absolute;left:-24px;right:-24px;top:0;height:64px;background:var(--mist);opacity:.7;animation:drift 5.2s ease-in-out infinite alternate"></div>
+    <div style="position:absolute;left:-24px;right:-24px;top:64px;height:11px;background:repeating-linear-gradient(90deg,var(--mist) 0 14px,transparent 14px 28px);opacity:.7;animation:drift 5.2s ease-in-out infinite alternate"></div>
+    <div style="position:absolute;left:-24px;right:-24px;top:75px;height:11px;background:repeating-linear-gradient(90deg,var(--mist) 0 28px,transparent 28px 56px);opacity:.45;animation:drift 7s ease-in-out infinite alternate"></div>
+    <div style="position:relative;align-self:flex-start;margin-left:168px;width:66px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+      <div style="position:absolute;left:calc(100% + 14px);bottom:-4px;display:flex;align-items:center;gap:10px;white-space:nowrap">
+        <span style="width:36px;height:36px;background:rgba(36,26,16,.28)"></span>
+        <span style="font-size:13px;letter-spacing:.06em;color:rgba(36,26,16,.55)">STOP 02?</span>
+      </div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:116px;width:66px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:150px;width:64px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:104px;width:70px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+      <div style="position:absolute;left:calc(100% + 14px);bottom:-4px;display:flex;align-items:center;gap:10px;white-space:nowrap">
+        <span style="width:36px;height:36px;background:var(--stone);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:15px">✓</span>
+        <span style="font-size:13px;letter-spacing:.06em;color:rgba(36,26,16,.6)">stamped</span>
+      </div>
+    </div>
+    <div style="position:relative;align-self:flex-start;margin-left:158px;width:74px;height:26px;flex:none;background:var(--stone)">
+      <div style="position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--stoneDark);opacity:.35"></div>
+    </div>
+    <div style="position:absolute;left:22px;bottom:8px;width:52px;height:76px">
+      <div style="position:absolute;left:11px;top:0;width:30px;height:12px;background:#6b4326"></div>
+      <div style="position:absolute;left:8px;top:10px;width:10px;height:22px;background:#6b4326"></div>
+      <div style="position:absolute;left:34px;top:10px;width:10px;height:22px;background:#6b4326"></div>
+      <div style="position:absolute;left:17px;top:14px;width:20px;height:16px;background:var(--skin)"></div>
+      <div style="position:absolute;left:21px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+      <div style="position:absolute;left:30px;top:21px;width:3px;height:3px;background:var(--ink)"></div>
+      <div style="position:absolute;left:13px;top:30px;width:26px;height:28px;background:var(--rose)"></div>
+      <div style="position:absolute;left:11px;top:44px;width:30px;height:14px;background:var(--rose)"></div>
+      <div style="position:absolute;left:18px;top:58px;width:6px;height:12px;background:var(--skin)"></div>
+      <div style="position:absolute;left:28px;top:58px;width:6px;height:12px;background:var(--skin)"></div>
+      <div style="position:absolute;left:16px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
+      <div style="position:absolute;left:26px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
+    </div>
+    <sc-if value="{{ hasEscort }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:74px;bottom:8px;width:52px;height:40px">
+      <div style="position:absolute;left:6px;bottom:6px;width:36px;height:18px;background:var(--escA)"></div>
+      <div style="position:absolute;left:28px;bottom:18px;width:18px;height:16px;background:var(--escA)"></div>
+      <div style="position:absolute;left:34px;bottom:22px;width:3px;height:3px;background:var(--ink)"></div>
+      <div style="position:absolute;left:0;bottom:18px;width:9px;height:5px;background:var(--escA);transform-origin:right center;animation:flick 1.3s steps(2,end) infinite alternate"></div>
+      <div style="position:absolute;left:10px;bottom:0;width:6px;height:8px;background:var(--escB)"></div>
+      <div style="position:absolute;left:30px;bottom:0;width:6px;height:8px;background:var(--escB)"></div>
+    </div>
+    </sc-if>
+  </div>
+  <div style="position:relative;margin:0 22px 24px;padding:14px 16px;background:var(--cream);border:3px solid var(--ink)">
+    <p style="margin:0;font-size:18px;font-weight:600">Stop 01 is stamped.</p>
+    <p style="margin:6px 0 0;font-family:system-ui;font-size:13.5px;line-height:1.45;color:rgba(36,26,16,.72)">The road continues. It is not shown in full, on purpose.</p>
+    <p style="margin:8px 0 12px;font-family:system-ui;font-size:12.5px;line-height:1.4;color:rgba(36,26,16,.58)">Address and map link arrive by text. So does the hour.</p>
+    <button type="button" data-go="next" style="width:100%;min-height:52px;border:3px solid var(--ink);background:var(--leaf);font-family:'Pixelify Sans';font-size:18px;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" style-active="transform:translateY(6px);box-shadow:none">Look at the castle</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- 19 CASTLE -->
+<sc-if value="{{ s19 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both;background:var(--stoneDark);display:flex;flex-direction:column;justify-content:flex-end" data-screen-label="19 Castle">
+  <div style="position:absolute;left:0;right:0;top:0;height:58%;background:var(--stone)"></div>
+  <div style="position:absolute;left:0;right:0;top:58%;bottom:0;background:var(--stoneDark)"></div>
+  <div style="position:absolute;left:0;right:0;top:56%;height:12px;background:repeating-conic-gradient(var(--stone) 0 25%,var(--stoneDark) 0 50%) 0 0/6px 6px"></div>
+  <div style="position:absolute;left:0;right:0;top:0;height:22px;background:var(--stoneDark);opacity:.4"></div>
+  <div style="position:absolute;left:34px;top:60px;width:58px;height:150px;background:var(--skyHi);border:4px solid var(--ink)">
+    <div style="position:absolute;left:0;right:0;top:50%;height:4px;background:var(--ink)"></div>
+    <div style="position:absolute;left:50%;top:0;bottom:0;width:4px;background:var(--ink)"></div>
+  </div>
+  <div style="position:absolute;right:34px;top:60px;width:58px;height:150px;background:var(--skyHi);border:4px solid var(--ink)">
+    <div style="position:absolute;left:0;right:0;top:50%;height:4px;background:var(--ink)"></div>
+    <div style="position:absolute;left:50%;top:0;bottom:0;width:4px;background:var(--ink)"></div>
+  </div>
+  <div style="position:absolute;left:50%;top:44px;transform:translateX(-50%);width:74px;height:186px;background:var(--terra);border:4px solid var(--ink)">
+    <div style="position:absolute;left:0;right:0;top:0;height:8px;background:rgba(36,26,16,.25)"></div>
+    <div style="position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:26px;height:26px;background:var(--honey)"></div>
+  </div>
+  <div style="position:absolute;left:50%;bottom:190px;transform:translateX(-50%);width:170px;height:28px;background:var(--stone);border:3px solid var(--ink)"></div>
+  <div style="position:absolute;left:50%;bottom:212px;transform:translateX(-50%);width:116px;height:126px;background:var(--honey);border:4px solid var(--ink)">
+    <div style="position:absolute;left:14px;right:14px;top:14px;height:56px;background:var(--terra);border:2px solid var(--ink)"></div>
+    <div style="position:absolute;left:0;right:0;bottom:12px;height:6px;background:rgba(36,26,16,.2)"></div>
+  </div>
+  <sc-if value="{{ hasEscort }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;left:50%;bottom:262px;transform:translateX(-50%);width:64px;height:52px;animation:bob 2.4s steps(2,end) infinite alternate">
+    <div style="position:absolute;left:8px;bottom:8px;width:44px;height:22px;background:var(--escA)"></div>
+    <div style="position:absolute;left:34px;bottom:24px;width:22px;height:20px;background:var(--escA)"></div>
+    <div style="position:absolute;left:40px;bottom:30px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:50px;bottom:30px;width:3px;height:3px;background:var(--ink)"></div>
+    <div style="position:absolute;left:0;bottom:24px;width:10px;height:6px;background:var(--escA);transform-origin:right center;animation:flick 1.6s steps(2,end) infinite alternate"></div>
+  </div>
+  </sc-if>
+  <div style="position:relative;margin:0 22px 34px;padding:16px 18px;background:var(--cream);border:3px solid var(--ink)">
+    <p style="margin:0;font-size:21px;font-weight:600;line-height:1.15">{{ castleLine }}</p>
+    <p style="margin:8px 0 0;font-family:system-ui;font-size:14.5px;line-height:1.45;color:rgba(36,26,16,.78)">{{ castleSub }}</p>
+    <p style="margin:12px 0 0;font-family:system-ui;font-size:12px;color:rgba(36,26,16,.5)">Pigeon: fed and released — it may come back, they tend to.</p>
+  </div>
+</div>
+</sc-if>
+
+<!-- 20 LEFT -->
+<sc-if value="{{ s20 }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;animation:in .09s both;display:flex;flex-direction:column;justify-content:flex-end" data-screen-label="20 Left">
+  <div style="position:absolute;left:0;top:0;animation:fly 5.4s linear infinite;opacity:.92">
+    <div style="position:relative;width:34px;height:20px;background:#8d93a1;border:2px solid var(--ink)">
+      <div style="position:absolute;left:6px;top:-8px;width:18px;height:10px;background:#b0b6c2;border:2px solid var(--ink);animation:flap .22s steps(2,end) infinite alternate"></div>
+    </div>
+  </div>
+  <div style="position:relative;margin:0 22px 96px;padding:22px 20px;background:var(--cream);border:3px solid var(--ink)">
+    <p style="margin:0;font-size:25px;font-weight:600;line-height:1.15">That is a complete answer.</p>
+    <div style="height:8px;margin:14px 0;background:repeating-conic-gradient(var(--cream2) 0 25%,var(--cream) 0 50%) 0 0/6px 6px"></div>
+    <p style="margin:0;font-family:system-ui;font-size:15.5px;line-height:1.5;color:rgba(36,26,16,.82)">No appeal, no second attempt, no version of this that comes back in three weeks wearing a different font.</p>
+    <p style="margin:12px 0 0;font-family:system-ui;font-size:15.5px;line-height:1.5;color:rgba(36,26,16,.82)">The garden stays. It was fun to build.</p>
+    <p style="margin:14px 0 0;font-family:system-ui;font-size:12.5px;color:rgba(36,26,16,.5)">You can close the tab. We are good.</p>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:880},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:20,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Review&quot;},&quot;weather&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sunny&quot;,&quot;overcast&quot;,&quot;light rain&quot;],&quot;default&quot;:&quot;sunny&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Review&quot;}}">
+const SUNNY = {ink:'#241a10',shadow:'#16241a',forest:'#26492f',forestHi:'#35603c',moss:'#4f8040',leaf:'#7cb14f',sky:'#a8d8e0',skyHi:'#c6e8ec',cream:'#f6e7c4',cream2:'#e0c99b',white:'#fdf6e6',stone:'#b39a72',stoneDark:'#5f5340',terra:'#c25f2e',rose:'#dc8f79',honey:'#eeb63c',wood:'#7a4a26',woodHi:'#96603a',mist:'#e7eee8'};
+const RAMPS = {
+  sunny: {},
+  overcast: {sky:'#b9c4c2',skyHi:'#cfd8d4',cream:'#eee2c8',cream2:'#d6c4a2',white:'#f7f1e4',moss:'#4d7150',leaf:'#719a5f',forest:'#2b4634',forestHi:'#3a5a41',stone:'#a99a80',stoneDark:'#5b5344',terra:'#a85c39',rose:'#c69384',honey:'#d3a95a',wood:'#6d4626',woodHi:'#875a37',mist:'#e6ebe7'},
+  'light rain': {sky:'#9fb4bd',skyHi:'#b8c9cf',cream:'#e5ded0',cream2:'#c9c0ab',white:'#f1efe4',moss:'#3f6650',leaf:'#5f8a68',forest:'#243c31',forestHi:'#2f4d3c',stone:'#93907f',stoneDark:'#4f5245',terra:'#96573c',rose:'#b48d84',honey:'#bd9a5e',wood:'#5f402a',woodHi:'#775338',mist:'#dfe7e6'}
+};
+const ESCORTS = {
+  'the ginger cat': ['#c25f2e', '#e8a882'],
+  'the dog': ['#7a4a26', '#a2764a'],
+  'the duck': ['#fdf6e6', '#eeb63c'],
+  'the chicken': ['#e0c99b', '#eeb63c'],
+  'all of them': ['#c25f2e', '#eeb63c']
+};
+const OUTFITS = {black: '#2a2724', red: '#c25f2e', blue: '#4a6f8a', green: '#26492f'};
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {i: props.startScreen ?? 0, picks: {}, dodges: 0, noX: 0, noY: 0, noR: 0, sealed: false, sealScale: 1};
+  }
+  componentDidMount(){ this.applyRamp(this.props.weather || 'sunny'); }
+  applyRamp(name){
+    const r = Object.assign({}, SUNNY, RAMPS[name] || {});
+    const s = document.documentElement.style;
+    Object.keys(r).forEach(k => s.setProperty('--' + k, r[k]));
+  }
+  set(pair){
+    if(!pair) return;
+    const idx = pair.indexOf(':');
+    const k = pair.slice(0, idx), v = pair.slice(idx + 1);
+    if(k === 'escort'){
+      const e = ESCORTS[v];
+      if(e){
+        document.documentElement.style.setProperty('--escA', e[0]);
+        document.documentElement.style.setProperty('--escB', e[1]);
+      }
+    }
+    if(k === 'colour') document.documentElement.style.setProperty('--escOutfit', OUTFITS[v] || '#4a6f8a');
+    this.setState(st => ({picks: Object.assign({}, st.picks, {[k]: v})}));
+    return {k, v};
+  }
+  onTap = (e) => {
+    const el = e.target.closest('[data-go],[data-act]');
+    if(!el || el.getAttribute('aria-disabled') === 'true') return;
+    const act = el.dataset.act, go = el.dataset.go;
+    const pair = this.set(el.dataset.set);
+    if(act === 'weather'){ this.applyRamp(pair && pair.v); this.go(this.state.i + 1); return; }
+    if(act === 'cut' || act === 'colour') return;
+    if(act === 'no'){ this.dodge(); return; }
+    if(act === 'seal'){ this.seal(); return; }
+    if(go === 'leave'){ this.go(20); return; }
+    if(go === 'next'){ this.go(this.state.i + 1); return; }
+    if(go != null) this.go(parseInt(go, 10));
+  };
+  go(n){ this.setState({i: Math.max(0, Math.min(20, n))}); }
+  dodge(){
+    const d = this.state.dodges;
+    if(d >= 3){ this.go(20); return; }
+    const xs = [-96, 84, -64], ys = [-104, -172, -48], rs = [-7, 6, -3];
+    this.setState({dodges: d + 1, noX: xs[d], noY: ys[d], noR: rs[d]});
+  }
+  seal(){
+    if(this.state.sealed) return;
+    this.setState({sealScale: .8});
+    setTimeout(() => this.setState({sealed: true, sealScale: 1}), 130);
+    setTimeout(() => this.go(18), 640);
+  }
+  renderVals(){
+    const {i, picks, dodges, sealed} = this.state;
+    const s = {};
+    for(let n = 0; n <= 20; n++) s['s' + n] = i === n;
+    const w = picks.weather || this.props.weather || 'sunny';
+    const alone = picks.escort === 'no one, just her';
+    const dress = (picks.cut || picks.colour) ? [picks.colour, picks.cut].filter(Boolean).join(' ') : 'as he is';
+    const stop = Math.max(0, Math.min(11, i - 5));
+    const stones = [];
+    for(let n = 0; n < 11; n++) stones.push({bg: n < stop ? 'var(--honey)' : 'var(--cream)'});
+    return Object.assign(s, {
+      onTap: this.onTap,
+      camX: -Math.max(0, Math.min(11, i - 2)) * 36,
+      isSunny: w === 'sunny', isOvercast: w === 'overcast', isRain: w === 'light rain',
+      inJourney: i >= 6 && i <= 16,
+      showGate: i >= 3 && i <= 16 && i !== 5,
+      stones,
+      noX: this.state.noX, noY: this.state.noY, noR: this.state.noR,
+      noLabel: dodges === 0 ? 'No' : dodges >= 3 ? 'no…' : 'No!',
+      hasEscort: !alone,
+      dressLabel: dress,
+      sealScale: this.state.sealScale,
+      sealLabel: sealed ? 'SEALED' : 'PRESS',
+      sealHint: sealed ? 'Done. Nothing else to do.' : 'Press the seal.',
+      castleLine: alone ? 'The throne is yours.' : 'The throne is occupied.',
+      castleSub: alone ? 'No queue, no negotiation.' : 'It was always going to be.',
+      vPlace: picks.place || 'he chooses',
+      vDay: picks.day || 'he chooses',
+      vHour: picks.hour || 'he chooses',
+      vDuration: picks.duration || 'he chooses',
+      vDrink: picks.drink || 'iced',
+      vFood: picks.food || 'he chooses',
+      vBanned: picks.banned || 'nothing yet',
+      vEscort: picks.escort || 'the escort',
+      vThrone: picks.throne || 'the gilded one',
+      vDress: dress,
+      vWeather: w
+    });
+  }
+}
+
+</script>
+</body>
+</html>

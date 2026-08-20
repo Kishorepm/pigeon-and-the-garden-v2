@@ -1,0 +1,83 @@
+:root{
+--ink:#241a10;--shadow:#16241a;--forest:#26492f;--forestHi:#35603c;--moss:#4f8040;--leaf:#7cb14f;
+--sky:#a8d8e0;--skyHi:#c6e8ec;--cream:#f6e7c4;--cream2:#e0c99b;--white:#fdf6e6;--stone:#b39a72;
+--stoneDark:#5f5340;--terra:#c25f2e;--rose:#dc8f79;--honey:#eeb63c;--wood:#7a4a26;--woodHi:#96603a;--mist:#e7eee8;
+--skin:#f0d0ac;--hair:#241a10;--escA:#c25f2e;--escB:#e8a882;
+}
+html,body{margin:0;background:#14120e;-webkit-font-smoothing:antialiased}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--terra)}a:hover{color:var(--wood)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+@keyframes in{from{opacity:0}to{opacity:1}}
+@keyframes sway{0%{transform:translateX(0)}100%{transform:translateX(3px)}}
+@keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-4px)}}
+@keyframes nod{0%{transform:translateY(0)}100%{transform:translateY(-3px)}}
+@keyframes peck{0%{transform:translateY(0)}100%{transform:translateY(5px)}}
+@keyframes flick{0%{transform:rotate(0)}100%{transform:rotate(-22deg)}}
+@keyframes drift{0%{transform:translateX(-8px)}100%{transform:translateX(8px)}}
+@keyframes glow{0%{opacity:.5}100%{opacity:1}}
+@keyframes petal{0%{transform:translate(0,-30px)}50%{transform:translate(16px,42vh)}100%{transform:translate(-8px,96vh)}}
+@keyframes mote{0%{transform:translate(0,0);opacity:0}30%{opacity:.9}100%{transform:translate(28px,-130px);opacity:0}}
+@keyframes rain{0%{transform:translate(0,-40px)}100%{transform:translate(-20px,104vh)}}
+@keyframes drip{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(46px);opacity:0}}
+@keyframes fly{0%{transform:translate(-50px,10vh)}100%{transform:translate(58vw,34vh)}}
+@keyframes flap{0%{transform:scaleY(1)}100%{transform:scaleY(.45)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+[data-active="a0"]:active{transform:translateY(6px) !important;box-shadow:none !important}
+[data-active="a1"]:active{box-shadow:none !important}
+[data-active="a2"]:active{transform:translateY(4px) !important}
+[data-active="a3"]:active{transform:translateY(5px) !important;box-shadow:none !important}
+
+/* --- real-device overrides ---------------------------------------- */
+/* The canvas is already a responsive max-width column; keep its layout
+   and only add what a real phone needs. */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+#app{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#app>div[data-if]{position:absolute;inset:0}
+button{font:inherit;color:inherit}
+[hidden]{display:none!important}
+
+/* Dress screen: his torso is the one element painted with --escOutfit,
+   so it is also where the formal yoke lands. Selected swatches get a ring
+   — tapping a colour has to visibly agree with her. */
+#app [style*="--escOutfit"]{box-shadow:var(--escCollar,none)}
+[data-chosen]{outline:3px solid var(--ink);outline-offset:3px}
+[data-act="cut"][data-chosen]{background:var(--honey)!important}
+
+/* The drawn horizon castle is replaced by artwork; its block towers stay
+   in the markup as the fallback if the image ever fails to load. */
+[data-art="castle"]>div{display:none}
+/* Painted sprites replace the drawn shapes underneath; the shapes stay in
+   the markup as the fallback if an image ever fails to load. 'behind'
+   keeps its children, because the seal has a label on top of it. */
+[data-art="swap"]>*{display:none}
+
+/* Her dress. Its own token so it is one knob rather than six edits, and
+   so it never drifts when the canvas restyles --rose for flowers. */
+:root{--dress:#197a4b}
+
+/* His skin. Matched on his figure rather than on coordinates, because
+   his arms sit at exactly the same coordinates as hers and a coordinate
+   match would recolour her too. */
+:root{--skinHim:#8a5a3b}
+[data-him] [style*="var(--skin)"]{background:var(--skinHim)!important}
+
+/* The way out. Deliberately the quietest control on screen — always
+   present, never competing, and far from the thumb so a terminal action
+   cannot be pressed by accident. */
+[data-active="exit"]:active{transform:translateY(2px);background:rgba(246,231,196,.95)!important}
+
+/* The pigeon's delivery: from him, over the garden, to her — once.
+   The wrapper's resting transform IS the landed position, so reduced-motion
+   users (whose animations are killed above) see it arrived rather than
+   parked in the top-left corner. */
+/* The scroll unrolling. clip-path reveals top-down without scaling, so
+   nothing inside stretches; steps() keeps it chunky rather than a wipe. */
+@keyframes unroll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+/* The dragon drifting over the far hills. Slow and small; it is scenery,
+   not an event. */
+@keyframes soar{from{transform:translate(0,0)}to{transform:translate(-26px,10px)}}
+/* And the pigeon going back the other way at the end. */
+@keyframes gohome{0%{transform:translate(80%,58%)}45%{transform:translate(40%,30%)}100%{transform:translate(2%,36%)}}
+@keyframes deliver{0%{transform:translate(6%,44%)}55%{transform:translate(40%,30%)}100%{transform:translate(72.5%,62%)}}
+
