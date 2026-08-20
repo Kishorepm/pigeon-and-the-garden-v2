@@ -160,7 +160,7 @@ font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer">Go on then.<
 # Lives outside #app, shown only by the media query in the stylesheet.
 ROTATE_SCREEN = '''
 <div id="rotate" aria-live="polite">
-  <div style="display:flex;align-items:center;gap:24px;background:var(--cream);border:4px solid var(--ink);box-shadow:0 8px 0 rgba(22,36,26,.45);padding:20px 26px;max-width:520px">
+  <div style="display:flex;align-items:center;gap:24px;background:var(--cream);border:4px solid var(--ink);box-shadow:0 8px 0 rgba(22,36,26,.45);padding:20px 26px;max-width:600px">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#241a10" stroke-width="1.6" stroke-linecap="square" aria-hidden="true" style="flex:none">
       <rect x="8.5" y="2.5" width="7" height="13"/>
       <path d="M4.5 13.5 L4.5 18.5 L19.5 18.5"/>
@@ -168,7 +168,7 @@ ROTATE_SCREEN = '''
       <path d="M17.5 16.5 L19.5 18.5 L17.5 20.5"/>
     </svg>
     <div>
-      <p style="margin:0;font-family:'Pixelify Sans';font-size:25px;font-weight:600;line-height:1.05">\
+      <p style="margin:0;font-family:'Pixelify Sans';font-size:25px;font-weight:600;line-height:1.1;text-wrap:balance">\
 The garden is taller than it is wide.</p>
       <p style="margin:8px 0 0;font-family:system-ui;font-size:14px;line-height:1.45;color:rgba(36,26,16,.72)">\
 Turn your phone back and the road carries on from where you left it. Nothing was lost.</p>
@@ -1055,6 +1055,14 @@ def main():
         "\n/* The refused 'hot' option. Deliberate joke, but it needs to answer a\n"
         "   tap or it reads as a dead site — see the copy fix. */\n"
         '[data-act="hot"]{cursor:default;-webkit-user-select:none;user-select:none}\n'
+        "\n/* PRESS sits on top of the wax seal's artwork, so flat contrast against\n"
+        "   the terracotta underneath is not the whole story — the swirl competes\n"
+        "   with the letterforms. A hard 1px cream outline is how a sprite is\n"
+        "   separated from its background in pixel art, and it stays in register\n"
+        "   with everything else here in a way a soft glow would not. */\n"
+        '[data-act="seal"]{text-shadow:1px 0 0 var(--cream),-1px 0 0 var(--cream),'
+        "0 1px 0 var(--cream),0 -1px 0 var(--cream),1px 1px 0 var(--cream),"
+        "-1px -1px 0 var(--cream),1px -1px 0 var(--cream),-1px 1px 0 var(--cream)}\n"
     )
 
     css_text = "\n".join(sheet) + "\n"

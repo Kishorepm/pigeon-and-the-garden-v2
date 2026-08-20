@@ -121,3 +121,10 @@ button{font:inherit;color:inherit}
    tap or it reads as a dead site — see the copy fix. */
 [data-act="hot"]{cursor:default;-webkit-user-select:none;user-select:none}
 
+/* PRESS sits on top of the wax seal's artwork, so flat contrast against
+   the terracotta underneath is not the whole story — the swirl competes
+   with the letterforms. A hard 1px cream outline is how a sprite is
+   separated from its background in pixel art, and it stays in register
+   with everything else here in a way a soft glow would not. */
+[data-act="seal"]{text-shadow:1px 0 0 var(--cream),-1px 0 0 var(--cream),0 1px 0 var(--cream),0 -1px 0 var(--cream),1px 1px 0 var(--cream),-1px -1px 0 var(--cream),1px -1px 0 var(--cream),-1px 1px 0 var(--cream)}
+
