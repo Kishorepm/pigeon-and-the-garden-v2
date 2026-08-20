@@ -14,14 +14,14 @@
   // 20 is the decline screen; 21 is the closing beat after the castle.
   var LAST = 22;
 
+  var REDUCED = !!(window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
   // The decree headline, keyed off the place she picked. Keys are the data-set
   // values from the "What sort of place?" screen — change one there and it must
   // change here, which is why the fallback is the original line rather than an
   // empty string. "his choice" is deliberately absent: it falls through to
   // "Coffee, then.", which is his line and the honest answer when she defers.
-  var REDUCED = !!(window.matchMedia
-    && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-
   var VERDICTS = {
     'one with a garden': 'A garden, then.',
     'one with animals nearby': 'Animals, then.',
@@ -36,8 +36,99 @@
     confirmingNo: false,
     sealed: false,
     sealScale: 1,
-    notified: false
+    notified: false,
+    opened: false       // the curtain is up until she taps the note
   };
+
+  // --- dawn ------------------------------------------------------------------
+  // The world starts before sunrise and comes up as she opens the note. This is
+  // a palette swap, not a scrim: the same mechanism the weather ramps use, so
+  // every sprite is repainted rather than dimmed behind a sheet of grey.
+  //
+  // The night values are DERIVED from SUNNY rather than written down, so the
+  // canvas stays the only place a colour is authored — a hand-written night
+  // palette would go stale the moment the canvas is regenerated.
+  var NIGHT = '#101a26';          // what everything tends toward before sunrise
+  var DAWN_FROM = 0.55;           // how far toward NIGHT the world starts
+  // Discrete steps, not a smooth fade. Pixel art does day/night as palette
+  // swaps, and stepping keeps it in register with the rest of the world.
+  var DAWN_STEPS = [0.55, 0.42, 0.30, 0.19, 0.10, 0.04, 0];
+  // Extra tokens that live in the stylesheet rather than in SUNNY. Without these
+  // her dress and his skin stay at full daylight while everything else is dark.
+  var EXTRA_TOKENS = ['dress', 'skinHim', 'hair'];
+  var extras = null;
+
+  function readExtras() {
+    if (extras) return extras;
+    var cs = getComputedStyle(document.documentElement);
+    extras = {};
+    EXTRA_TOKENS.forEach(function (k) {
+      var v = cs.getPropertyValue('--' + k).trim();
+      if (v) extras[k] = v;
+    });
+    return extras;
+  }
+
+  function hexToRgb(h) {
+    h = h.trim();
+    if (h.length === 4) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+    return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)];
+  }
+
+  function mix(hex, target, t) {
+    if (!/^#[0-9a-f]{3,6}$/i.test(hex)) return hex;   // leave anything exotic alone
+    var a = hexToRgb(hex), b = hexToRgb(target);
+    return '#' + a.map(function (v, i) {
+      return Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0');
+    }).join('');
+  }
+
+  function applyDawn(amount) {
+    var s = document.documentElement.style;
+    var curtain = document.getElementById('curtain');
+    var base = Object.assign({}, SUNNY, readExtras());
+    Object.keys(base).forEach(function (k) {
+      s.setProperty('--' + k, amount ? mix(base[k], NIGHT, amount) : base[k]);
+      // The note is the one lit thing in the frame — it is what she is reading,
+      // and a dimmed parchment reads as dirty concrete rather than paper. Scope
+      // the pristine palette to the curtain so the dawn never touches it.
+      if (curtain) curtain.style.setProperty('--' + k, base[k]);
+    });
+    // A night sky, derived rather than invented: the palette's darkest colour
+    // pulled toward blue. There is no dark blue in the 24, and hand-writing one
+    // would be the first colour on this site that came from nowhere.
+    if (curtain) curtain.style.setProperty('--nightSky', mix(SUNNY.shadow, NIGHT, 0.55));
+  }
+
+  // Walk the steps, then hand the palette back to the normal ramp machinery so
+  // the weather screen keeps working exactly as it did.
+  function sunrise() {
+    if (REDUCED) { applyRamp('sunny'); return; }
+    DAWN_STEPS.forEach(function (amount, n) {
+      setTimeout(function () {
+        if (amount) applyDawn(amount);
+        else applyRamp(state.picks.weather || 'sunny');
+      }, n * 230);
+    });
+  }
+
+  function openTheNote() {
+    if (state.opened) return;
+    var curtain = document.getElementById('curtain');
+    // Start the garden moving and the sun coming up WHILE the note fades, so the
+    // two halves are one movement rather than a cut followed by an effect.
+    document.documentElement.setAttribute('data-opened', '');
+    var theme = document.querySelector('meta[name="theme-color"]');
+    if (theme) theme.setAttribute('content', '#c3e0e4');
+    sunrise();
+    if (curtain && !REDUCED) {
+      curtain.setAttribute('data-lifting', '');
+      setTimeout(function () { state.opened = true; render(); }, 480);
+    } else {
+      state.opened = true;
+      render();
+    }
+  }
 
   // --- one fire-and-forget POST ---------------------------------------------
   function tell(choice, picks) {
@@ -93,6 +184,8 @@
     // The way out stays up through the decree — the seal is the commitment, so
     // she can still stop right until she presses it. Gone afterwards: screens 18
     // and 19 are the result, and there is nothing left to leave.
+    // The note over the garden, until she opens it.
+    v.curtain = !state.opened;
     v.showGate = i >= 3 && i <= 17;
     // The way out asks once before it acts. Everything about the No button says
     // an accidental decline must be impossible — three dodges, then a plain
@@ -360,6 +453,7 @@
       state.picks[set.slice(0, idx)] = set.slice(idx + 1);
     }
     var act = el.getAttribute('data-act');
+    if (act === 'open') { openTheNote(); return; }
     if (act === 'no') return;                   // already handled on pointerdown
     // The way out, asked and answered. Opening the question is not leaving, and
     // "stay" is a plain dismissal — neither one sends anything.
@@ -408,7 +502,10 @@
     }
   });
 
+  // Before sunrise. The curtain is opaque over the garden either way, but the
+  // world underneath has to already be dark or the light never arrives.
   applyRamp('sunny');
+  applyDawn(DAWN_FROM);
   setThrone();          // default, in case she never reaches the throne screen
   // Seed the history stack so the first pushState has something behind it and a
   // back gesture on screen zero leaves the site, as it should.

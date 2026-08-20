@@ -117,6 +117,26 @@ button{font:inherit;color:inherit}
   [data-act="back"],[data-act="askleave"]{height:38px;font-size:13px}
 }
 
+/* --- the opening ---------------------------------------------------- */
+/* A full-bleed button, so tap and keyboard both work with no extra JS. */
+#curtain{position:absolute;inset:0;z-index:80;display:block;padding:0;margin:0;border:none;background:var(--shadow);text-align:left;cursor:pointer;overflow:hidden;opacity:1;transition:opacity .5s ease-out}
+/* Lifting is a separate state from hidden: the fade has to finish before
+   the element leaves, or the cut is instant and the dawn behind it is
+   never seen. */
+#curtain[data-lifting]{opacity:0;pointer-events:none}
+/* The bottom rod travels down with the unroll. Its RESTING transform is
+   the finished position, so reduced-motion opens on a scroll that is
+   already unrolled rather than one frozen shut. */
+@keyframes rodfall{from{transform:translateY(calc(-1 * var(--noteH)))}to{transform:translateY(0)}}
+@keyframes nudgeup{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+/* Hold the delivery until the curtain lifts. Otherwise the pigeon flies,
+   lands and is finished while she is still reading the note, and the
+   garden is a static tableau by the time she gets there.
+   !important is load-bearing: the delivery's animation is an INLINE
+   shorthand, which resets animation-play-state to running and beats a
+   stylesheet longhand. Without it this rule silently does nothing. */
+html:not([data-opened]) [data-if="s0"] *{animation-play-state:paused!important}
+
 /* The refused 'hot' option. Deliberate joke, but it needs to answer a
    tap or it reads as a dead site — see the copy fix. */
 [data-act="hot"]{cursor:default;-webkit-user-select:none;user-select:none}

@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>A pigeon has arrived.</title>
 <meta name="description" content="It is carrying something.">
-<meta name="theme-color" content="#c3e0e4">
+<!-- Opens before sunrise; script.js swaps this to the daylight sky when she
+     opens the note, so the phone's own chrome comes up with the garden. -->
+<meta name="theme-color" content="#151d28">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pigeon-and-the-garden.vercel.app/">
@@ -20,7 +22,7 @@
 <meta name="twitter:description" content="It is carrying something.">
 <meta name="twitter:image" content="https://pigeon-and-the-garden.vercel.app/og.png">
 
-<link rel="stylesheet" href="/style.css?v=921a27da">
+<link rel="stylesheet" href="/style.css?v=973f19fb">
 </head>
 <body>
 <div style="min-height:100dvh;display:flex;justify-content:center;background:#14120e">
@@ -1122,6 +1124,113 @@
 </div>
 </div>
 
+<button type="button" data-if="curtain" hidden data-act="open" id="curtain" aria-label="Open the note">
+  <div style="position:absolute;inset:0;overflow:hidden">
+    <div style="position:absolute;inset:0;background:var(--nightSky,var(--shadow))"></div>
+
+    <div style="position:absolute;left:14%;top:9%;width:2px;height:2px;background:var(--cream);opacity:.55"></div>
+    <div style="position:absolute;left:31%;top:5%;width:2px;height:2px;background:var(--cream);opacity:.32"></div>
+    <div style="position:absolute;left:47%;top:13%;width:2px;height:2px;background:var(--cream);opacity:.7"></div>
+    <div style="position:absolute;left:68%;top:6%;width:2px;height:2px;background:var(--cream);opacity:.45"></div>
+    <div style="position:absolute;left:82%;top:16%;width:2px;height:2px;background:var(--cream);opacity:.6"></div>
+    <div style="position:absolute;left:23%;top:21%;width:2px;height:2px;background:var(--cream);opacity:.26"></div>
+    <div style="position:absolute;left:59%;top:24%;width:2px;height:2px;background:var(--cream);opacity:.38"></div>
+    <div style="position:absolute;left:89%;top:3%;width:2px;height:2px;background:var(--cream);opacity:.3"></div>
+    <div style="position:absolute;left:7%;top:29%;width:2px;height:2px;background:var(--cream);opacity:.22"></div>
+    <div style="position:absolute;left:73%;top:31%;width:2px;height:2px;background:var(--cream);opacity:.2"></div>
+
+    <div style="position:absolute;left:0;right:0;top:44.6%;height:6px;background:repeating-conic-gradient(var(--wood) 0 25%,var(--nightSky,var(--shadow)) 0 50%) 0 0/4px 4px;opacity:.6"></div>
+    <div style="position:absolute;left:0;right:0;top:46.4%;height:2.2%;background:var(--wood)"></div>
+    <div style="position:absolute;left:0;right:0;top:48.6%;height:1.6%;background:var(--terra)"></div>
+    <div style="position:absolute;left:0;right:0;top:50.2%;height:1%;background:var(--honey)"></div>
+
+    <div style="position:absolute;left:0;right:0;top:51.2%;bottom:0;background:var(--shadow)"></div>
+    <div style="position:absolute;left:68.25%;top:51.20%;width:3.50%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:65.54%;top:55.27%;width:5.25%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:62.83%;top:59.33%;width:7.00%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:60.12%;top:63.40%;width:8.75%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:57.42%;top:67.47%;width:10.50%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:54.71%;top:71.53%;width:12.25%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:52.00%;top:75.60%;width:14.00%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:49.29%;top:79.67%;width:15.75%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:46.58%;top:83.73%;width:17.50%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:43.88%;top:87.80%;width:19.25%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:41.17%;top:91.87%;width:21.00%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:38.46%;top:95.93%;width:22.75%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:35.75%;top:100.00%;width:24.50%;height:4.57%;background:var(--forest);opacity:.5"></div>
+    <div style="position:absolute;left:-5.00%;top:calc(51.2% - 26px);width:5.40%;height:30px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:-1.33%;top:calc(51.2% - 14px);width:3.20%;height:18px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:0.85%;top:calc(51.2% - 34px);width:6.20%;height:38px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:5.06%;top:calc(51.2% - 19px);width:4.00%;height:23px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:7.78%;top:calc(51.2% - 44px);width:4.80%;height:48px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:11.05%;top:calc(51.2% - 12px);width:3.00%;height:16px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:13.09%;top:calc(51.2% - 30px);width:5.80%;height:34px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:17.03%;top:calc(51.2% - 17px);width:3.80%;height:21px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:19.62%;top:calc(51.2% - 38px);width:6.60%;height:42px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:24.10%;top:calc(51.2% - 22px);width:3.50%;height:26px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:26.48%;top:calc(51.2% - 15px);width:4.40%;height:19px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:29.48%;top:calc(51.2% - 32px);width:5.20%;height:36px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:33.01%;top:calc(51.2% - 25px);width:4.20%;height:29px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:35.87%;top:calc(51.2% - 11px);width:2.80%;height:15px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:37.77%;top:calc(51.2% - 40px);width:6.00%;height:44px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:41.85%;top:calc(51.2% - 18px);width:3.40%;height:22px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:44.16%;top:calc(51.2% - 28px);width:5.00%;height:32px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:47.56%;top:calc(51.2% - 13px);width:3.60%;height:17px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:50.01%;top:calc(51.2% - 26px);width:5.40%;height:30px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:53.68%;top:calc(51.2% - 14px);width:3.20%;height:18px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:55.86%;top:calc(51.2% - 34px);width:6.20%;height:38px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:81.50%;top:calc(51.2% - 15px);width:4.40%;height:19px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:84.49%;top:calc(51.2% - 32px);width:5.20%;height:36px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:88.02%;top:calc(51.2% - 25px);width:4.20%;height:29px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:90.88%;top:calc(51.2% - 11px);width:2.80%;height:15px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:92.78%;top:calc(51.2% - 40px);width:6.00%;height:44px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:96.86%;top:calc(51.2% - 18px);width:3.40%;height:22px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:99.18%;top:calc(51.2% - 28px);width:5.00%;height:32px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:102.58%;top:calc(51.2% - 13px);width:3.60%;height:17px;background:var(--shadow)"></div>
+
+    <div style="position:absolute;left:66.6%;top:calc(51.2% - 40px);width:38px;height:40px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:65.1%;top:calc(51.2% - 56px);width:11px;height:56px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:75.6%;top:calc(51.2% - 50px);width:11px;height:50px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:70.4%;top:calc(51.2% - 66px);width:10px;height:66px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:71.2%;top:calc(51.2% - 30px);width:5px;height:5px;background:var(--honey);animation:glow 2.8s steps(2,end) infinite alternate"></div>
+
+    <div style="position:absolute;left:0;right:0;top:88%;height:10px;background:repeating-conic-gradient(var(--forest) 0 25%,var(--shadow) 0 50%) 0 0/5px 5px;opacity:.5"></div>
+
+    <div style="position:absolute;left:0;width:40%;top:76.5%;height:5px;background:var(--forest);opacity:.85"></div>
+    <div style="position:absolute;left:4%;top:76.5%;width:6px;height:34px;background:var(--forest);opacity:.85"></div>
+    <div style="position:absolute;left:36%;top:76.5%;width:6px;height:34px;background:var(--forest);opacity:.85"></div>
+
+    <div style="position:absolute;left:17%;top:calc(76.5% - 21px);width:34px;height:22px;animation:nod 2.4s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:0;bottom:0;width:27px;height:15px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:19px;bottom:10px;width:11px;height:10px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:29px;bottom:13px;width:5px;height:3px;background:var(--terra)"></div>
+      <div style="position:absolute;left:-7px;bottom:5px;width:9px;height:6px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:5px;bottom:6px;width:14px;height:4px;background:var(--stone);opacity:.5"></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:32px;right:32px;top:clamp(104px,18.5vh,166px);--noteH:clamp(186px,26.5vh,224px)">
+    <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.4)"></div>
+    <div style="position:relative;height:var(--noteH);overflow:hidden">
+      <div style="position:absolute;inset:0;background:var(--cream);border:3px solid var(--ink);border-top:none;padding:clamp(17px,3vh,26px) 22px 0;animation:unroll 1s steps(14,end) .55s both">
+        <p style="margin:0;text-align:center;font-size:11.5px;letter-spacing:.22em;color:rgba(36,26,16,.5);animation:in .5s 1.5s both">FOR PEANUT</p>
+        <h1 style="margin:14px 0 0;text-align:center;font-size:clamp(24px,7vw,29px);font-weight:600;line-height:1.08;text-wrap:balance;animation:in .5s 1.6s both">A pigeon has arrived.</h1>
+        <div style="height:3px;background:var(--honey);margin:16px 34px 0;animation:in .5s 1.75s both"></div>
+        <p style="margin:16px 0 0;text-align:center;font-family:system-ui;font-size:14px;line-height:1.5;color:rgba(36,26,16,.72);animation:in .5s 1.85s both">It is carrying something.</p>
+      </div>
+    </div>
+    <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.4);transform:translateY(calc(-1 * var(--noteH)));animation:rodfall 1s steps(14,end) .55s both"></div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:clamp(60px,10.5vh,92px);display:flex;justify-content:center;animation:in .6s 2.3s both">
+    <div style="display:flex;align-items:center;gap:9px;min-height:44px;padding:0 18px;background:rgba(246,231,196,.9);border:2px solid var(--ink);color:var(--ink);font-family:'Pixelify Sans';font-size:15px;animation:nudgeup 1.6s steps(2,end) 3s infinite alternate">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#241a10" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+        <path d="M12 4 L12 15"/><path d="M7 10 L12 15 L17 10"/>
+      </svg>
+      tap to open
+    </div>
+  </div>
+</button>
 </main>
 </div>
 <div id="rotate" aria-live="polite">
@@ -1143,6 +1252,6 @@
   overcast: {sky:'#b9c4c2',skyHi:'#cfd8d4',cream:'#eee2c8',cream2:'#d6c4a2',white:'#f7f1e4',moss:'#4d7150',leaf:'#719a5f',forest:'#2b4634',forestHi:'#3a5a41',stone:'#a99a80',stoneDark:'#5b5344',terra:'#a85c39',rose:'#c69384',honey:'#d3a95a',wood:'#6d4626',woodHi:'#875a37',mist:'#e6ebe7'},
   'light rain': {sky:'#9fb4bd',skyHi:'#b8c9cf',cream:'#e5ded0',cream2:'#c9c0ab',white:'#f1efe4',moss:'#3f6650',leaf:'#679070',forest:'#243c31',forestHi:'#2f4d3c',stone:'#93907f',stoneDark:'#4f5245',terra:'#96573c',rose:'#b48d84',honey:'#bd9a5e',wood:'#5f402a',woodHi:'#775338',mist:'#dfe7e6'}
 }};</script>
-<script src="/script.js?v=2e470798"></script>
+<script src="/script.js?v=3257001f"></script>
 </body>
 </html>

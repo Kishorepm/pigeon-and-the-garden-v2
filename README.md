@@ -236,6 +236,51 @@ screen, which is the same three-quarter view most "top-down" packs are drawn in,
 those assets sit correctly on the map even though they would look wrong in the garden.
 That is the test to apply before reaching for any new pack.
 
+## The opening
+
+The first thing she sees is a note, not a landscape: a scroll unrolls against a
+pre-dawn sky, addressed **FOR PEANUT**, carrying the line that used to live only in the
+`<title>` — *"A pigeon has arrived."* Tapping it lifts the note, the palette comes up
+into morning, and the pigeon sets off. The world wakes up as she arrives.
+
+Before this the opening was a wide establishing shot with both figures at 52×74 on an
+812px screen — about 6% of the height — a dead centre of empty grass, and 1.1 seconds
+where nothing moved at all.
+
+How it is put together:
+
+- `CURTAIN_SCREEN` in `build.py`, injected last so it paints over the screens beneath it
+  without an argument about z-index. It is a real `<button>`, so tap and keyboard both
+  work with no extra code.
+- The sunrise is a **palette swap**, not a scrim — the same mechanism the weather ramps
+  use, so every sprite is repainted rather than dimmed behind grey. `applyDawn()` in
+  `script.js` derives the night values from `SUNNY` rather than hard-coding them, and
+  steps through them discretely, because pixel art does day/night as palette swaps.
+- **The note keeps the pristine palette**, scoped to `#curtain`. It is the one lit thing
+  in the frame; a dimmed parchment reads as dirty concrete rather than paper.
+- The treeline and the path are generated (`dawn_treeline()`, `dawn_road()`) from
+  stacked rectangles. A `clip-path` diagonal anti-aliases its edge, and one soft edge in
+  a scene of hard pixels reads as a rendering fault.
+- The delivery is **held** until she taps — `animation-play-state:paused!important`. The
+  `!important` is load-bearing: the delivery's animation is an inline shorthand, which
+  resets play-state to running and beats a stylesheet longhand. Without it the pigeon
+  flies, lands and is finished while she is still reading the note.
+
+`theme-color` starts at the night sky and `script.js` swaps it to daylight on open, so
+the phone's own chrome comes up with the garden.
+
+## Her name
+
+She is called **Peanut** on the note. That is the one place it appears, and it is
+deliberately the *first* thing on screen: a letter is addressed, and being addressed is
+what separates a thing made for someone from a thing sent to someone.
+
+It is **not** in the Open Graph tags or the `<title>`. Those are public — they show in
+every link preview and are fetchable by anyone with the URL — and a private name does not
+belong in metadata on a site whose spec is built around her being wary of how much is
+known about her. If you want it in the link preview, that is your call to make, not a
+default to fall into.
+
 ## The decree headline
 
 It reads off the place she picked (`VERDICTS` in `script.js`, keyed by the `data-set`

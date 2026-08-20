@@ -151,6 +151,152 @@ font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer">Go on then.<
 
 '''
 
+# The opening. Before this, the first thing she saw was a wide establishing shot
+# with both figures at 52x74 on an 812px screen — about 6% of the height — a dead
+# centre of empty grass, 1.1 seconds where nothing moved at all, and the best line
+# in the whole thing ("A pigeon has arrived.") living only in the <title>.
+#
+# So: the note first. A scroll unrolls against a pre-dawn sky and hands her the
+# line. Tapping it lifts the curtain, the palette ramps up into morning, and the
+# pigeon sets off — the world wakes up as she arrives.
+#
+# Everything here is drawn from the same 24 colours as the rest of the site. The
+# dawn glow is wood -> terra -> honey, which are already the sunset end of the
+# palette, so nothing is invented for this screen.
+#
+# Resting states are the FINISHED states throughout (rod down, parchment
+# unrolled, text at full opacity), because the stylesheet kills every animation
+# under prefers-reduced-motion — the same discipline the pigeon's delivery uses.
+HORIZON = 51.2          # where the land starts, in % of the stage height
+VANISHING = 70.0        # where the path meets the castle, in % of the width
+
+
+def dawn_road():
+    """The path to the castle, before sunrise.
+
+    Stacked rectangles rather than a clip-path polygon: a diagonal clip
+    anti-aliases its edge, and one soft edge in a scene made entirely of hard
+    pixels reads as a rendering fault rather than a road.
+
+    Deliberately narrow and barely lighter than the land. A wide bright one
+    stops being a path and becomes a searchlight pointing at the sky.
+    """
+    bands, n = [], 13
+    for k in range(n):
+        t = k / (n - 1)
+        top = HORIZON + t * (100 - HORIZON)
+        height = (100 - HORIZON) / (n - 1) + 0.5   # overlap so no seams show
+        width = 3.5 + t * 21                       # narrow at the castle
+        centre = VANISHING - t * 22                # sweeping down and to the left
+        bands.append(
+            '<div style="position:absolute;left:%.2f%%;top:%.2f%%;width:%.2f%%;'
+            'height:%.2f%%;background:var(--forest);opacity:.5"></div>'
+            % (centre - width / 2, top, width, height)
+        )
+    return "\n    ".join(bands)
+
+
+def dawn_treeline():
+    """A ragged silhouette along the horizon.
+
+    A dead-straight horizon is what made the first pass read as two flat slabs
+    stacked on each other. Trees biting up into the glow are what makes a dawn
+    look like a dawn — and being pure --shadow, they are silhouette, so they
+    cost nothing in palette terms.
+
+    Heights come from an index-based pattern rather than randomness: the build
+    has to be deterministic or every rebuild reshuffles the skyline.
+    """
+    shapes, x = [], -5.0
+    # Heights in px (trees are short, and px keeps them the same size on every
+    # phone); widths in % so the line stays dense whatever the stage measures.
+    heights = [26, 14, 34, 19, 44, 12, 30, 17, 38, 22, 15, 32, 25, 11, 40, 18, 28, 13]
+    widths = [5.4, 3.2, 6.2, 4.0, 4.8, 3.0, 5.8, 3.8, 6.6, 3.5, 4.4, 5.2, 4.2, 2.8, 6.0, 3.4, 5.0, 3.6]
+    k = 0
+    while x < 105:
+        h, w = heights[k % len(heights)], widths[k % len(widths)]
+        # Leave the castle its own sky; trees drawn over it turn it to mush.
+        if not (VANISHING - 11 < x + w / 2 < VANISHING + 11):
+            shapes.append(
+                '<div style="position:absolute;left:%.2f%%;top:calc(%s%% - %dpx);'
+                'width:%.2f%%;height:%dpx;background:var(--shadow)"></div>'
+                % (x, HORIZON, h, w, h + 4)
+            )
+        x += w * 0.68        # overlap, so the line reads as a mass not a comb
+        k += 1
+    return "\n    ".join(shapes)
+
+
+CURTAIN_SCREEN = '''
+<button type="button" data-if="curtain" hidden data-act="open" id="curtain" aria-label="Open the note">
+  <div style="position:absolute;inset:0;overflow:hidden">
+    <div style="position:absolute;inset:0;background:var(--nightSky,var(--shadow))"></div>
+
+    <div style="position:absolute;left:14%;top:9%;width:2px;height:2px;background:var(--cream);opacity:.55"></div>
+    <div style="position:absolute;left:31%;top:5%;width:2px;height:2px;background:var(--cream);opacity:.32"></div>
+    <div style="position:absolute;left:47%;top:13%;width:2px;height:2px;background:var(--cream);opacity:.7"></div>
+    <div style="position:absolute;left:68%;top:6%;width:2px;height:2px;background:var(--cream);opacity:.45"></div>
+    <div style="position:absolute;left:82%;top:16%;width:2px;height:2px;background:var(--cream);opacity:.6"></div>
+    <div style="position:absolute;left:23%;top:21%;width:2px;height:2px;background:var(--cream);opacity:.26"></div>
+    <div style="position:absolute;left:59%;top:24%;width:2px;height:2px;background:var(--cream);opacity:.38"></div>
+    <div style="position:absolute;left:89%;top:3%;width:2px;height:2px;background:var(--cream);opacity:.3"></div>
+    <div style="position:absolute;left:7%;top:29%;width:2px;height:2px;background:var(--cream);opacity:.22"></div>
+    <div style="position:absolute;left:73%;top:31%;width:2px;height:2px;background:var(--cream);opacity:.2"></div>
+
+    <div style="position:absolute;left:0;right:0;top:44.6%;height:6px;background:repeating-conic-gradient(var(--wood) 0 25%,var(--nightSky,var(--shadow)) 0 50%) 0 0/4px 4px;opacity:.6"></div>
+    <div style="position:absolute;left:0;right:0;top:46.4%;height:2.2%;background:var(--wood)"></div>
+    <div style="position:absolute;left:0;right:0;top:48.6%;height:1.6%;background:var(--terra)"></div>
+    <div style="position:absolute;left:0;right:0;top:50.2%;height:1%;background:var(--honey)"></div>
+
+    <div style="position:absolute;left:0;right:0;top:51.2%;bottom:0;background:var(--shadow)"></div>
+    <!--ROAD-->
+    <!--TREES-->
+
+    <div style="position:absolute;left:66.6%;top:calc(51.2% - 40px);width:38px;height:40px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:65.1%;top:calc(51.2% - 56px);width:11px;height:56px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:75.6%;top:calc(51.2% - 50px);width:11px;height:50px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:70.4%;top:calc(51.2% - 66px);width:10px;height:66px;background:var(--shadow)"></div>
+    <div style="position:absolute;left:71.2%;top:calc(51.2% - 30px);width:5px;height:5px;background:var(--honey);animation:glow 2.8s steps(2,end) infinite alternate"></div>
+
+    <div style="position:absolute;left:0;right:0;top:88%;height:10px;background:repeating-conic-gradient(var(--forest) 0 25%,var(--shadow) 0 50%) 0 0/5px 5px;opacity:.5"></div>
+
+    <div style="position:absolute;left:0;width:40%;top:76.5%;height:5px;background:var(--forest);opacity:.85"></div>
+    <div style="position:absolute;left:4%;top:76.5%;width:6px;height:34px;background:var(--forest);opacity:.85"></div>
+    <div style="position:absolute;left:36%;top:76.5%;width:6px;height:34px;background:var(--forest);opacity:.85"></div>
+
+    <div style="position:absolute;left:17%;top:calc(76.5% - 21px);width:34px;height:22px;animation:nod 2.4s steps(2,end) infinite alternate">
+      <div style="position:absolute;left:0;bottom:0;width:27px;height:15px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:19px;bottom:10px;width:11px;height:10px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:29px;bottom:13px;width:5px;height:3px;background:var(--terra)"></div>
+      <div style="position:absolute;left:-7px;bottom:5px;width:9px;height:6px;background:var(--stoneDark)"></div>
+      <div style="position:absolute;left:5px;bottom:6px;width:14px;height:4px;background:var(--stone);opacity:.5"></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:32px;right:32px;top:clamp(104px,18.5vh,166px);--noteH:clamp(186px,26.5vh,224px)">
+    <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.4)"></div>
+    <div style="position:relative;height:var(--noteH);overflow:hidden">
+      <div style="position:absolute;inset:0;background:var(--cream);border:3px solid var(--ink);border-top:none;padding:clamp(17px,3vh,26px) 22px 0;animation:unroll 1s steps(14,end) .55s both">
+        <p style="margin:0;text-align:center;font-size:11.5px;letter-spacing:.22em;color:rgba(36,26,16,.5);animation:in .5s 1.5s both">FOR PEANUT</p>
+        <h1 style="margin:14px 0 0;text-align:center;font-size:clamp(24px,7vw,29px);font-weight:600;line-height:1.08;text-wrap:balance;animation:in .5s 1.6s both">A pigeon has arrived.</h1>
+        <div style="height:3px;background:var(--honey);margin:16px 34px 0;animation:in .5s 1.75s both"></div>
+        <p style="margin:16px 0 0;text-align:center;font-family:system-ui;font-size:14px;line-height:1.5;color:rgba(36,26,16,.72);animation:in .5s 1.85s both">It is carrying something.</p>
+      </div>
+    </div>
+    <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.4);transform:translateY(calc(-1 * var(--noteH)));animation:rodfall 1s steps(14,end) .55s both"></div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:clamp(60px,10.5vh,92px);display:flex;justify-content:center;animation:in .6s 2.3s both">
+    <div style="display:flex;align-items:center;gap:9px;min-height:44px;padding:0 18px;background:rgba(246,231,196,.9);border:2px solid var(--ink);color:var(--ink);font-family:'Pixelify Sans';font-size:15px;animation:nudgeup 1.6s steps(2,end) 3s infinite alternate">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#241a10" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+        <path d="M12 4 L12 15"/><path d="M7 10 L12 15 L17 10"/>
+      </svg>
+      tap to open
+    </div>
+  </div>
+</button>
+'''
+
 # Landscape. Nothing on this site scrolls — html, body and #app are all
 # overflow:hidden — so on a short screen anything below the fold is not merely
 # off-screen, it is unreachable. At 360px tall the seal on the decree sits at
@@ -955,6 +1101,19 @@ def main():
     markup = convert_bindings(markup)
     markup = unpark(markup)   # restore every parked template, exactly once
 
+    # The curtain goes in LAST, after every transform, so its raw markup passes
+    # through untouched — and last in the DOM means it paints over the screens
+    # underneath without needing to win a z-index argument.
+    if markup.count("</main>") != 1:
+        sys.exit("expected exactly one </main> to hang the curtain on")
+    curtain = CURTAIN_SCREEN.strip()
+    for token in ("<!--ROAD-->", "<!--TREES-->"):
+        if token not in curtain:
+            sys.exit(f"the curtain lost its {token} placeholder")
+    curtain = curtain.replace("<!--ROAD-->", dawn_road())
+    curtain = curtain.replace("<!--TREES-->", dawn_treeline())
+    markup = markup.replace("</main>", curtain + "\n</main>")
+
     sheet.append(
         "\n/* --- real-device overrides ---------------------------------------- */\n"
         "/* The canvas is already a responsive max-width column; keep its layout\n"
@@ -1052,6 +1211,28 @@ def main():
         "@media (max-height:600px){\n"
         '  [data-act="back"],[data-act="askleave"]{height:38px;font-size:13px}\n'
         "}\n"
+        "\n/* --- the opening ---------------------------------------------------- */\n"
+        "/* A full-bleed button, so tap and keyboard both work with no extra JS. */\n"
+        "#curtain{position:absolute;inset:0;z-index:80;display:block;padding:0;margin:0;"
+        "border:none;background:var(--shadow);text-align:left;cursor:pointer;overflow:hidden;"
+        "opacity:1;transition:opacity .5s ease-out}\n"
+        "/* Lifting is a separate state from hidden: the fade has to finish before\n"
+        "   the element leaves, or the cut is instant and the dawn behind it is\n"
+        "   never seen. */\n"
+        "#curtain[data-lifting]{opacity:0;pointer-events:none}\n"
+        "/* The bottom rod travels down with the unroll. Its RESTING transform is\n"
+        "   the finished position, so reduced-motion opens on a scroll that is\n"
+        "   already unrolled rather than one frozen shut. */\n"
+        "@keyframes rodfall{from{transform:translateY(calc(-1 * var(--noteH)))}"
+        "to{transform:translateY(0)}}\n"
+        "@keyframes nudgeup{from{transform:translateY(0)}to{transform:translateY(-4px)}}\n"
+        "/* Hold the delivery until the curtain lifts. Otherwise the pigeon flies,\n"
+        "   lands and is finished while she is still reading the note, and the\n"
+        "   garden is a static tableau by the time she gets there.\n"
+        "   !important is load-bearing: the delivery's animation is an INLINE\n"
+        "   shorthand, which resets animation-play-state to running and beats a\n"
+        "   stylesheet longhand. Without it this rule silently does nothing. */\n"
+        'html:not([data-opened]) [data-if="s0"] *{animation-play-state:paused!important}\n'
         "\n/* The refused 'hot' option. Deliberate joke, but it needs to answer a\n"
         "   tap or it reads as a dead site — see the copy fix. */\n"
         '[data-act="hot"]{cursor:default;-webkit-user-select:none;user-select:none}\n'
@@ -1087,7 +1268,9 @@ def main():
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>{TITLE}</title>
 <meta name="description" content="{BLURB}">
-<meta name="theme-color" content="#c3e0e4">
+<!-- Opens before sunrise; script.js swaps this to the daylight sky when she
+     opens the note, so the phone's own chrome comes up with the garden. -->
+<meta name="theme-color" content="#151d28">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="{SITE}/">
