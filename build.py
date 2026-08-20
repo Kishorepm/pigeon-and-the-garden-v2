@@ -62,7 +62,9 @@ CLOSING_SCREEN = '''
 <sc-if value="{{ s21 }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="21 The wait">
 
-  <div style="position:absolute;right:26px;bottom:34%;width:52px;height:76px">
+  <div style="position:absolute;left:22px;right:22px;bottom:clamp(24px,4.6vh,40px);display:flex;flex-direction:column;gap:clamp(10px,1.8vh,16px)">
+
+  <div style="position:absolute;right:4px;bottom:calc(100% + 10px);width:52px;height:76px">
     <div style="position:absolute;left:11px;top:0;width:30px;height:12px;background:#6b4326"></div>
     <div style="position:absolute;left:8px;top:10px;width:10px;height:22px;background:#6b4326"></div>
     <div style="position:absolute;left:34px;top:10px;width:10px;height:22px;background:#6b4326"></div>
@@ -87,20 +89,22 @@ border:2px solid var(--ink);animation:flap .2s steps(2,end) 18 alternate both"><
       <div style="position:absolute;left:-8px;top:4px;width:8px;height:8px;background:#8d93a1;border:2px solid var(--ink)"></div>
     </div>
   </div>
-  <div style="position:absolute;left:22px;right:22px;bottom:112px;padding:18px 20px;background:var(--cream);border:3px solid var(--ink)">
-    <p style="margin:0;font-size:23px;font-weight:600;line-height:1.15">Now we wait.</p>
-    <p style="margin:10px 0 0;font-family:system-ui;font-size:14.5px;line-height:1.5;color:rgba(36,26,16,.78)">\
+  <div style="padding:clamp(13px,2.2vh,18px) 20px;background:var(--cream);border:3px solid var(--ink)">
+    <p style="margin:0;font-size:clamp(19px,5.6vw,23px);font-weight:600;line-height:1.15">Now we wait.</p>
+    <p style="margin:clamp(7px,1.3vh,10px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,14.5px);line-height:1.5;color:rgba(36,26,16,.78)">\
 It is going back to tell me. I will text you to fix the hour, and the address comes with it.</p>
-    <p style="margin:10px 0 0;font-family:system-ui;font-size:12.5px;color:rgba(36,26,16,.5)">\
+    <p style="margin:clamp(7px,1.3vh,10px) 0 0;font-family:system-ui;font-size:clamp(11.5px,3.2vw,12.5px);line-height:1.45;color:rgba(36,26,16,.5)">\
 Nothing else to do. Stop 02 unlocks once stop 01 has actually happened.</p>
   </div>
-  <div style="position:absolute;left:22px;right:22px;bottom:40px;display:flex;gap:10px">
-    <button type="button" data-go="17" data-active="a3" style="flex:1;min-height:52px;\
+  <div style="display:flex;gap:10px">
+    <button type="button" data-go="17" data-active="a3" style="flex:1;min-height:clamp(46px,6vh,52px);\
 border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:16px;\
 font-weight:600;box-shadow:0 5px 0 var(--stoneDark);cursor:pointer">See the card</button>
-    <button type="button" data-act="restart" data-active="a3" style="flex:1;min-height:52px;\
+    <button type="button" data-act="restart" data-active="a3" style="flex:1;min-height:clamp(46px,6vh,52px);\
 border:3px solid var(--ink);background:var(--cream);font-family:'Pixelify Sans';font-size:16px;\
 box-shadow:0 5px 0 var(--stoneDark);cursor:pointer">Change something</button>
+  </div>
+
   </div>
 
 </div>
@@ -124,24 +128,39 @@ INTRO_SCREEN = '''
 <!-- 22 THE PETITIONER -->
 <sc-if value="{{ s22 }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="22 The petitioner">
-  <div style="position:absolute;left:26px;right:26px;top:clamp(56px,11vh,104px);padding:clamp(15px,2.4vh,24px) 22px;background:var(--white);border:3px solid var(--ink);box-shadow:8px 8px 0 rgba(36,26,16,.18)">
-    <div style="height:6px;background:var(--cream2);margin:-16px -14px 18px"></div>
-    <p style="margin:0;font-size:clamp(11px,3.2vw,13px);letter-spacing:.18em;color:rgba(36,26,16,.55)">THE PETITIONER</p>
-    <h1 style="margin:clamp(9px,1.6vh,14px) 0 0;font-size:clamp(20px,5.6vw,26px);font-weight:600;line-height:1.15">Before you answer.</h1>
-    <p style="margin:clamp(9px,1.6vh,14px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
-He builds things. This is one of them.</p>
-    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
-He will be early. You will not be kept waiting.</p>
-    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
-He would rather hear you talk than talk.</p>
-    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
-He does not need you to be anything other than what you already are.</p>
-    <p style="margin:clamp(10px,1.9vh,16px) 0 0;font-family:system-ui;font-size:clamp(11.5px,3.2vw,13px);line-height:1.5;color:rgba(36,26,16,.55)">\
+  <div style="position:absolute;left:26px;right:26px;top:clamp(44px,7.5vh,74px);bottom:clamp(90px,15.5vh,132px);display:flex;flex-direction:column">
+    <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.3)"></div>
+    <div style="flex:1;min-height:0;background:var(--cream);border:3px solid var(--ink);border-top:none;border-bottom:none;padding:clamp(15px,2.6vh,24px) clamp(16px,5vw,22px);display:flex;flex-direction:column;justify-content:center;overflow:hidden">
+      <p style="margin:0;font-size:clamp(10px,2.9vw,12px);letter-spacing:.2em;color:rgba(36,26,16,.5)">THE PETITIONER</p>
+      <h1 style="margin:clamp(6px,1.2vh,11px) 0 clamp(11px,2vh,18px);font-size:clamp(21px,6vw,27px);font-weight:600;line-height:1.1">Before you answer.</h1>
+
+      <div style="display:flex;align-items:flex-start;gap:11px;margin:0">
+        <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
+        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He builds things. This is one of them.</p>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:11px;margin:clamp(8px,1.5vh,13px) 0 0">
+        <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
+        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He will be early. You will not be kept waiting.</p>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:11px;margin:clamp(8px,1.5vh,13px) 0 0">
+        <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
+        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He would rather hear you talk than talk.</p>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:11px;margin:clamp(8px,1.5vh,13px) 0 0">
+        <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
+        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He does not need you to be anything other than what you already are.</p>
+      </div>
+
+      <div style="height:3px;background:var(--honey);margin:clamp(13px,2.4vh,20px) 0 clamp(11px,2vh,16px)"></div>
+
+      <p style="margin:0;font-family:system-ui;font-size:clamp(11.5px,3.2vw,13px);line-height:1.45;color:rgba(36,26,16,.55)">\
 That is the whole pitch. No one is lucky here yet.</p>
-    <p style="margin:clamp(6px,1vh,8px) 0 0;font-family:system-ui;font-size:clamp(12.5px,3.6vw,14.5px);line-height:1.5;color:rgba(36,26,16,.8)">\
+      <p style="margin:clamp(5px,1vh,8px) 0 0;font-family:system-ui;font-size:clamp(12.5px,3.5vw,14.5px);line-height:1.45;color:rgba(36,26,16,.82)">\
 You do finally get to judge the accent in person.</p>
+    </div>
+    <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.3)"></div>
   </div>
-  <div style="position:absolute;left:22px;right:22px;bottom:clamp(22px,6vh,56px)">
+  <div style="position:absolute;left:22px;right:22px;bottom:clamp(22px,5.5vh,50px)">
     <button type="button" data-go="1" data-active="a3" style="width:100%;min-height:clamp(48px,6.4vh,56px);\
 border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:clamp(17px,4.8vw,19px);\
 font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer">Go on then.</button>
@@ -480,6 +499,27 @@ COPY_FIXES = [
      '<span style="font-family:system-ui;font-size:11.5px;'
      'text-decoration:none">{{ hotNote }}</span></div>'),
 
+    # Screen 18 reserves a fixed 214px at the bottom for this card, but the card
+    # is bottom-anchored in flow and grows upward as its copy wraps. On a 360x640
+    # phone it needs 231px, so it climbs into the map and lands on top of her and
+    # her escort — 11% and 21% of them covered. Clamping the padding, the margin,
+    # the heading and the button gets it back under the reservation.
+    ('<div style="position:relative;margin:0 22px 24px;padding:14px 16px;'
+     'background:var(--cream);border:3px solid var(--ink)">\n'
+     '    <p style="margin:0;font-size:18px;font-weight:600">Stop 01 is stamped.</p>',
+     '<div style="position:relative;margin:0 22px clamp(12px,2.6vh,24px);'
+     'padding:clamp(10px,1.9vh,14px) 16px;'
+     'background:var(--cream);border:3px solid var(--ink)">\n'
+     '    <p style="margin:0;font-size:clamp(16px,4.6vw,18px);font-weight:600">'
+     'Stop 01 is stamped.</p>'),
+    ('<p style="margin:8px 0 12px;font-family:system-ui;font-size:12.5px;line-height:1.4;'
+     'color:rgba(36,26,16,.58)">Address and map link arrive by text. So does the hour.</p>\n'
+     '    <button type="button" data-go="next" style="width:100%;min-height:52px;',
+     '<p style="margin:clamp(6px,1.2vh,8px) 0 clamp(9px,1.9vh,12px);font-family:system-ui;'
+     'font-size:12.5px;line-height:1.4;'
+     'color:rgba(36,26,16,.58)">Address and map link arrive by text. So does the hour.</p>\n'
+     '    <button type="button" data-go="next" style="width:100%;min-height:clamp(46px,7vh,52px);'),
+
     # The seal's PRESS label was cream on terracotta: 3.45:1, the only contrast
     # failure on the whole site. Ink on terracotta is 4.03:1, which clears AA at
     # large-text size — so the label goes up to 19px bold, which suits the word.
@@ -500,6 +540,27 @@ def fix_hair(text, label):
     if HAIR[0] not in text:
         sys.exit(f"hair colour not found in {label} — canvas changed?")
     return text.replace(HAIR[0], HAIR[1])
+
+
+# The pigeon was drawn in two slate greys that belong to no palette. They are the
+# only colours on the site sourced from outside the 24, and it shows: the bird is
+# cool blue-grey in a world of warm greens and creams, and it does not repaint
+# with the weather, so under overcast and rain it is the one object that stays
+# lit. On the closing screen it flies home over the ruins and reads as a grey box
+# sitting on top of the scenery.
+#
+# --stoneDark body with a --stone wing keeps it a grey-brown bird that is dark
+# against the sky and light against the forest, and it now takes the weather with
+# everything else.
+PIGEON = (("#8d93a1", "var(--stoneDark)"), ("#b0b6c2", "var(--stone)"))
+
+
+def fix_pigeon(markup):
+    for wrong, right in PIGEON:
+        if wrong not in markup:
+            sys.exit(f"pigeon colour {wrong} not found — canvas changed?")
+        markup = markup.replace(wrong, right)
+    return markup
 
 
 # Fixes that must apply to ONE screen only. His hair on Construction and Dress is
@@ -1090,6 +1151,7 @@ def main():
 
     markup = body.group(1).replace(helmet.group(0), "")
     markup = apply_copy_fixes(markup)
+    markup = fix_pigeon(markup)
     markup = apply_art(markup)
     markup = promote_signposts(markup)
     markup = strip_chrome(markup)
@@ -1204,6 +1266,18 @@ def main():
         "  #app{display:none}\n"
         "  #rotate{display:flex}\n"
         "}\n"
+        "\n/* Screen 18 reserves a fixed 214px under the map for its card. Clamping\n"
+        "   the card got most of the way, but the reservation itself has to grow on\n"
+        "   a short phone — and it cannot be expressed in vh, because vh gets\n"
+        "   SMALLER as the screen shortens, which is the wrong direction. So: a\n"
+        "   media query, and only on short screens, so tall phones keep the\n"
+        "   composition they already have.\n"
+        "   Screen 5 has the identical shape — same figure at bottom:8px inside a\n"
+        "   fixed reservation, same bottom-anchored card growing past it. */\n"
+        "@media (max-height:700px){\n"
+        '  [data-if="s18"] [style*="bottom:214px"]{bottom:232px!important}\n'
+        '  [data-if="s5"] [style*="bottom:186px"]{bottom:222px!important}\n'
+        "}\n"
         "\n/* The gate pills sit at the very top corners, which is exactly where a\n"
         "   notch lands. #app pads for the safe area; these are positioned against\n"
         "   it, so they inherit that padding and need nothing further — but on a\n"
@@ -1247,6 +1321,16 @@ def main():
     )
 
     css_text = "\n".join(sheet) + "\n"
+
+    # A stray */ ends a comment that was never open, and the parser then discards
+    # everything up to the next thing it can recover from — which silently ate an
+    # entire @media block here. The file still grepped fine, which is exactly what
+    # made it hard to see: the rule was present in the CSS and absent from the
+    # CSSOM. Counting the markers catches it at build time instead.
+    if css_text.count("/*") != css_text.count("*/"):
+        sys.exit(f"unbalanced CSS comments: {css_text.count('/*')} '/*' vs "
+                 f"{css_text.count('*/')} '*/' — a rule block will be silently dropped")
+
     (ROOT / "style.css").write_text(css_text, encoding="utf-8")
 
     # Content-hashed asset URLs. Without these a cached style.css or script.js

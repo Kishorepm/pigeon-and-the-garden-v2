@@ -109,6 +109,19 @@ button{font:inherit;color:inherit}
   #rotate{display:flex}
 }
 
+/* Screen 18 reserves a fixed 214px under the map for its card. Clamping
+   the card got most of the way, but the reservation itself has to grow on
+   a short phone — and it cannot be expressed in vh, because vh gets
+   SMALLER as the screen shortens, which is the wrong direction. So: a
+   media query, and only on short screens, so tall phones keep the
+   composition they already have.
+   Screen 5 has the identical shape — same figure at bottom:8px inside a
+   fixed reservation, same bottom-anchored card growing past it. */
+@media (max-height:700px){
+  [data-if="s18"] [style*="bottom:214px"]{bottom:232px!important}
+  [data-if="s5"] [style*="bottom:186px"]{bottom:222px!important}
+}
+
 /* The gate pills sit at the very top corners, which is exactly where a
    notch lands. #app pads for the safe area; these are positioned against
    it, so they inherit that padding and need nothing further — but on a
