@@ -19,10 +19,8 @@
 <meta name="twitter:title" content="A pigeon has arrived.">
 <meta name="twitter:description" content="It is carrying something.">
 <meta name="twitter:image" content="https://pigeon-and-the-garden.vercel.app/og.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=bb9bda74">
+
+<link rel="stylesheet" href="/style.css?v=558727ad">
 </head>
 <body>
 <div style="min-height:100dvh;display:flex;justify-content:center;background:#14120e">
@@ -148,7 +146,16 @@
 </div>
 
 <div data-if="showGate" hidden>
-<button type="button" data-go="leave" data-active="exit" aria-label="Leave" style="position:absolute;right:10px;top:10px;height:44px;padding:0 14px;display:flex;align-items:center;justify-content:center;background:rgba(246,231,196,.82);border:2px solid rgba(36,26,16,.5);color:rgba(36,26,16,.72);font-family:'Pixelify Sans';font-size:14px;cursor:pointer;z-index:45">leave</button>
+<button type="button" data-if="showBack" hidden data-act="back" data-active="exit" aria-label="Go back one step" style="position:absolute;left:10px;top:10px;height:44px;padding:0 13px;display:flex;align-items:center;gap:7px;background:rgba(246,231,196,.82);border:2px solid rgba(36,26,16,.5);color:rgba(36,26,16,.72);font-family:'Pixelify Sans';font-size:14px;cursor:pointer;z-index:45"><svg width="11" height="14" viewBox="0 0 11 14" fill="none" aria-hidden="true" stroke="rgba(36,26,16,.72)" stroke-width="2.4" stroke-linecap="square"><path d="M8 2 L3 7 L8 12"/></svg>back</button>
+<button type="button" data-if="gateIdle" hidden data-act="askleave" data-active="exit" aria-label="Leave" style="position:absolute;right:10px;top:10px;height:44px;padding:0 14px;display:flex;align-items:center;justify-content:center;background:rgba(246,231,196,.82);border:2px solid rgba(36,26,16,.5);color:rgba(36,26,16,.72);font-family:'Pixelify Sans';font-size:14px;cursor:pointer;z-index:45">leave</button>
+<div data-if="confirmLeave" hidden style="position:absolute;right:10px;top:10px;width:238px;background:var(--cream);border:3px solid var(--ink);box-shadow:0 6px 0 rgba(22,36,26,.4);padding:13px 14px;z-index:46">
+  <p style="margin:0;font-family:'Pixelify Sans';font-size:18px;line-height:1.15">Leave the garden?</p>
+  <p style="margin:4px 0 10px;font-family:system-ui;font-size:12px;line-height:1.4;color:rgba(36,26,16,.62)">Nothing you have picked is sent.</p>
+  <div style="display:flex;gap:9px">
+    <button type="button" data-act="stay" data-active="a3" style="flex:1;min-height:44px;border:3px solid var(--ink);background:var(--skyHi);box-shadow:0 4px 0 var(--stoneDark);font-family:'Pixelify Sans';font-size:16px;cursor:pointer">stay</button>
+    <button type="button" data-go="leave" data-active="exit" style="flex:1;min-height:44px;border:2px solid rgba(36,26,16,.4);background:transparent;color:rgba(36,26,16,.66);font-family:'Pixelify Sans';font-size:16px;cursor:pointer">leave</button>
+  </div>
+</div>
 </div>
 
 <!-- 0 DELIVERY -->
@@ -200,19 +207,19 @@
 <!-- 22 THE PETITIONER -->
 <div data-if="s22" hidden>
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="22 The petitioner">
-  <div style="position:absolute;left:26px;right:26px;top:104px;padding:24px 22px;background:var(--white);border:3px solid var(--ink);box-shadow:8px 8px 0 rgba(36,26,16,.18)">
+  <div style="position:absolute;left:26px;right:26px;top:clamp(56px,11vh,104px);padding:clamp(15px,2.4vh,24px) 22px;background:var(--white);border:3px solid var(--ink);box-shadow:8px 8px 0 rgba(36,26,16,.18)">
     <div style="height:6px;background:var(--cream2);margin:-16px -14px 18px"></div>
-    <p style="margin:0;font-size:13px;letter-spacing:.18em;color:rgba(36,26,16,.55)">THE PETITIONER</p>
-    <p style="margin:14px 0 0;font-size:26px;font-weight:600;line-height:1.15">Before you answer.</p>
-    <p style="margin:14px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">He builds things. This is one of them.</p>
-    <p style="margin:9px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">He will be early. You will not be kept waiting.</p>
-    <p style="margin:9px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">He would rather hear you talk than talk.</p>
-    <p style="margin:9px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">He does not need you to be anything other than what you already are.</p>
-    <p style="margin:16px 0 0;font-family:system-ui;font-size:13px;line-height:1.5;color:rgba(36,26,16,.55)">That is the whole pitch. No one is lucky here yet.</p>
-    <p style="margin:8px 0 0;font-family:system-ui;font-size:14.5px;line-height:1.5;color:rgba(36,26,16,.8)">You do finally get to judge the accent in person.</p>
+    <p style="margin:0;font-size:clamp(11px,3.2vw,13px);letter-spacing:.18em;color:rgba(36,26,16,.55)">THE PETITIONER</p>
+    <h1 style="margin:clamp(9px,1.6vh,14px) 0 0;font-size:clamp(20px,5.6vw,26px);font-weight:600;line-height:1.15">Before you answer.</h1>
+    <p style="margin:clamp(9px,1.6vh,14px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">He builds things. This is one of them.</p>
+    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">He will be early. You will not be kept waiting.</p>
+    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">He would rather hear you talk than talk.</p>
+    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">He does not need you to be anything other than what you already are.</p>
+    <p style="margin:clamp(10px,1.9vh,16px) 0 0;font-family:system-ui;font-size:clamp(11.5px,3.2vw,13px);line-height:1.5;color:rgba(36,26,16,.55)">That is the whole pitch. No one is lucky here yet.</p>
+    <p style="margin:clamp(6px,1vh,8px) 0 0;font-family:system-ui;font-size:clamp(12.5px,3.6vw,14.5px);line-height:1.5;color:rgba(36,26,16,.8)">You do finally get to judge the accent in person.</p>
   </div>
-  <div style="position:absolute;left:22px;right:22px;bottom:56px">
-    <button type="button" data-go="1" data-active="a3" style="width:100%;min-height:56px;border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:19px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer">Go on then.</button>
+  <div style="position:absolute;left:22px;right:22px;bottom:clamp(22px,6vh,56px)">
+    <button type="button" data-go="1" data-active="a3" style="width:100%;min-height:clamp(48px,6.4vh,56px);border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:clamp(17px,4.8vw,19px);font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer">Go on then.</button>
   </div>
 </div>
 </div>
@@ -258,11 +265,10 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="03 Escort">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:64px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;text-align:center">Who is coming with you?
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;text-align:center;margin:0;font-weight:400">Who is coming with you?
       <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
       <div style="position:absolute;left:4px;top:4px;width:4px;height:4px;background:var(--stoneDark)"></div>
-      <div style="position:absolute;right:4px;top:4px;width:4px;height:4px;background:var(--stoneDark)"></div>
-    </div>
+      <div style="position:absolute;right:4px;top:4px;width:4px;height:4px;background:var(--stoneDark)"></h1>>
   </div>
   <div style="position:absolute;left:10px;right:10px;bottom:152px;display:flex;justify-content:center;gap:6px">
     <button type="button" data-go="next" data-set="escort:Topaz" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px" data-active="a2">
@@ -332,9 +338,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="04 Weather">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:64px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">You decide the sky.
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">You decide the sky.
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:16px;right:16px;bottom:150px;display:flex;justify-content:center;gap:12px">
     <button type="button" data-act="weather" data-set="weather:sunny" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" data-active="a2">
@@ -476,9 +481,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="07 Kind of place">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">What sort of place?
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">What sort of place?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
     <button type="button" data-go="next" data-set="place:one with a garden" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" data-active="a2">
@@ -527,9 +531,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="08 When">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Which day?
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">Which day?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px">
     <button type="button" data-go="next" data-set="day:Friday" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" data-active="a2">
@@ -574,9 +577,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="09 What hour">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">What hour?
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">What hour?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
     <button type="button" data-go="next" data-set="hour:morning" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" data-active="a2">
@@ -616,9 +618,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="10 How long">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">How long?
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">How long?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <p style="position:absolute;left:26px;right:26px;top:132px;margin:0;text-align:center;font-family:system-ui;font-size:13.5px;color:rgba(36,26,16,.7)">You set the end before it starts.</p>
   <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
@@ -666,9 +667,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="11 Food">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Something to eat?
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">Something to eat?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:20px;right:32px;top:136px;padding:10px 12px;background:rgba(224,201,155,.55);border:3px dashed rgba(36,26,16,.32);display:flex;align-items:center;justify-content:center;gap:8px;color:rgba(36,26,16,.42)" aria-disabled="true">
     <span style="width:22px;height:22px;background:rgba(253,246,230,.8);border:2px solid rgba(36,26,16,.3)"></span>
@@ -716,9 +716,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="12 The drink">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Iced or hot?
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">Iced or hot?
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:0;right:0;top:150px;display:flex;justify-content:center">
     <div data-art="swap" style="position:relative;width:112px;height:160px;background:url(/art-drink.png) no-repeat center/contain;image-rendering:pixelated">
@@ -736,7 +735,7 @@
   </div>
   <div style="position:absolute;left:22px;right:22px;bottom:104px;display:flex;flex-direction:column;gap:12px">
     <button type="button" data-go="next" data-set="drink:iced" style="min-height:62px;border:3px solid var(--ink);background:var(--skyHi);font-family:'Pixelify Sans';font-size:22px;font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer" data-active="a0">iced</button>
-    <div aria-disabled="true" style="min-height:62px;border:3px dashed rgba(36,26,16,.3);background:rgba(224,201,155,.4);color:rgba(36,26,16,.4);font-family:'Pixelify Sans';font-size:22px;display:flex;align-items:center;justify-content:center;cursor:not-allowed">hot</div>
+    <div data-act="hot" aria-disabled="true" style="min-height:62px;border:3px dashed rgba(36,26,16,.34);background:rgba(224,201,155,.4);color:rgba(36,26,16,.42);font-family:'Pixelify Sans';font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;transition:transform .12s ease-out;transform:translateX(0px)" data-tpl-style="min-height:62px;border:3px dashed rgba(36,26,16,.34);background:rgba(224,201,155,.4);color:rgba(36,26,16,.42);font-family:&#x27;Pixelify Sans&#x27;;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;transition:transform .12s ease-out;transform:translateX({{ hotShake }}px)"><span style="text-decoration:line-through">hot</span><span style="font-family:system-ui;font-size:11.5px;text-decoration:none"><span data-bind="hotNote"></span></span></div>
   </div>
 </div>
 </div>
@@ -746,9 +745,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="13 Ban a topic">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Ban one topic.
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">Ban one topic.
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <p style="position:absolute;left:26px;right:26px;top:132px;margin:0;text-align:center;font-family:system-ui;font-size:13.5px;color:rgba(36,26,16,.7)">It gets printed on the card.</p>
   <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px">
@@ -787,7 +785,7 @@
 
 <!-- 14 CONSTRUCTION -->
 <div data-if="s14" hidden>
-<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="14 Construction"><div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center"><div style="width:5px;height:60px;background:var(--stoneDark)"></div><div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">The castle, so far.<div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div></div></div>
+<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="14 Construction"><div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center"><div style="width:5px;height:60px;background:var(--stoneDark)"></div><h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">The castle, so far.<div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>></div>
   <div style="position:absolute;left:24px;top:150px;width:200px;height:260px">
     <div style="position:absolute;left:0;bottom:0;width:200px;height:124px;background:var(--stone);border:3px solid var(--ink)"></div>
     <div style="position:absolute;left:0;bottom:110px;width:200px;height:8px;background:var(--stoneDark);opacity:.4"></div>
@@ -827,9 +825,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="15 Throne">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Pick your throne.
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">Pick your throne.
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:12px;right:12px;bottom:148px;display:flex;justify-content:center;gap:9px;align-items:flex-end">
     <button type="button" data-go="next" data-set="throne:the gilded one" style="flex:1;border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px" data-active="a2">
@@ -872,9 +869,8 @@
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="16 Dress">
   <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
     <div style="width:5px;height:60px;background:var(--stoneDark)"></div>
-    <div style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px">Dress the builder.
-      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></div>
-    </div>
+    <h1 style="position:relative;background:var(--wood);border:3px solid var(--ink);padding:11px 18px;color:var(--cream);font-size:19px;margin:0;font-weight:400">Dress the builder.
+      <div style="position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.22)"></h1>>
   </div>
   <div style="position:absolute;left:0;right:0;top:150px;display:flex;justify-content:center">
     <div data-him style="position:relative;width:104px;height:152px">
@@ -919,7 +915,7 @@
         <p style="margin:0;font-size:12px;letter-spacing:.2em;color:rgba(36,26,16,.6)">STOP 01 · THE DECREE</p>
         <span style="width:24px;height:3px;background:var(--terra)"></span>
       </div>
-      <p style="margin:6px 0 10px;text-align:center;font-size:29px;font-weight:600;line-height:1.05">Coffee, then.</p>
+      <p style="margin:6px 0 10px;text-align:center;font-size:29px;font-weight:600;line-height:1.05"><span data-bind="vVerdict"></span></p>
       <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-family:system-ui;font-size:13px;line-height:1.3;border-top:2px solid var(--cream2);border-bottom:2px solid var(--cream2);padding:10px 0">
         <span style="color:rgba(36,26,16,.5)">place</span><span><span data-bind="vPlace"></span></span>
         <span style="color:rgba(36,26,16,.5)">day</span><span><span data-bind="vDay"></span></span>
@@ -936,7 +932,7 @@
       <p style="margin:10px 0 0;font-family:system-ui;font-size:13.5px;line-height:1.45;color:rgba(36,26,16,.85)">Plainly: I have built a whole castle out of a joke. The part that is not a joke is that I would like to meet you, and I have wanted to for a while.</p>
       <div style="flex:1;min-height:8px"></div>
       <div style="display:flex;align-items:center;gap:14px">
-        <button data-art="behind" type="button" data-act="seal" style="flex:none;width:88px;height:88px;border:4px solid var(--ink);border-radius:50%;background:var(--terra);color:var(--cream);font-family:'Pixelify Sans';font-size:14px;line-height:1.1;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer;transform:scale(0);background-image:url(/art-seal.png);background-repeat:no-repeat;background-position:center;background-size:86%;image-rendering:pixelated" data-active="a1" data-tpl-style="flex:none;width:88px;height:88px;border:4px solid var(--ink);border-radius:50%;background:var(--terra);color:var(--cream);font-family:&#x27;Pixelify Sans&#x27;;font-size:14px;line-height:1.1;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer;transform:scale({{ sealScale }});background-image:url(/art-seal.png);background-repeat:no-repeat;background-position:center;background-size:86%;image-rendering:pixelated"><span data-bind="sealLabel"></span></button>
+        <button data-art="behind" type="button" data-act="seal" style="flex:none;width:88px;height:88px;border:4px solid var(--ink);border-radius:50%;background:var(--terra);color:var(--ink);font-family:'Pixelify Sans';font-size:19px;font-weight:700;line-height:1.1;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer;transform:scale(0);background-image:url(/art-seal.png);background-repeat:no-repeat;background-position:center;background-size:86%;image-rendering:pixelated" data-active="a1" data-tpl-style="flex:none;width:88px;height:88px;border:4px solid var(--ink);border-radius:50%;background:var(--terra);color:var(--ink);font-family:&#x27;Pixelify Sans&#x27;;font-size:19px;font-weight:700;line-height:1.1;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer;transform:scale({{ sealScale }});background-image:url(/art-seal.png);background-repeat:no-repeat;background-position:center;background-size:86%;image-rendering:pixelated"><span data-bind="sealLabel"></span></button>
         <p style="margin:0;font-family:system-ui;font-size:13px;color:rgba(36,26,16,.6)"><span data-bind="sealHint"></span></p>
       </div>
     </div>
@@ -1128,11 +1124,25 @@
 
 </main>
 </div>
+<div id="rotate" aria-live="polite">
+  <div style="display:flex;align-items:center;gap:24px;background:var(--cream);border:4px solid var(--ink);box-shadow:0 8px 0 rgba(22,36,26,.45);padding:20px 26px;max-width:520px">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#241a10" stroke-width="1.6" stroke-linecap="square" aria-hidden="true" style="flex:none">
+      <rect x="8.5" y="2.5" width="7" height="13"/>
+      <path d="M4.5 13.5 L4.5 18.5 L19.5 18.5"/>
+      <path d="M2.5 15.5 L4.5 13.5 L6.5 15.5"/>
+      <path d="M17.5 16.5 L19.5 18.5 L17.5 20.5"/>
+    </svg>
+    <div>
+      <p style="margin:0;font-family:'Pixelify Sans';font-size:25px;font-weight:600;line-height:1.05">The garden is taller than it is wide.</p>
+      <p style="margin:8px 0 0;font-family:system-ui;font-size:14px;line-height:1.45;color:rgba(36,26,16,.72)">Turn your phone back and the road carries on from where you left it. Nothing was lost.</p>
+    </div>
+  </div>
+</div>
 <script>window.__PALETTE__={SUNNY:{ink:'#241a10',shadow:'#16241a',forest:'#26492f',forestHi:'#35603c',moss:'#4f8040',leaf:'#7cb14f',sky:'#a8d8e0',skyHi:'#c6e8ec',cream:'#f6e7c4',cream2:'#e0c99b',white:'#fdf6e6',stone:'#b39a72',stoneDark:'#5f5340',terra:'#c25f2e',rose:'#dc8f79',honey:'#eeb63c',wood:'#7a4a26',woodHi:'#96603a',mist:'#e7eee8'},RAMPS:{
   sunny: {},
   overcast: {sky:'#b9c4c2',skyHi:'#cfd8d4',cream:'#eee2c8',cream2:'#d6c4a2',white:'#f7f1e4',moss:'#4d7150',leaf:'#719a5f',forest:'#2b4634',forestHi:'#3a5a41',stone:'#a99a80',stoneDark:'#5b5344',terra:'#a85c39',rose:'#c69384',honey:'#d3a95a',wood:'#6d4626',woodHi:'#875a37',mist:'#e6ebe7'},
-  'light rain': {sky:'#9fb4bd',skyHi:'#b8c9cf',cream:'#e5ded0',cream2:'#c9c0ab',white:'#f1efe4',moss:'#3f6650',leaf:'#5f8a68',forest:'#243c31',forestHi:'#2f4d3c',stone:'#93907f',stoneDark:'#4f5245',terra:'#96573c',rose:'#b48d84',honey:'#bd9a5e',wood:'#5f402a',woodHi:'#775338',mist:'#dfe7e6'}
+  'light rain': {sky:'#9fb4bd',skyHi:'#b8c9cf',cream:'#e5ded0',cream2:'#c9c0ab',white:'#f1efe4',moss:'#3f6650',leaf:'#679070',forest:'#243c31',forestHi:'#2f4d3c',stone:'#93907f',stoneDark:'#4f5245',terra:'#96573c',rose:'#b48d84',honey:'#bd9a5e',wood:'#5f402a',woodHi:'#775338',mist:'#dfe7e6'}
 }};</script>
-<script src="/script.js?v=c7d49592"></script>
+<script src="/script.js?v=2e470798"></script>
 </body>
 </html>

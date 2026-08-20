@@ -3,7 +3,7 @@
 A pixel-art invitation micro-game. A pigeon carries a note. She says yes. She walks a
 road through a garden choosing the shape of the date, and the road ends at a castle.
 
-Twenty-one screens, one tap each, no typing, 82 KB total.
+Twenty-three screens, one tap each, no typing, no third-party requests.
 
 ```
 Pigeon Garden Invite v2.dc.html   the design canvas — the source of truth for layout
@@ -12,9 +12,11 @@ index.html                        generated, do not hand-edit
 style.css                         generated, do not hand-edit
 script.js                         hand-written: state machine, dodge, notify
 api/respond.js                    POST -> webhook or Resend
+fonts/                            vendored Pixelify Sans (see "The font")
 og.png                            1200x630 link preview
-assets/                           palette + the pixelate pipeline (see below)
+assets/                           palette, the font fetcher, the pixelate pipeline
 vercel.json                       pins the output directory to the repo root
+.vercelignore                     what must NOT be served — read it before deploying
 support.js                        Claude Design's editor runtime — needed to open the
                                   canvas, never shipped and never referenced by the site
 .env.example                      the notification env vars
@@ -57,6 +59,42 @@ transform you run yourself.
 **Before sending, set `SITE` at the top of `build.py`** to the real domain and rebuild —
 it is baked into the Open Graph tags, and the link preview is the first thing she sees.
 
+### Check what you actually published
+
+`vercel.json` pins the output directory to the repo root, so **without `.vercelignore`
+every file here is served at a public URL** — `docs/`, `README.md`, `build.py`, the
+design canvas and `.env.example` all answer `200`.
+
+`docs/` is the one that matters. The spec is a dossier on the recipient, and it contains
+the line *"for a reader who is explicitly wary of how much men know about her"*. Sitting
+it at a guessable path on the same domain as the invitation is the single thing most
+likely to undo the invitation. `README.md` is second: it explains the No button, the
+notification wiring and every joke, before she has met any of them.
+
+`.vercelignore` excludes all of it. Confirm after every deploy — anything but `404` means
+it is not working:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' https://YOUR-DOMAIN/README.md
+```
+
+## The font
+
+Pixelify Sans is **vendored**, not linked. The Google Fonts stylesheet is render-blocking
+and third-party: a DNS lookup, a TLS handshake and a round trip before the first paint of
+a page whose whole job is a first impression — and it hands Google the IP and user-agent
+of the one person this was built for, which does not square with "nothing is tracked".
+
+`build.py` inlines `fonts/pixelify.css` into the stylesheet the page already loads, so
+the faces cost no extra request at all. Only the weights the design uses (400, 600, 700)
+and only the latin subsets are fetched.
+
+```bash
+python assets/fetch_font.py     # re-run only if the design starts using a new weight
+```
+
+The build fails if `fonts/pixelify.css` is missing rather than silently falling back.
+
 ## Env vars
 
 Set **one** of these in Vercel → Project → Settings → Environment Variables.
@@ -81,6 +119,47 @@ She can go back from the closing screen and change something, so sealing can hap
 more than once. A second seal carries `updated: true` and arrives titled **Updated.**
 with "She changed something. The decree now:". Suppressing it would leave him acting
 on choices she had already replaced.
+
+Leaving **after** a seal sends nothing — `tell()`'s `notified` guard swallows it. That is
+deliberate: she has already committed, so a later exit is far more likely to be a closed
+tab than a change of heart, and a "she left" message arriving after "Sealed." would read
+as a withdrawal she never made.
+
+## Leaving
+
+The `leave` pill asks once before it acts. Opening the question sends nothing; `stay` and
+`Escape` both dismiss it.
+
+It used to fire immediately: one tap, no confirm, the decline notification sent, and she
+landed on a screen with no buttons and no way back. The No button gets three dodges *and*
+a confirm precisely because an accidental decline is unrecoverable — this button did the
+same thing with no guard at all, 44px from where a thumb goes when you regrip a phone.
+
+She can still leave at any moment. She just cannot do it by accident.
+
+## Going back
+
+A `back` pill mirrors `leave` on the other corner, from screen 4 to the decree.
+
+Choosing *is* advancing on every question screen, so without it a mis-tap was
+uncorrectable until the end — where "change something" costs ten screens to fix one
+answer. Her picks are kept, so returning to a screen shows what she chose and lets her
+choose again.
+
+`go()` also pushes a history entry, so the phone's own back gesture steps back through
+the garden. Before that the whole thing was one entry: a back swipe left the site, and
+since picks live in memory and nothing is stored, returning restarted her from zero.
+
+## Landscape
+
+Nothing on this site scrolls — `html`, `body` and `#app` are all `overflow:hidden` — so on
+a short screen anything below the fold is not merely off-screen, it is **unreachable**. At
+360px tall the seal sat at 527px: she could rotate her phone on the final screen and have
+no way to finish.
+
+The design is one screen per beat and should stay that way, so the honest move is to ask
+for the phone back. `#rotate` covers the page under
+`(orientation:landscape) and (max-height:520px)` — short phones only, never a desktop.
 
 ## The No button
 
@@ -157,10 +236,32 @@ screen, which is the same three-quarter view most "top-down" packs are drawn in,
 those assets sit correctly on the map even though they would look wrong in the garden.
 That is the test to apply before reaching for any new pack.
 
+## The decree headline
+
+It reads off the place she picked (`VERDICTS` in `script.js`, keyed by the `data-set`
+values on the "What sort of place?" screen — change one there and it must change here).
+
+It used to be the literal word "Coffee" no matter what she chose, at 29px, directly above
+eleven rows that said something else: she could pick a garden, savoury and iced and still
+be told "Coffee, then." That line survives verbatim on the `his choice` path, which is
+the one place it was ever true.
+
+## The refused "hot"
+
+"Iced or hot?" offers only iced, on purpose. It was signalled by a dashed border and
+`cursor:not-allowed` — and a phone has no cursor, so the only thing a tap produced was
+nothing at all, which reads as a broken site rather than a joke.
+
+It now carries the same line-through the "white chocolate" gag on the food screen already
+uses, and it answers when tapped. **The escalating lines in `vals()` are placeholders —
+they should be written in his voice, not left as they are.**
+
 ## Still to do
 
 - Both figures are drawn in CSS. A matched non-combat sprite pair could replace
   them, but only if both arrive together and neither is armed.
 - Real copy for the three dates and three hour slots.
 - The venue behind each "kind of place" answer.
+- The three "hot" refusal lines are stand-ins. Replace them.
 - Set `SITE` in `build.py` and regenerate.
+- Test on a real phone, in portrait and landscape, before sending.

@@ -14,6 +14,20 @@
   // 20 is the decline screen; 21 is the closing beat after the castle.
   var LAST = 22;
 
+  // The decree headline, keyed off the place she picked. Keys are the data-set
+  // values from the "What sort of place?" screen — change one there and it must
+  // change here, which is why the fallback is the original line rather than an
+  // empty string. "his choice" is deliberately absent: it falls through to
+  // "Coffee, then.", which is his line and the honest answer when she defers.
+  var REDUCED = !!(window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  var VERDICTS = {
+    'one with a garden': 'A garden, then.',
+    'one with animals nearby': 'Animals, then.',
+    'quiet and indoors': 'Somewhere quiet, then.'
+  };
+
   var state = {
     i: 0,
     picks: {},          // lives in memory, dies with the tab. Nothing stored.
@@ -80,6 +94,23 @@
     // she can still stop right until she presses it. Gone afterwards: screens 18
     // and 19 are the result, and there is nothing left to leave.
     v.showGate = i >= 3 && i <= 17;
+    // The way out asks once before it acts. Everything about the No button says
+    // an accidental decline must be impossible — three dodges, then a plain
+    // confirm — and this button did exactly the same thing with no guard at all,
+    // 44px from where a thumb lands when you regrip a phone.
+    v.gateIdle = !state.confirmingLeave;
+    v.confirmLeave = !!state.confirmingLeave;
+    // A way back. Not before screen 4: back from the first question is the
+    // "CORRECT." beat, which is not a choice and not worth returning to.
+    v.showBack = i >= 4 && i <= 17 && !state.confirmingLeave;
+    // "hot" is refused, not broken. It answers, and the nudge alternates so a
+    // second tap is visibly a second tap.
+    v.hotNote = !state.hotTaps ? '(iced only)'
+      : state.hotTaps === 1 ? 'he has strong feelings about this.'
+      : 'still iced.';
+    // The stylesheet kills transitions under prefers-reduced-motion, which would
+    // leave the nudge as a permanent 5px offset rather than a movement. Zero it.
+    v.hotShake = (!state.hotTaps || REDUCED) ? 0 : (state.hotTaps % 2 ? -5 : 5);
     // The last screen has two halves: the pigeon waiting with her, and the
     // pigeon gone. She decides which one she is looking at.
     v.waiting = !state.sentBack;
@@ -106,6 +137,13 @@
     v.vThrone = picks.throne || 'the gilded one';
     v.vDress = dress === 'dress him' ? 'as he is' : dress;
     v.vWeather = w;
+    // The decree's headline. It used to be the literal word "Coffee" forever,
+    // sitting at 29px directly above eleven rows that said something else — she
+    // could pick a garden, savoury and iced and still be told "Coffee, then."
+    // The cadence is his, so the derived lines keep it; and "Coffee, then."
+    // survives verbatim on the one path where it was ever true, which is the
+    // path where she hands the choice back to him.
+    v.vVerdict = VERDICTS[picks.place] || 'Coffee, then.';
     return v;
   }
 
@@ -138,19 +176,42 @@
       if (host.innerHTML !== html) host.innerHTML = html;
     }
     // Move focus so a screen reader lands on the new screen, not limbo.
-    var live = document.querySelector('[data-if="s' + state.i + '"]');
-    if (live && !live.hidden) {
-      live.setAttribute('tabindex', '-1');
-      live.focus({ preventScroll: true });
+    // ONLY when the screen actually changed. This used to run on every render,
+    // which meant tapping a colour swatch on the Dress screen — a render, not a
+    // navigation — threw focus off the swatch and back to the screen container,
+    // so a keyboard user lost their place on every single pick.
+    if (state.focused !== state.i) {
+      var live = document.querySelector('[data-if="s' + state.i + '"]');
+      if (live && !live.hidden) {
+        state.focused = state.i;
+        live.setAttribute('tabindex', '-1');
+        live.focus({ preventScroll: true });
+      }
     }
   }
 
-  function go(n) {
+  function go(n, fromHistory) {
     state.i = Math.max(0, Math.min(LAST, n));
+    // Moving screen always dismisses a half-asked question.
+    state.confirmingLeave = false;
     if (state.i === 20) tell('left');           // decline: choice only, no partial picks
+    // Give the phone's own back gesture something to go back TO. Without this
+    // the whole thing is one history entry: a back swipe left the site outright,
+    // and since picks live in memory and nothing is stored, returning restarted
+    // her from screen zero with everything gone.
+    if (!fromHistory) {
+      try { history.pushState({ i: state.i }, ''); } catch (e) {}
+    }
     render();
     window.scrollTo(0, 0);
   }
+
+  // Back gesture / browser back. tell() already guards against a second 'left',
+  // so stepping back onto the decline screen never re-sends anything.
+  window.addEventListener('popstate', function (e) {
+    var i = e.state && typeof e.state.i === 'number' ? e.state.i : 0;
+    go(i, true);
+  });
 
   // --- the No button: three dodges, surrender, ONE confirm ------------------
   // Canvas version jumped straight to the decline screen on the fourth press.
@@ -283,6 +344,14 @@
   });
 
   document.addEventListener('click', function (e) {
+    // "hot" is aria-disabled on purpose — it is refused, not offered — so it has
+    // to be handled BEFORE the aria-disabled guard below. It is the one control
+    // here whose whole job is to answer without doing anything.
+    if (e.target.closest('[data-act="hot"]')) {
+      state.hotTaps = (state.hotTaps || 0) + 1;
+      render();
+      return;
+    }
     var el = e.target.closest('[data-go],[data-act]');
     if (!el || el.getAttribute('aria-disabled') === 'true') return;
     var set = el.getAttribute('data-set');
@@ -292,6 +361,13 @@
     }
     var act = el.getAttribute('data-act');
     if (act === 'no') return;                   // already handled on pointerdown
+    // The way out, asked and answered. Opening the question is not leaving, and
+    // "stay" is a plain dismissal — neither one sends anything.
+    if (act === 'askleave') { state.confirmingLeave = true; render(); return; }
+    if (act === 'stay') { state.confirmingLeave = false; render(); return; }
+    // One step back. Her picks are kept, so returning to a screen shows what she
+    // chose and lets her choose again rather than starting the answer over.
+    if (act === 'back') { go(state.i - 1); return; }
     if (act === 'weather') { applyRamp(state.picks.weather); go(state.i + 1); return; }
     if (act === 'seal') { seal(); return; }
     if (set && set.indexOf('escort:') === 0) setEscort();
@@ -324,7 +400,18 @@
     if (el) { e.preventDefault(); state.dodges = 3; dodge(); }
   });
 
+  // Escape dismisses the leave question, the way any half-asked question should.
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && state.confirmingLeave) {
+      state.confirmingLeave = false;
+      render();
+    }
+  });
+
   applyRamp('sunny');
   setThrone();          // default, in case she never reaches the throne screen
+  // Seed the history stack so the first pushState has something behind it and a
+  // back gesture on screen zero leaves the site, as it should.
+  try { history.replaceState({ i: 0 }, ''); } catch (e) {}
   render();
 })();

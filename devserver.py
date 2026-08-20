@@ -10,11 +10,17 @@ This serves the same files and forbids caching outright, so a rebuild plus a
 refresh always shows the current build. Local only. The deployed site is served by
 Vercel and is not affected.
 """
+import functools
 import http.server
+import pathlib
 import socketserver
 import sys
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8123
+# Serve the repo this script lives in, not whatever directory it was launched
+# from. Otherwise running it from anywhere else quietly serves the wrong tree and
+# the page looks broken for reasons that have nothing to do with the page.
+ROOT = pathlib.Path(__file__).resolve().parent
 
 
 class NoCache(http.server.SimpleHTTPRequestHandler):
@@ -44,6 +50,7 @@ class Server(socketserver.ThreadingTCPServer):
 
 
 if __name__ == "__main__":
-    with Server(("127.0.0.1", PORT), NoCache) as httpd:
-        print(f"serving http://localhost:{PORT}  (no-cache)")
+    handler = functools.partial(NoCache, directory=str(ROOT))
+    with Server(("127.0.0.1", PORT), handler) as httpd:
+        print(f"serving {ROOT} on http://localhost:{PORT}  (no-cache)")
         httpd.serve_forever()

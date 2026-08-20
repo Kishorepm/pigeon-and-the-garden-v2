@@ -124,31 +124,57 @@ INTRO_SCREEN = '''
 <!-- 22 THE PETITIONER -->
 <sc-if value="{{ s22 }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="22 The petitioner">
-  <div style="position:absolute;left:26px;right:26px;top:104px;padding:24px 22px;background:var(--white);border:3px solid var(--ink);box-shadow:8px 8px 0 rgba(36,26,16,.18)">
+  <div style="position:absolute;left:26px;right:26px;top:clamp(56px,11vh,104px);padding:clamp(15px,2.4vh,24px) 22px;background:var(--white);border:3px solid var(--ink);box-shadow:8px 8px 0 rgba(36,26,16,.18)">
     <div style="height:6px;background:var(--cream2);margin:-16px -14px 18px"></div>
-    <p style="margin:0;font-size:13px;letter-spacing:.18em;color:rgba(36,26,16,.55)">THE PETITIONER</p>
-    <p style="margin:14px 0 0;font-size:26px;font-weight:600;line-height:1.15">Before you answer.</p>
-    <p style="margin:14px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">\
+    <p style="margin:0;font-size:clamp(11px,3.2vw,13px);letter-spacing:.18em;color:rgba(36,26,16,.55)">THE PETITIONER</p>
+    <h1 style="margin:clamp(9px,1.6vh,14px) 0 0;font-size:clamp(20px,5.6vw,26px);font-weight:600;line-height:1.15">Before you answer.</h1>
+    <p style="margin:clamp(9px,1.6vh,14px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
 He builds things. This is one of them.</p>
-    <p style="margin:9px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">\
+    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
 He will be early. You will not be kept waiting.</p>
-    <p style="margin:9px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">\
+    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
 He would rather hear you talk than talk.</p>
-    <p style="margin:9px 0 0;font-family:system-ui;font-size:15px;line-height:1.6;color:rgba(36,26,16,.85)">\
+    <p style="margin:clamp(6px,1.1vh,9px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,15px);line-height:1.55;color:rgba(36,26,16,.85)">\
 He does not need you to be anything other than what you already are.</p>
-    <p style="margin:16px 0 0;font-family:system-ui;font-size:13px;line-height:1.5;color:rgba(36,26,16,.55)">\
+    <p style="margin:clamp(10px,1.9vh,16px) 0 0;font-family:system-ui;font-size:clamp(11.5px,3.2vw,13px);line-height:1.5;color:rgba(36,26,16,.55)">\
 That is the whole pitch. No one is lucky here yet.</p>
-    <p style="margin:8px 0 0;font-family:system-ui;font-size:14.5px;line-height:1.5;color:rgba(36,26,16,.8)">\
+    <p style="margin:clamp(6px,1vh,8px) 0 0;font-family:system-ui;font-size:clamp(12.5px,3.6vw,14.5px);line-height:1.5;color:rgba(36,26,16,.8)">\
 You do finally get to judge the accent in person.</p>
   </div>
-  <div style="position:absolute;left:22px;right:22px;bottom:56px">
-    <button type="button" data-go="1" data-active="a3" style="width:100%;min-height:56px;\
-border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:19px;\
+  <div style="position:absolute;left:22px;right:22px;bottom:clamp(22px,6vh,56px)">
+    <button type="button" data-go="1" data-active="a3" style="width:100%;min-height:clamp(48px,6.4vh,56px);\
+border:3px solid var(--ink);background:var(--honey);font-family:'Pixelify Sans';font-size:clamp(17px,4.8vw,19px);\
 font-weight:600;box-shadow:0 6px 0 var(--stoneDark);cursor:pointer">Go on then.</button>
   </div>
 </div>
 </sc-if>
 
+'''
+
+# Landscape. Nothing on this site scrolls — html, body and #app are all
+# overflow:hidden — so on a short screen anything below the fold is not merely
+# off-screen, it is unreachable. At 360px tall the seal on the decree sits at
+# 527px, which means she can rotate her phone on the final screen and have no
+# way to finish. The design is one screen per beat and should stay that way, so
+# the honest move is to ask for the phone back rather than to invent scrolling.
+# Lives outside #app, shown only by the media query in the stylesheet.
+ROTATE_SCREEN = '''
+<div id="rotate" aria-live="polite">
+  <div style="display:flex;align-items:center;gap:24px;background:var(--cream);border:4px solid var(--ink);box-shadow:0 8px 0 rgba(22,36,26,.45);padding:20px 26px;max-width:520px">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#241a10" stroke-width="1.6" stroke-linecap="square" aria-hidden="true" style="flex:none">
+      <rect x="8.5" y="2.5" width="7" height="13"/>
+      <path d="M4.5 13.5 L4.5 18.5 L19.5 18.5"/>
+      <path d="M2.5 15.5 L4.5 13.5 L6.5 15.5"/>
+      <path d="M17.5 16.5 L19.5 18.5 L17.5 20.5"/>
+    </svg>
+    <div>
+      <p style="margin:0;font-family:'Pixelify Sans';font-size:25px;font-weight:600;line-height:1.05">\
+The garden is taller than it is wide.</p>
+      <p style="margin:8px 0 0;font-family:system-ui;font-size:14px;line-height:1.45;color:rgba(36,26,16,.72)">\
+Turn your phone back and the road carries on from where you left it. Nothing was lost.</p>
+    </div>
+  </div>
+</div>
 '''
 
 COPY_FIXES = [
@@ -278,6 +304,43 @@ COPY_FIXES = [
     ('<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="14 Construction">',
      '<div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="14 Construction">'
      + SIGNPOST.format("The castle, so far.")),
+
+    # The decree headline was the literal word "Coffee" no matter what she chose.
+    # It is the largest thing on the payoff screen, and it contradicted the eleven
+    # rows printed directly underneath it. It now reads off her answer — and the
+    # original line survives verbatim on the "he chooses" path, which is the one
+    # place it was ever true.
+    ('<p style="margin:6px 0 10px;text-align:center;font-size:29px;font-weight:600;'
+     'line-height:1.05">Coffee, then.</p>',
+     '<p style="margin:6px 0 10px;text-align:center;font-size:29px;font-weight:600;'
+     'line-height:1.05">{{ vVerdict }}</p>'),
+
+    # "hot" is a deliberate gag, not a bug — but it was only signalled by a dashed
+    # border and cursor:not-allowed, and a phone has no cursor. Tapping it did
+    # nothing at all, which reads as a broken site rather than a joke. It now
+    # carries the same line-through the "white chocolate" gag on the food screen
+    # already uses, and it answers when tapped.
+    ('<div aria-disabled="true" style="min-height:62px;border:3px dashed rgba(36,26,16,.3);'
+     'background:rgba(224,201,155,.4);color:rgba(36,26,16,.4);'
+     "font-family:'Pixelify Sans';font-size:22px;display:flex;align-items:center;"
+     'justify-content:center;cursor:not-allowed">hot</div>',
+     '<div data-act="hot" aria-disabled="true" style="min-height:62px;'
+     'border:3px dashed rgba(36,26,16,.34);'
+     'background:rgba(224,201,155,.4);color:rgba(36,26,16,.42);'
+     "font-family:'Pixelify Sans';font-size:22px;display:flex;flex-direction:column;"
+     'align-items:center;justify-content:center;gap:2px;padding:6px;'
+     'transition:transform .12s ease-out;transform:translateX({{ hotShake }}px)">'
+     '<span style="text-decoration:line-through">hot</span>'
+     '<span style="font-family:system-ui;font-size:11.5px;'
+     'text-decoration:none">{{ hotNote }}</span></div>'),
+
+    # The seal's PRESS label was cream on terracotta: 3.45:1, the only contrast
+    # failure on the whole site. Ink on terracotta is 4.03:1, which clears AA at
+    # large-text size — so the label goes up to 19px bold, which suits the word.
+    ("border-radius:50%;background:var(--terra);color:var(--cream);"
+     "font-family:'Pixelify Sans';font-size:14px;line-height:1.1;",
+     "border-radius:50%;background:var(--terra);color:var(--ink);"
+     "font-family:'Pixelify Sans';font-size:19px;font-weight:700;line-height:1.1;"),
 ]
 
 
@@ -449,12 +512,52 @@ ART_INJECTIONS = [
         '  <div style="position:absolute;left:0;right:0;bottom:6px;text-align:center;'
         'font-size:11px;color:var(--cream)">gate</div>\n'
         '</div>',
-        '<button type="button" data-go="leave" data-active="exit" aria-label="Leave"'
+        # The way back, mirroring it on the other corner. Choosing a thing IS
+        # advancing on every question screen, so without this a mis-tap is
+        # uncorrectable until the very end — where "change something" costs her
+        # ten screens to fix one answer. Same pill, same quiet, same 44px.
+        '<button type="button" data-if="showBack" hidden data-act="back" data-active="exit"'
+        ' aria-label="Go back one step"'
+        ' style="position:absolute;left:10px;top:10px;height:44px;padding:0 13px;'
+        'display:flex;align-items:center;gap:7px;'
+        'background:rgba(246,231,196,.82);border:2px solid rgba(36,26,16,.5);'
+        'color:rgba(36,26,16,.72);font-family:\'Pixelify Sans\';font-size:14px;'
+        'cursor:pointer;z-index:45">'
+        '<svg width="11" height="14" viewBox="0 0 11 14" fill="none" aria-hidden="true"'
+        ' stroke="rgba(36,26,16,.72)" stroke-width="2.4" stroke-linecap="square">'
+        '<path d="M8 2 L3 7 L8 12"/></svg>back</button>\n'
+        # The leave pill itself. It now only ASKS — see the panel below.
+        '<button type="button" data-if="gateIdle" hidden data-act="askleave" data-active="exit"'
+        ' aria-label="Leave"'
         ' style="position:absolute;right:10px;top:10px;height:44px;padding:0 14px;'
         'display:flex;align-items:center;justify-content:center;'
         'background:rgba(246,231,196,.82);border:2px solid rgba(36,26,16,.5);'
         'color:rgba(36,26,16,.72);font-family:\'Pixelify Sans\';font-size:14px;'
-        'cursor:pointer;z-index:45">leave</button>',
+        'cursor:pointer;z-index:45">leave</button>\n'
+        # One confirm before an irreversible exit. The No button already gets
+        # three dodges AND a confirm because an accidental no is unrecoverable;
+        # this button did exactly the same thing — fired the decline notification
+        # and landed her on a screen with no buttons — with no protection at all,
+        # sitting 44px from where a thumb goes when you regrip a phone.
+        # She can still leave whenever she likes. She just cannot do it by accident.
+        '<div data-if="confirmLeave" hidden'
+        ' style="position:absolute;right:10px;top:10px;width:238px;background:var(--cream);'
+        'border:3px solid var(--ink);box-shadow:0 6px 0 rgba(22,36,26,.4);'
+        'padding:13px 14px;z-index:46">\n'
+        '  <p style="margin:0;font-family:\'Pixelify Sans\';font-size:18px;line-height:1.15">'
+        'Leave the garden?</p>\n'
+        # True, and worth saying: tell() never transmits partial picks.
+        '  <p style="margin:4px 0 10px;font-family:system-ui;font-size:12px;line-height:1.4;'
+        'color:rgba(36,26,16,.62)">Nothing you have picked is sent.</p>\n'
+        '  <div style="display:flex;gap:9px">\n'
+        '    <button type="button" data-act="stay" data-active="a3" style="flex:1;min-height:44px;'
+        'border:3px solid var(--ink);background:var(--skyHi);box-shadow:0 4px 0 var(--stoneDark);'
+        'font-family:\'Pixelify Sans\';font-size:16px;cursor:pointer">stay</button>\n'
+        '    <button type="button" data-go="leave" data-active="exit" style="flex:1;min-height:44px;'
+        'border:2px solid rgba(36,26,16,.4);background:transparent;color:rgba(36,26,16,.66);'
+        'font-family:\'Pixelify Sans\';font-size:16px;cursor:pointer">leave</button>\n'
+        '  </div>\n'
+        '</div>',
     ),
     # Landmarks either side of the road. The map is a three-quarter view, which is
     # the view these ruins are drawn in, so they stand correctly here. The canvas
@@ -629,6 +732,52 @@ def paint_sprites(markup):
     return markup
 
 
+# The signpost plate is the title of its screen, but it shipped as a plain div,
+# so the whole site had exactly one heading for twenty-three screens and a screen
+# reader got no structure at all. Screens are mutually exclusive — only one is
+# ever visible — so each one owning an <h1> is correct, not a duplicate-h1 bug.
+# The trailing [^"]* matters: the Escort screen's plate carries an extra
+# text-align:center and an exact-match pattern silently skipped it, which is
+# precisely the kind of near-miss the count assertion below exists to catch.
+SIGNPOST_PLATE = re.compile(
+    r'<div style="(position:relative;background:var\(--wood\);border:3px solid '
+    r'var\(--ink\);padding:11px 18px;color:var\(--cream\);font-size:19px[^"]*)">'
+)
+
+
+def promote_signposts(markup):
+    """Turn every signpost plate <div>…</div> into an <h1>…</h1>, close included."""
+    out, pos, count = [], 0, 0
+    while True:
+        m = SIGNPOST_PLATE.search(markup, pos)
+        if not m:
+            out.append(markup[pos:])
+            break
+        out.append(markup[pos:m.start()])
+        # h1 brings its own font-size, weight and margins; pin all three so the
+        # plate looks byte-identical to the div it replaces.
+        out.append(f'<h1 style="{m.group(1)};margin:0;font-weight:400">')
+
+        # Walk to the matching close: the plate wraps one nested shadow div.
+        i, depth = m.end(), 1
+        while depth and i < len(markup):
+            nxt = re.compile(r"<(/?)div\b").search(markup, i)
+            if not nxt:
+                sys.exit("unbalanced signpost plate — canvas structure changed?")
+            depth += -1 if nxt.group(1) else 1
+            i = nxt.end()
+        close = markup.rindex("</div>", m.end(), i)
+        out.append(markup[m.end():close])
+        out.append("</h1>")
+        pos = i
+        count += 1
+
+    if count < 12:
+        sys.exit(f"only {count} signposts promoted to headings — canvas changed?")
+    print(f"  promoted {count} signposts to headings")
+    return "".join(out)
+
+
 def strip_chrome(markup):
     markup, n = STAGE.subn(lambda m: f'<main id="app" style="{m.group(1)}">', markup)
     if n != 1:
@@ -779,17 +928,29 @@ def main():
         sys.exit("could not find <helmet> or <x-dc> in the canvas")
 
     head = helmet.group(1)
-    fonts = "\n".join(re.findall(r"<link[^>]*>", head))
     base_css = fix_hair(re.search(r"<style>(.*?)</style>", head, re.S).group(1).strip(), ":root")
+
+    # The canvas links Pixelify Sans from Google Fonts. That link is RENDER-BLOCKING
+    # and third-party: a DNS lookup, a TLS handshake and a round trip before the
+    # first paint of a page whose entire job is a first impression — and it hands
+    # Google the IP and user-agent of the one person this was built for, which is
+    # hard to square with "nothing is stored, nothing is tracked".
+    # The faces are vendored instead (assets/fetch_font.py) and inlined into the
+    # stylesheet the page already loads, so the font costs no extra request at all.
+    font_css = ROOT / "fonts" / "pixelify.css"
+    if not font_css.exists():
+        sys.exit("missing fonts/pixelify.css — run: python assets/fetch_font.py")
+    fonts = ""
 
     markup = body.group(1).replace(helmet.group(0), "")
     markup = apply_copy_fixes(markup)
     markup = apply_art(markup)
+    markup = promote_signposts(markup)
     markup = strip_chrome(markup)
     markup = convert_conditionals(markup)
     markup = convert_loops(markup)
 
-    sheet = [base_css]
+    sheet = [font_css.read_text(encoding="utf-8").strip(), base_css]
     markup = extract_active_styles(markup, sheet)
     markup = convert_bindings(markup)
     markup = unpark(markup)   # restore every parked template, exactly once
@@ -864,6 +1025,38 @@ def main():
         "100%{transform:translate(72.5%,62%)}}\n"
     )
 
+    sheet.append(
+        "\n/* --- review fixes -------------------------------------------------- */\n"
+        "\n/* Keyboard focus. There were no :focus rules at all, so a keyboard or\n"
+        "   switch user had nothing to follow across twenty-three screens. The\n"
+        "   screen container takes programmatic focus on every change and must NOT\n"
+        "   draw a ring — only things you actually operate should. */\n"
+        ":focus-visible{outline:3px solid var(--ink);outline-offset:3px}\n"
+        "#app>div[data-if]:focus,#app>div[data-if]:focus-visible{outline:none}\n"
+        "\n/* Landscape. html, body and #app are all overflow:hidden and nothing on\n"
+        "   this site can scroll, so anything below the fold is unreachable rather\n"
+        "   than merely off-screen. At 360px tall the seal on the decree sits at\n"
+        "   527px: she rotates her phone on the last screen and cannot finish.\n"
+        "   Rather than introduce scrolling to a design that is deliberately one\n"
+        "   screen per beat, ask for the phone back. */\n"
+        "#rotate{display:none;position:fixed;inset:0;align-items:center;"
+        "justify-content:center;padding:24px;background:var(--forest);z-index:99}\n"
+        "@media (orientation:landscape) and (max-height:520px){\n"
+        "  #app{display:none}\n"
+        "  #rotate{display:flex}\n"
+        "}\n"
+        "\n/* The gate pills sit at the very top corners, which is exactly where a\n"
+        "   notch lands. #app pads for the safe area; these are positioned against\n"
+        "   it, so they inherit that padding and need nothing further — but on a\n"
+        "   short screen they must not collide with the signpost. */\n"
+        "@media (max-height:600px){\n"
+        '  [data-act="back"],[data-act="askleave"]{height:38px;font-size:13px}\n'
+        "}\n"
+        "\n/* The refused 'hot' option. Deliberate joke, but it needs to answer a\n"
+        "   tap or it reads as a dead site — see the copy fix. */\n"
+        '[data-act="hot"]{cursor:default;-webkit-user-select:none;user-select:none}\n'
+    )
+
     css_text = "\n".join(sheet) + "\n"
     (ROOT / "style.css").write_text(css_text, encoding="utf-8")
 
@@ -905,6 +1098,7 @@ def main():
 </head>
 <body>
 {markup.strip()}
+{ROTATE_SCREEN.strip()}
 <script>{palette_js}</script>
 <script src="{js_url}"></script>
 </body>

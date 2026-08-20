@@ -1,3 +1,9 @@
+@font-face{font-family:'Pixelify Sans';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/pixelify-400-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Pixelify Sans';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/pixelify-400-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Pixelify Sans';font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/pixelify-600-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Pixelify Sans';font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/pixelify-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Pixelify Sans';font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/pixelify-700-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Pixelify Sans';font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/pixelify-700-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 :root{
 --ink:#241a10;--shadow:#16241a;--forest:#26492f;--forestHi:#35603c;--moss:#4f8040;--leaf:#7cb14f;
 --sky:#a8d8e0;--skyHi:#c6e8ec;--cream:#f6e7c4;--cream2:#e0c99b;--white:#fdf6e6;--stone:#b39a72;
@@ -80,4 +86,38 @@ button{font:inherit;color:inherit}
 /* And the pigeon going back the other way at the end. */
 @keyframes gohome{0%{transform:translate(80%,58%)}45%{transform:translate(40%,30%)}100%{transform:translate(2%,36%)}}
 @keyframes deliver{0%{transform:translate(6%,44%)}55%{transform:translate(40%,30%)}100%{transform:translate(72.5%,62%)}}
+
+
+/* --- review fixes -------------------------------------------------- */
+
+/* Keyboard focus. There were no :focus rules at all, so a keyboard or
+   switch user had nothing to follow across twenty-three screens. The
+   screen container takes programmatic focus on every change and must NOT
+   draw a ring — only things you actually operate should. */
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+#app>div[data-if]:focus,#app>div[data-if]:focus-visible{outline:none}
+
+/* Landscape. html, body and #app are all overflow:hidden and nothing on
+   this site can scroll, so anything below the fold is unreachable rather
+   than merely off-screen. At 360px tall the seal on the decree sits at
+   527px: she rotates her phone on the last screen and cannot finish.
+   Rather than introduce scrolling to a design that is deliberately one
+   screen per beat, ask for the phone back. */
+#rotate{display:none;position:fixed;inset:0;align-items:center;justify-content:center;padding:24px;background:var(--forest);z-index:99}
+@media (orientation:landscape) and (max-height:520px){
+  #app{display:none}
+  #rotate{display:flex}
+}
+
+/* The gate pills sit at the very top corners, which is exactly where a
+   notch lands. #app pads for the safe area; these are positioned against
+   it, so they inherit that padding and need nothing further — but on a
+   short screen they must not collide with the signpost. */
+@media (max-height:600px){
+  [data-act="back"],[data-act="askleave"]{height:38px;font-size:13px}
+}
+
+/* The refused 'hot' option. Deliberate joke, but it needs to answer a
+   tap or it reads as a dead site — see the copy fix. */
+[data-act="hot"]{cursor:default;-webkit-user-select:none;user-select:none}
 
