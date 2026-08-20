@@ -62,6 +62,15 @@ CLOSING_SCREEN = '''
 <sc-if value="{{ s21 }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;inset:0;animation:in .09s both" data-screen-label="21 The wait">
 
+  <div style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;\
+transform:translate(2%,34%);animation:gohome 3.6s steps(11,end) both">
+    <div style="position:relative;width:40px;height:24px;background:#8d93a1;border:2px solid var(--ink);transform:scaleX(-1)">
+      <div style="position:absolute;left:8px;top:-9px;width:22px;height:11px;background:#b0b6c2;\
+border:2px solid var(--ink);animation:flap .2s steps(2,end) 18 alternate both"></div>
+      <div style="position:absolute;left:-8px;top:4px;width:8px;height:8px;background:#8d93a1;border:2px solid var(--ink)"></div>
+    </div>
+  </div>
+
   <div style="position:absolute;left:22px;right:22px;bottom:clamp(24px,4.6vh,40px);display:flex;flex-direction:column;gap:clamp(10px,1.8vh,16px)">
 
   <div style="position:absolute;right:4px;bottom:calc(100% + 10px);width:52px;height:76px">
@@ -80,14 +89,6 @@ CLOSING_SCREEN = '''
     <div style="position:absolute;left:28px;top:58px;width:6px;height:12px;background:var(--skin)"></div>
     <div style="position:absolute;left:16px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
     <div style="position:absolute;left:26px;top:70px;width:10px;height:6px;background:var(--terra)"></div>
-  </div>
-  <div style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;\
-transform:translate(2%,34%);animation:gohome 3.6s steps(11,end) both">
-    <div style="position:relative;width:40px;height:24px;background:#8d93a1;border:2px solid var(--ink);transform:scaleX(-1)">
-      <div style="position:absolute;left:8px;top:-9px;width:22px;height:11px;background:#b0b6c2;\
-border:2px solid var(--ink);animation:flap .2s steps(2,end) 18 alternate both"></div>
-      <div style="position:absolute;left:-8px;top:4px;width:8px;height:8px;background:#8d93a1;border:2px solid var(--ink)"></div>
-    </div>
   </div>
   <div style="padding:clamp(13px,2.2vh,18px) 20px;background:var(--cream);border:3px solid var(--ink)">
     <p style="margin:0;font-size:clamp(19px,5.6vw,23px);font-weight:600;line-height:1.15">Now we wait.</p>
@@ -889,6 +890,100 @@ FOLIAGE_ART = ["/art-tree.png", "/art-boulder.png", "/art-hedge.png",
                "/art-crystal.png", "/art-tree.png"]
 
 
+# Flowers. The canvas's idea of a wildflower is an 8x8 square of --rose with a
+# nod on it — five of them across an 860px world. At that size a flat square does
+# not read as a flower, it reads as a stray pink pixel, which is exactly how it
+# looked on screen.
+#
+# These are drawn instead: four petals, a honey centre, a stem and one leaf, on
+# the same pixel grid as everything else. The nod stays — it is what stops a
+# garden from looking like a photograph of a garden.
+FLOWER_SQUARE = re.compile(
+    r'<div style="position:absolute;left:(\d+)px;top:(\d+)%;width:8px;height:8px;'
+    r'background:var\(--rose\);animation:nod ([\d.]+)s steps\(2,end\) infinite alternate">'
+    r'</div>'
+)
+
+# Bloom and centre, paired so nothing lands rose-on-rose. All from the 24.
+BLOOMS = [("--rose", "--honey"), ("--white", "--honey"), ("--rose", "--terra"),
+          ("--honey", "--terra"), ("--white", "--rose"), ("--rose", "--white")]
+
+# More of them, spread across the 860px parallax layer and kept below 56% so
+# they sit on the grass rather than floating in the sky. Positions are hand
+# placed to miss the big foliage slabs and the figures.
+#
+# Two of these were moved after checking every screen at its OWN camera offset
+# (camX = -clamp(i-2, 0, 11) * 34): x=330 grew straight through her on the
+# delivery screen, where the camera is still at 0. Re-run that check if you add
+# any — a flower is only ever safe at the camX of the screens it is visible on.
+EXTRA_FLOWERS = [
+    (128, 62, 2.4), (176, 80, 2.1), (238, 74, 2.9), (262, 58, 2.6),
+    (398, 86, 1.9), (452, 68, 2.3), (528, 78, 2.5), (574, 60, 2.0),
+    (640, 84, 2.7), (726, 66, 2.2), (778, 80, 2.8), (836, 70, 2.1),
+]
+
+
+def draw_flower(left, top, secs, n, unit="px"):
+    bloom, centre = BLOOMS[n % len(BLOOMS)]
+    return (
+        f'<div style="position:absolute;left:{left}{unit};top:{top}%;width:11px;height:17px;'
+        f'animation:nod {secs}s steps(2,end) infinite alternate">'
+        f'<div style="position:absolute;left:4px;top:7px;width:3px;height:10px;'
+        f'background:var(--forest)"></div>'
+        f'<div style="position:absolute;left:0;top:11px;width:4px;height:3px;'
+        f'background:var(--moss)"></div>'
+        f'<div style="position:absolute;left:4px;top:0;width:3px;height:3px;'
+        f'background:var({bloom})"></div>'
+        f'<div style="position:absolute;left:1px;top:3px;width:3px;height:3px;'
+        f'background:var({bloom})"></div>'
+        f'<div style="position:absolute;left:7px;top:3px;width:3px;height:3px;'
+        f'background:var({bloom})"></div>'
+        f'<div style="position:absolute;left:4px;top:6px;width:3px;height:3px;'
+        f'background:var({bloom})"></div>'
+        f'<div style="position:absolute;left:4px;top:3px;width:3px;height:3px;'
+        f'background:var({centre})"></div>'
+        f'</div>'
+    )
+
+
+# The canvas puts one wildflower at x=56, which is exactly where both figures
+# stand on the early screens. As an 8px square it tucked behind a boot; as a
+# 17px drawn flower it grows straight through her shin. Moved clear of the spot
+# the characters occupy — this is the same failure the scenery sweep exists for.
+RELOCATE = {("56", "58"): (118, 62)}
+
+
+def plant_flowers(markup):
+    """Upgrade the canvas's pink squares, then plant more of them."""
+    n = [0]
+
+    def repl(m):
+        left, top, secs = m.group(1), m.group(2), m.group(3)
+        left, top = (str(v) for v in RELOCATE.get((left, top), (left, top)))
+        out = draw_flower(left, top, secs, n[0])
+        n[0] += 1
+        return out
+
+    markup, upgraded = FLOWER_SQUARE.subn(repl, markup)
+    if upgraded == 0:
+        sys.exit("no flower squares matched — canvas structure changed?")
+
+    # Plant the rest at the END of the parallax layer, so near-field blooms sit
+    # in front of the trees rather than behind them.
+    anchor = markup.find('width:860px')
+    if anchor == -1:
+        sys.exit("parallax layer not found — cannot plant flowers")
+    open_tag = markup.rindex("<div", 0, anchor)
+    close = matching_close(markup, open_tag)
+
+    extra = "\n    ".join(
+        draw_flower(x, y, s, n[0] + k) for k, (x, y, s) in enumerate(EXTRA_FLOWERS)
+    )
+    markup = markup[:close] + "\n    " + extra + "\n  " + markup[close:]
+    print(f"  planted {upgraded + len(EXTRA_FLOWERS)} flowers")
+    return markup
+
+
 def plant_foliage(markup):
     """Swap the big --forest slabs for real trees and hedges."""
     n = [0]
@@ -952,6 +1047,33 @@ SIGNPOST_PLATE = re.compile(
 )
 
 
+def matching_close(markup, open_tag_start):
+    """Index where the <div> opened at open_tag_start has its OWN </div>.
+
+    Worth having in one place. The obvious way to write this walk advances with
+    match.end(), which lands before the closing '>' — so a following
+    rindex("</div>", ..., i) misses the container's own tag by a single
+    character and silently returns the LAST CHILD's instead. That mistake
+    shipped malformed HTML (an unclosed div swallowed inside an <h1>, which
+    browsers quietly repair so it looks fine) and planted twelve flowers inside
+    a 24px shrub. Both from the same off-by-one, in two different functions.
+    """
+    i, depth = markup.index(">", open_tag_start) + 1, 1
+    tok = re.compile(r"<(/?)div\b")
+    while depth and i < len(markup):
+        m = tok.search(markup, i)
+        if not m:
+            break
+        if m.group(1):
+            depth -= 1
+            if depth == 0:
+                return m.start()
+        else:
+            depth += 1
+        i = m.end()
+    sys.exit("unbalanced <div> while walking the markup — canvas structure changed?")
+
+
 def promote_signposts(markup):
     """Turn every signpost plate <div>…</div> into an <h1>…</h1>, close included."""
     out, pos, count = [], 0, 0
@@ -965,18 +1087,10 @@ def promote_signposts(markup):
         # plate looks byte-identical to the div it replaces.
         out.append(f'<h1 style="{m.group(1)};margin:0;font-weight:400">')
 
-        # Walk to the matching close: the plate wraps one nested shadow div.
-        i, depth = m.end(), 1
-        while depth and i < len(markup):
-            nxt = re.compile(r"<(/?)div\b").search(markup, i)
-            if not nxt:
-                sys.exit("unbalanced signpost plate — canvas structure changed?")
-            depth += -1 if nxt.group(1) else 1
-            i = nxt.end()
-        close = markup.rindex("</div>", m.end(), i)
+        close = matching_close(markup, m.start())
         out.append(markup[m.end():close])
         out.append("</h1>")
-        pos = i
+        pos = close + len("</div>")
         count += 1
 
     if count < 12:
@@ -1152,6 +1266,7 @@ def main():
     markup = body.group(1).replace(helmet.group(0), "")
     markup = apply_copy_fixes(markup)
     markup = fix_pigeon(markup)
+    markup = plant_flowers(markup)
     markup = apply_art(markup)
     markup = promote_signposts(markup)
     markup = strip_chrome(markup)
@@ -1380,6 +1495,18 @@ def main():
 </html>
 """
     (ROOT / "index.html").write_text(page, encoding="utf-8")
+
+    # Tag balance. Browsers repair malformed markup silently, so a mangled tree
+    # renders fine and ships anyway — that is exactly how an unclosed div inside
+    # an <h1> survived a full visual pass. Count them instead.
+    for tag in ("div", "h1", "button", "p"):
+        opened = len(re.findall(rf"<{tag}\b", page))
+        closed = page.count(f"</{tag}>")
+        if opened != closed:
+            sys.exit(f"unbalanced <{tag}>: {opened} open vs {closed} close — "
+                     "something in the transform pipeline is eating tags")
+    if "</h1>>" in page or "</div>>" in page:
+        sys.exit("stray '>' after a closing tag — a depth walk is off by one")
 
     screens = len(re.findall(r'data-if="s\d+"', markup))
     print(f"wrote index.html ({len(page) // 1024} KB, {screens} screens) and style.css")
