@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#12241f">
+  <meta name="description" content="The road continues. A new chapter. And this time, food.">
+  <title>The road continues. · The Pigeon & the Garden</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The road continues.">
+  <meta property="og:description" content="A new chapter. And this time, food.">
+  <meta property="og:image" content="https://pigeon-and-the-garden.vercel.app/og.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/scenery/garden.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="/fonts/eb-garamond-regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="/journey.css">
+  <script src="/vendor/anime-4.5.0.min.js" defer></script>
+  <script src="/journey-data.js" defer></script>
+  <script src="/journey.js" defer></script>
+</head>
+<body>
+  <main id="chapter" data-scene="0" aria-label="The Pigeon and the Garden, Stop 02">
+    <div class="world" aria-hidden="true">
+      <img class="world-image is-current" data-world="garden" src="/scenery/garden.webp" alt="" fetchpriority="high" width="1024" height="1536">
+      <img class="world-image" data-world="bridge" data-src="/scenery/bridge.webp" alt="" width="1024" height="1536">
+      <img class="world-image" data-world="table" data-src="/scenery/table.webp" alt="" width="1024" height="1536">
+      <img class="world-image" data-world="indoor" data-src="/scenery/indoor.webp" alt="" width="1024" height="1536">
+      <div class="world-shade"></div>
+      <div class="lantern-halo halo-one"></div><div class="lantern-halo halo-two"></div><div class="lantern-halo halo-three"></div>
+      <svg class="journey-path" viewBox="0 0 400 800" preserveAspectRatio="none">
+        <path id="new-path" d="M68 613 C68 556 161 579 171 514 S280 475 252 422 S238 381 281 352" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 7"/>
+      </svg>
+      <div class="milestone milestone-one"><span class="milestone-number">01</span><span class="milestone-label">✓ a good beginning</span></div>
+      <div class="milestone milestone-two"><span class="milestone-number">02</span><span class="milestone-label">something unfinished</span></div>
+      <div class="messenger" id="messenger"><img src="/scenery/pigeon.webp" alt="" width="1536" height="1024"></div>
+      <div id="fireflies"></div>
+      <svg class="foreground-sprig sprig-left" viewBox="0 0 120 220"><g fill="currentColor"><path d="M15 220Q70 120 36 5Q75 113 29 220Z"/><path d="M47 71Q4 51 0 18Q42 22 47 71M53 111Q100 61 105 29Q63 44 53 111M50 141Q1 116 0 84Q37 89 50 141M41 177Q99 131 115 107Q65 107 41 177M23 210Q3 181 0 148Q33 159 23 210"/></g></svg>
+      <svg class="foreground-sprig sprig-right" viewBox="0 0 120 220"><g fill="currentColor"><path d="M15 220Q70 120 36 5Q75 113 29 220Z"/><path d="M47 71Q4 51 0 18Q42 22 47 71M53 111Q100 61 105 29Q63 44 53 111M50 141Q1 116 0 84Q37 89 50 141M41 177Q99 131 115 107Q65 107 41 177"/></g></svg>
+    </div>
+    <header class="topbar">
+      <button class="quiet-control" id="back" type="button" aria-label="Go back" hidden><span aria-hidden="true">‹</span> Back</button>
+      <span class="brand" id="brand">THE PIGEON <span>&</span> THE GARDEN</span>
+      <button class="quiet-control" id="leave" type="button" hidden>Leave</button>
+    </header>
+    <div class="chapter-progress" id="progress" hidden aria-label="Journey progress"><span class="past">01 <span aria-hidden="true">✓</span></span><span class="progress-track"><span id="progress-fill"></span></span><span>02</span></div>
+    <div id="scene-host">
+      <section class="scene scene-prologue" aria-labelledby="scene-title" tabindex="-1">
+        <header class="scene-heading"><p class="eyebrow">A NEW CHAPTER</p><h1 id="scene-title">The road<br>continues.</h1><p class="scene-intro">A good beginning behind us.<br>Something lovely still ahead.</p></header>
+        <footer class="scene-footer"><p class="prelude">Same pigeon. A new stretch of path.</p><button class="primary" type="button" data-next>Walk on to Stop 02 <span aria-hidden="true">→</span></button><p class="footnote">And this time, there will be food.</p></footer>
+      </section>
+    </div>
+    <button class="motion-control" id="motion" type="button" aria-label="Pause garden animation" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5v10M13 5v10"/></svg></button>
+    <div class="announcement" id="announcement" role="status" aria-live="polite"></div>
+    <noscript><div class="noscript-note">The garden needs JavaScript to open the invitation. Enable it, then refresh this page.</div></noscript>
+  </main>
+</body>
+</html>

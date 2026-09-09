@@ -1,5 +1,5 @@
 // POST { choice: "sealed", picks: {...} } | { choice: "left" } -> notify me.
-// Nothing is stored, nothing is tracked.
+// No database; notification attempts are recorded in function logs.
 // ponytail: no queue, no retry, no dedupe. It fires once a decade.
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -13,7 +13,7 @@ module.exports = async function handler(req, res) {
   if (choice === 'sealed') {
     const p = (req.body && req.body.picks) || {};
     // Her choices, one line each, straight into the notification.
-    const rows = ['place', 'day', 'hour', 'duration', 'food', 'drink', 'banned', 'escort', 'throne', 'weather', 'cut', 'colour', 'build']
+    const rows = ['travel', 'range', 'date', 'place', 'day', 'hour', 'duration', 'food', 'drink', 'note', 'banned', 'escort', 'tortoise', 'crown', 'throne', 'build']
       .filter((k) => p[k])
       .map((k) => `${k}: ${p[k]}`);
     // She can seal, go back, change something and seal again. Say which this is,
@@ -38,14 +38,19 @@ module.exports = async function handler(req, res) {
   const hook = raw && !/^https?:\/\//i.test(raw)
     ? 'https://ntfy.sh/' + raw.replace(/^\/+/, '')
     : raw;
-  if (raw && raw !== hook) console.log('[respond] read WEBHOOK_URL as a topic ->', hook);
+  if (!hook && !process.env.RESEND_API_KEY) return res.status(503).end();
+  // Report delivery failures so the invitation can offer retry or copying by text.
+  const deliver = async (url, options) => {
+    const result = await fetch(url, { ...options, signal: AbortSignal.timeout(8000) });
+    if (!result.ok) throw new Error('Notification service returned ' + result.status);
+  };
 
   try {
     if (hook && /ntfy\./.test(hook)) {
       // ntfy takes the message as the raw body. Posting JSON to a topic URL does
       // not unwrap it, it just shows the JSON itself as the message, so the
       // phone would light up with {"text":"Sealed...","content":...}.
-      await fetch(hook, {
+      await deliver(hook, {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
@@ -58,7 +63,7 @@ module.exports = async function handler(req, res) {
         body: text
       });
     } else if (hook) {
-      await fetch(hook, {
+      await deliver(hook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // `text` is what Slack reads; `content` is what Discord reads.
@@ -66,7 +71,7 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({ text, content: text, choice })
       });
     } else if (process.env.RESEND_API_KEY) {
-      await fetch('https://api.resend.com/emails', {
+      await deliver('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -81,13 +86,12 @@ module.exports = async function handler(req, res) {
       });
     }
   } catch (e) {
-    // Swallowed on purpose. A failed notification must never become her problem.
     console.error('[respond] notify failed:', e && e.message);
+    return res.status(502).end();
   }
 
   // Respond LAST, not first. A serverless function can be frozen the moment it
   // ends the response, which would kill the notification mid-flight — and the
-  // notification is the one thing here that has to work. She never waits on this:
-  // the browser sends it fire-and-forget with keepalive and moves on immediately.
+  // invitation waits for acceptance before showing its sent state.
   res.status(200).end();
 };

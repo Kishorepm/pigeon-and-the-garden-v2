@@ -530,3 +530,62 @@ vercel.json       outputDirectory pinned to repo root
 - The three hour slots.
 - Domain name.
 - Whether Auckland Zoo is a gift or a busman's holiday.
+
+---
+
+## Addendum — stop 02 (2026-09-08)
+
+Stop 01 happened: Ambury, a Saturday. A walk, birds she identified at distance, and an
+anatomy class that broke out on its own. Her verdict afterwards, verbatim: *"you handled
+saturday just fine."* They are seeing each other now.
+
+**What this changes in the constraints above.**
+
+- Section 1's governing fact — *"It is not an ask. She already proposed the meeting
+  herself"* — has been spent. Stop 02 is his ask, made from inside something mutual, which
+  is why an elaborate confirmation is still the right register and pressure still is not.
+- The "Always" block relaxes exactly as written: **daytime is no longer required**, so the
+  hour screen offers evening. Public, her choice of hour, and easy exit all stand.
+- Every entry on the "Never" list stands unchanged.
+- One new rule. She has said she is **rusty at dating**. That fact governs the tone and
+  must never appear on screen: naming it would read as a ledger of things she has admitted.
+  The build makes room for it through *his* fallibility instead — the ten minutes late,
+  printed and struck, on both the terms and the petitioner.
+
+**What stop 02 is.** The meal stop 01 never reached. The walk ran long, she wanted to go
+early, and the decree's `food` row went unfulfilled — so the sequel is an unfinished
+promise rather than a fresh one.
+
+**Still open, carried forward from section 12.**
+
+- The venue behind each "where are we eating" answer. The section 7 table needs a
+  sit-down column; the no-alcohol, no-spice, pescatarian and easy-exit filters all stand.
+- Whether Auckland Zoo is a gift or a busman's holiday. Ambury suggests the animals are a
+  gift, but a zoo is her working day at scale — still unresolved.
+- She offered a **tortoise anatomy class** "some other day". Stop 02 books the day. If she
+  picks "at stop 02", that is a commitment on his side to make room for it.
+
+### What stop 01 actually returned
+
+From the sealed decree, and load-bearing for stop 02 — these are the things it must stop
+asking about:
+
+- **Escort: none.** She walked Ambury on her own. Stop 02 therefore *asks* her to bring
+  someone, which is a new question rather than a repeat, and keeps "just me, again".
+- **Throne: the gilded one.** Hers from stop 01. Re-picking it would be a continuity
+  error, so that screen went to the crown — the other half of the same conversation.
+- **Outfit: green** — and in person she said it did not look green. She was right. The
+  canvas swatch was `--forest` (#26492f), the colour section 10 of this document rejects
+  for her dress as "dark and murky". The site printed the word "green" under a mud-coloured
+  torso. Fixed to `--moss`, and stop 02 says so on its own screen rather than quietly
+  repainting him.
+
+The general rule this produced, which stop 03 should inherit: **a stop may only ask what
+the previous stop left open.** The first draft of stop 02 re-ran the whole questionnaire
+and played as a photocopy. Settled answers are shown, not re-collected.
+
+### The weather screen is retired
+
+Picking the sky spent a full screen to buy one repaint. `applyLight()` runs it from golden
+hour into evening across the journey instead, so the world is still changing on the last
+screen of the road. The three ramps stay in the canvas; a later stop can walk in the rain.

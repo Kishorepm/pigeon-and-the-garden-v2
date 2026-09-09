@@ -1,0 +1,62 @@
+[
+  {
+    "file": "game-art/characters/her-body.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/body/female/light.png",
+    "sha256": "8cb8719254636c86a83376657aa077c955818aef81d75910aa412b2653529b9c"
+  },
+  {
+    "file": "game-art/characters/her-dress.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/torso/robes_female_no_th-sh/forest%20green.png",
+    "sha256": "fff7c13044e548a659b871f77b3956c81e2a795868a9064ab92364e0cc9cd1a1"
+  },
+  {
+    "file": "game-art/characters/her-shoes.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/feet/shoes/female/brown_shoes_female.png",
+    "sha256": "98a51cb2c39f947ffbfcd0c072be5760fc0b987f8083aea117c6f9355d0f8ab4"
+  },
+  {
+    "file": "game-art/characters/her-hair.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/hair/female/long/brown.png",
+    "sha256": "358b3e4655cdada0ce23532190fb9168b576056d7a0200567135dbca5ddf6aeb"
+  },
+  {
+    "file": "game-art/characters/him-body.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/body/male/dark2.png",
+    "sha256": "9085ccbdef51c52f2e05cea0be5de6de33c29f7d493f3931551d7be17000709a"
+  },
+  {
+    "file": "game-art/characters/him-legs.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/legs/armor/male/metal_pants_male.png",
+    "sha256": "1f6053d8cf625244e39f87b0c9f5702b524412f892db13d058e36f8a5daf18f5"
+  },
+  {
+    "file": "game-art/characters/him-shoes.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/feet/shoes/male/brown_shoes_male.png",
+    "sha256": "32ee4279fb93c51ed60d2b818d4fdb129bacf2262afa13efd5fd901e70289fae"
+  },
+  {
+    "file": "game-art/characters/him-chest.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/torso/plate/chest_male.png",
+    "sha256": "50d9f8ab0a73bf7e39a01732e2d20251d4a95f59ee402f409ab9460e1a349e11"
+  },
+  {
+    "file": "game-art/characters/him-arms.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/torso/plate/arms_male.png",
+    "sha256": "a2a895607c2e302e99e8ba81f4f8afc6d65db5c3092a0ad5438855625aa85708"
+  },
+  {
+    "file": "game-art/characters/him-hair.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/hair/male/messy1/black.png",
+    "sha256": "fabc13230b84771d46dd89ef1e025861169acc15d48b89d7a64437e6dd278b8e"
+  },
+  {
+    "file": "game-art/characters/him-beard.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/facial/male/beard/black.png",
+    "sha256": "83be3a02add9790eb1eae39e46f1c33fa5dba9a4f69c3db8c8751f19af68dbe2"
+  },
+  {
+    "file": "game-art/characters/her-skirt.png",
+    "source": "https://raw.githubusercontent.com/makrohn/Universal-LPC-spritesheet/master/legs/skirt/female/robe_skirt_female_incomplete.png",
+    "sha256": "ffa9365408d0d53df30786e15a2958cee68064fb4169162af9c7016bb4a9d188"
+  }
+]

@@ -22,3 +22,11 @@ support.js
 # the packs stay local and only the specific sprites this page uses get committed.
 *.zip
 vendor/
+!vendor/
+vendor/*
+!vendor/anime-4.5.0.min.js
+!vendor/ANIME-LICENSE.md
+!vendor/phaser-3.90.0.min.js
+!vendor/PHASER-LICENSE.txt
+.local-review/
+__pycache__/

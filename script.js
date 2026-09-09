@@ -3,10 +3,10 @@
 (function () {
   'use strict';
 
-  // --- palette ramps (weather repaints the world; sprites never change) ------
+  // --- palette (the light repaints the world; sprites never change) ---------
   // Lifted out of the design canvas at build time. Never hand-copy these — the
   // canvas rewrites the whole palette between revisions, and a stale copy here
-  // repaints the site in last week's colours the moment she picks the weather.
+  // would repaint the site in last week's colours on the first screen.
   var PALETTE = window.__PALETTE__ || { SUNNY: {}, RAMPS: {} };
   var SUNNY = PALETTE.SUNNY;
   var RAMPS = PALETTE.RAMPS;
@@ -18,13 +18,13 @@
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   // The decree headline, keyed off the place she picked. Keys are the data-set
-  // values from the "What sort of place?" screen — change one there and it must
-  // change here, which is why the fallback is the original line rather than an
-  // empty string. "his choice" is deliberately absent: it falls through to
-  // "Coffee, then.", which is his line and the honest answer when she defers.
+  // values from the "Where are we eating?" screen — change one there and it must
+  // change here, which is why the fallback is a real line rather than an empty
+  // string. "his choice" is deliberately absent: it falls through to "Food,
+  // then.", which is his line and the honest answer when she defers.
   var VERDICTS = {
-    'one with a garden': 'A garden, then.',
-    'one with animals nearby': 'Animals, then.',
+    'one with a garden': 'A table in a garden, then.',
+    'one with animals nearby': 'Animals again, then.',
     'quiet and indoors': 'Somewhere quiet, then.'
   };
 
@@ -100,14 +100,14 @@
     if (curtain) curtain.style.setProperty('--nightSky', mix(SUNNY.shadow, NIGHT, 0.55));
   }
 
-  // Walk the steps, then hand the palette back to the normal ramp machinery so
-  // the weather screen keeps working exactly as it did.
+  // Walk the steps, then hand the palette to applyLight(), which carries it on
+  // through golden hour for the rest of the road.
   function sunrise() {
-    if (REDUCED) { applyRamp('sunny'); return; }
+    if (REDUCED) { applyLight(lightAt(state.i)); return; }
     DAWN_STEPS.forEach(function (amount, n) {
       setTimeout(function () {
         if (amount) applyDawn(amount);
-        else applyRamp(state.picks.weather || 'sunny');
+        else applyLight(lightAt(state.i));
       }, n * 230);
     });
   }
@@ -157,12 +157,32 @@
     // Swallowed on purpose. A failed notification must never become her problem.
   }
 
-  function applyRamp(name) {
-    var r = Object.assign({}, SUNNY, RAMPS[name] || {});
+  // The sky is not a question any more — asking her to pick it produced one
+  // repaint and then a static world for twenty screens. It runs on its own
+  // instead: late afternoon, through golden hour, into evening, advanced by the
+  // screen she is on. Same mechanism as the dawn, and for the same reason — a
+  // palette swap repaints every sprite, where a scrim would just grey them out.
+  var GOLD = '#e8a04a';        // the sunset end of the 24, not a new colour
+  var DUSK = '#2b2a46';        // where the light finally goes
+  var LIGHT_FROM = 3;          // the world starts turning once she sets off
+  var LIGHT_TO = 19;           // and has fully turned by the castle
+
+  function lightAt(i) {
+    return Math.max(0, Math.min(1, (i - LIGHT_FROM) / (LIGHT_TO - LIGHT_FROM)));
+  }
+
+  function applyLight(t) {
+    var base = Object.assign({}, SUNNY, readExtras());
     var s = document.documentElement.style;
-    Object.keys(r).forEach(function (k) { s.setProperty('--' + k, r[k]); });
-    // Baked PNGs cannot recolour with the ramp, so they get tinted by attribute.
-    document.documentElement.setAttribute('data-weather', name);
+    // Warm first, then darken. One straight mix toward dusk skips golden hour
+    // and just reads as someone switching a light off.
+    var warm = Math.min(1, t / 0.55) * 0.22;
+    var dark = Math.max(0, (t - 0.55) / 0.45) * 0.40;
+    Object.keys(base).forEach(function (k) {
+      s.setProperty('--' + k, mix(mix(base[k], GOLD, warm), DUSK, dark));
+    });
+    // Baked PNGs cannot recolour with the palette, so they are tinted by attribute.
+    document.documentElement.setAttribute('data-weather', 'sunny');
   }
 
   // --- derived values, straight port of the canvas's renderVals -------------
@@ -172,9 +192,6 @@
     for (var n = 0; n <= LAST; n++) v['s' + n] = (i === n);
     var w = picks.weather || 'sunny';
     var alone = picks.escort === 'no one, just her';
-    var dress = (picks.cut || picks.colour)
-      ? [picks.colour, picks.cut].filter(Boolean).join(' ')
-      : 'dress him';
     var stop = Math.max(0, Math.min(11, i - 5));
     var stones = [];
     for (var m = 0; m < 11; m++) stones.push(m < stop ? 'var(--honey)' : 'var(--cream)');
@@ -199,8 +216,8 @@
     // "hot" is refused, not broken. It answers, and the nudge alternates so a
     // second tap is visibly a second tap.
     v.hotNote = !state.hotTaps ? '(iced only)'
-      : state.hotTaps === 1 ? 'he has strong feelings about this.'
-      : 'still iced.';
+      : state.hotTaps === 1 ? 'that button has never worked.'
+      : 'and it is not going to start now.';
     // The stylesheet kills transitions under prefers-reduced-motion, which would
     // leave the nudge as a permanent 5px offset rather than a movement. Zero it.
     v.hotShake = (!state.hotTaps || REDUCED) ? 0 : (state.hotTaps % 2 ? -5 : 5);
@@ -213,12 +230,12 @@
     v.noLabel = state.confirmingNo ? 'yes, no' : state.dodges === 0 ? 'No' : state.dodges >= 3 ? 'no…' : 'No!';
     v.escortShort = alone ? '' : (picks.escort || 'escort').replace('the ', '');
     v.hasEscort = !alone;
-    v.dressLabel = dress;
     v.sealScale = state.sealScale;
     v.sealLabel = state.sealed ? 'SEALED' : 'PRESS';
     v.sealHint = state.sealed ? 'Done. Nothing else to do.' : 'Press the seal.';
-    v.castleLine = alone ? 'The throne is yours.' : 'The throne is occupied.';
-    v.castleSub = alone ? 'No queue, no negotiation.' : 'It was always going to be.';
+    v.castleLine = alone ? 'The throne is yours. Still.' : 'The throne is occupied.';
+    v.castleSub = alone ? 'The crown is new. So is the table.'
+                        : 'It was always going to be. The crown is new.';
     v.vPlace = picks.place || 'he chooses';
     v.vDay = picks.day || 'he chooses';
     v.vHour = picks.hour || 'he chooses';
@@ -227,16 +244,19 @@
     v.vFood = picks.food || 'he chooses';
     v.vBanned = picks.banned || 'nothing yet';
     v.vEscort = picks.escort || 'the escort';
-    v.vThrone = picks.throne || 'the gilded one';
-    v.vDress = dress === 'dress him' ? 'as he is' : dress;
-    v.vWeather = w;
+    // Her throne carries over from stop 01 — the castle screen still seats her
+    // escort on it. This row books the anatomy class she offered instead.
+    v.vTortoise = picks.tortoise || 'a later stop';
+    v.vCrown = picks.crown || 'his choice';
+    // Settled at stop 01, and corrected since. Not hers to pick again.
+    v.vDress = 'green, actually green';
     // The decree's headline. It used to be the literal word "Coffee" forever,
     // sitting at 29px directly above eleven rows that said something else — she
     // could pick a garden, savoury and iced and still be told "Coffee, then."
-    // The cadence is his, so the derived lines keep it; and "Coffee, then."
-    // survives verbatim on the one path where it was ever true, which is the
-    // path where she hands the choice back to him.
-    v.vVerdict = VERDICTS[picks.place] || 'Coffee, then.';
+    // The cadence is his, so the derived lines keep it. Stop 01 was coffee and
+    // stop 02 is the meal it never got to, so the defer path now reads "Food,
+    // then." — same joke, still true on the one path where she hands it back.
+    v.vVerdict = VERDICTS[picks.place] || 'Food, then.';
     return v;
   }
 
@@ -288,6 +308,7 @@
     // Moving screen always dismisses a half-asked question.
     state.confirmingLeave = false;
     if (state.i === 20) tell('left');           // decline: choice only, no partial picks
+    if (state.opened) applyLight(lightAt(state.i));
     // Give the phone's own back gesture something to go back TO. Without this
     // the whole thing is one history entry: a back swipe left the site outright,
     // and since picks live in memory and nothing is stored, returning restarted
@@ -365,6 +386,10 @@
     'all of them': '/art-dog.png'  // Ruby leads; she ranked the dog above everyone
   };
 
+  // There is no throne screen any more — stop 02 gave that slot to the tortoise,
+  // because re-picking a throne she already owns at stop 01 is a continuity error.
+  // This stays wired: the castle screen still seats her escort on a throne, so it
+  // needs the default, and a later stop can re-add a picker without rebuilding it.
   // "his choice" lands on the gilded one, which is also what the decree prints.
   var THRONE_ART = {
     'the gilded one': '/art-throne-gilded.png',
@@ -384,35 +409,17 @@
       '--escortArt', art ? 'url(' + art + ')' : 'none');
   }
 
-  // --- dressing him ---------------------------------------------------------
-  // The canvas draws his torso as var(--escOutfit, <blue>) but never sets the
-  // variable, so picking a colour changed the caption and not the character.
-  // Colours are read off the swatch buttons themselves, so the design keeps
-  // ownership of them — no second copy to drift.
-  function dressUp() {
-    var root = document.documentElement.style;
-    var picked = state.picks.colour;
-    if (picked) {
-      var swatch = document.querySelector('[data-set="colour:' + picked + '"]');
-      if (swatch) {
-        var bg = (swatch.getAttribute('style') || '').match(/background:([^;]+)/);
-        if (bg) root.setProperty('--escOutfit', bg[1].trim());
-      }
-    }
-    // Formal gets a darker yoke across the shoulders; casual stays flat. One
-    // variable, so the shape stays the canvas's business.
-    root.setProperty('--escCollar',
-      state.picks.cut === 'formal' ? 'inset 0 11px 0 rgba(36,26,16,.34)' : 'none');
+  // --- the crown ------------------------------------------------------------
+  // The outfit picker is gone: she dressed him at stop 01 and the site painted
+  // it --forest (#26492f), which the design spec itself calls dark and murky.
+  // She said so to his face. The colour is corrected in the stylesheet now, and
+  // this slot went to the crown — the half of the throne conversation that
+  // never got built.
+  var CROWN_TINT = { 'one made of flowers': 'var(--rose)' };
 
-    // Acknowledge the tap. Without this she picks a colour and nothing on the
-    // screen agrees that she did.
-    ['cut', 'colour'].forEach(function (kind) {
-      document.querySelectorAll('[data-act="' + kind + '"]').forEach(function (el) {
-        var v = (el.getAttribute('data-set') || '').split(':')[1];
-        if (v === state.picks[kind]) el.setAttribute('data-chosen', '');
-        else el.removeAttribute('data-chosen');
-      });
-    });
+  function setCrown() {
+    document.documentElement.style.setProperty(
+      '--crownA', CROWN_TINT[state.picks.crown] || 'var(--honey)');
   }
 
   function seal() {
@@ -462,11 +469,10 @@
     // One step back. Her picks are kept, so returning to a screen shows what she
     // chose and lets her choose again rather than starting the answer over.
     if (act === 'back') { go(state.i - 1); return; }
-    if (act === 'weather') { applyRamp(state.picks.weather); go(state.i + 1); return; }
     if (act === 'seal') { seal(); return; }
     if (set && set.indexOf('escort:') === 0) setEscort();
     if (set && set.indexOf('throne:') === 0) setThrone();
-    if (act === 'cut' || act === 'colour') { dressUp(); render(); return; }
+    if (set && set.indexOf('crown:') === 0) setCrown();
     // She can go back and change her mind. Her picks are kept as defaults so she
     // is not made to redo the whole thing, and the seal is un-pressed so it can
     // be pressed again.
@@ -504,9 +510,10 @@
 
   // Before sunrise. The curtain is opaque over the garden either way, but the
   // world underneath has to already be dark or the light never arrives.
-  applyRamp('sunny');
+  applyLight(0);
   applyDawn(DAWN_FROM);
-  setThrone();          // default, in case she never reaches the throne screen
+  setThrone();          // stop 01's throne, which the castle screen still seats her on
+  setCrown();           // default, in case she never reaches the crown screen
   // Seed the history stack so the first pushState has something behind it and a
   // back gesture on screen zero leaves the site, as it should.
   try { history.replaceState({ i: 0 }, ''); } catch (e) {}

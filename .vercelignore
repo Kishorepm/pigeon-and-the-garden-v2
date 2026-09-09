@@ -30,6 +30,22 @@ assets/
 *.dc.html
 build.py
 devserver.py
+visual_refresh.py
+preview_screens.py
+garden.css
+.local-review/
+__pycache__/
+tests/
+pixel.html
+build_pixel.py
+build_kingdom.py
+build_journey.py
+journey.html
+journey.css
+journey.js
+journey-data.js
+scenery/
+!vendor/ANIME-LICENSE.md
 
 # Names the notification vars and carries a sample address. Nothing secret, but
 # nothing anyone visiting the invitation needs either.

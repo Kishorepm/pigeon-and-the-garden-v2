@@ -22,8 +22,8 @@ ROOT = pathlib.Path(__file__).parent
 # thing she sees, in a chat, from someone she has never met in person — it does
 # the reassuring before she has clicked anything.
 SITE = "https://pigeon-and-the-garden.vercel.app"
-TITLE = "A pigeon has arrived."
-BLURB = "It is carrying something."
+TITLE = "The pigeon is back."
+BLURB = "It is carrying something else."
 
 # The canvas's own container: a centred, max-width column on a dark backdrop.
 # It is already responsive, so it ships as-is; it only needs an id to hang the
@@ -95,7 +95,7 @@ border:2px solid var(--ink);animation:flap .2s steps(2,end) 18 alternate both"><
     <p style="margin:clamp(7px,1.3vh,10px) 0 0;font-family:system-ui;font-size:clamp(13px,3.8vw,14.5px);line-height:1.5;color:rgba(36,26,16,.78)">\
 It is going back to tell me. I will text you to fix the hour, and the address comes with it.</p>
     <p style="margin:clamp(7px,1.3vh,10px) 0 0;font-family:system-ui;font-size:clamp(11.5px,3.2vw,12.5px);line-height:1.45;color:rgba(36,26,16,.5)">\
-Nothing else to do. Stop 02 unlocks once stop 01 has actually happened.</p>
+Nothing else to do. Stop 03 unlocks once stop 02 has actually happened.</p>
   </div>
   <div style="display:flex;gap:10px">
     <button type="button" data-go="17" data-active="a3" style="flex:1;min-height:clamp(46px,6vh,52px);\
@@ -133,19 +133,19 @@ INTRO_SCREEN = '''
     <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.3)"></div>
     <div style="flex:1;min-height:0;background:var(--cream);border:3px solid var(--ink);border-top:none;border-bottom:none;padding:clamp(15px,2.6vh,24px) clamp(16px,5vw,22px);display:flex;flex-direction:column;justify-content:center;overflow:hidden">
       <p style="margin:0;font-size:clamp(10px,2.9vw,12px);letter-spacing:.2em;color:rgba(36,26,16,.5)">THE PETITIONER</p>
-      <h1 style="margin:clamp(6px,1.2vh,11px) 0 clamp(11px,2vh,18px);font-size:clamp(21px,6vw,27px);font-weight:600;line-height:1.1">Before you answer.</h1>
+      <h1 style="margin:clamp(6px,1.2vh,11px) 0 clamp(11px,2vh,18px);font-size:clamp(21px,6vw,27px);font-weight:600;line-height:1.1">Before you answer again.</h1>
 
       <div style="display:flex;align-items:flex-start;gap:11px;margin:0">
         <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
-        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He builds things. This is one of them.</p>
+        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He builds things. This is one of them. You have seen it work.</p>
       </div>
       <div style="display:flex;align-items:flex-start;gap:11px;margin:clamp(8px,1.5vh,13px) 0 0">
         <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
-        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He will be early. You will not be kept waiting.</p>
+        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)"><span style="text-decoration:line-through;color:rgba(36,26,16,.42);font-size:.88em">He will be early. You will not be kept waiting.</span><br>He was ten minutes late. The terms have been amended.</p>
       </div>
       <div style="display:flex;align-items:flex-start;gap:11px;margin:clamp(8px,1.5vh,13px) 0 0">
         <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
-        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He would rather hear you talk than talk.</p>
+        <p style="margin:0;font-family:system-ui;font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--ink)">He would rather hear you talk than talk. Saturday tested that.</p>
       </div>
       <div style="display:flex;align-items:flex-start;gap:11px;margin:clamp(8px,1.5vh,13px) 0 0">
         <span style="flex:none;width:7px;height:7px;background:var(--terra);margin-top:clamp(5px,1.1vw,7px)"></span>
@@ -157,7 +157,7 @@ INTRO_SCREEN = '''
       <p style="margin:0;font-family:system-ui;font-size:clamp(11.5px,3.2vw,13px);line-height:1.45;color:rgba(36,26,16,.55)">\
 That is the whole pitch. No one is lucky here yet.</p>
       <p style="margin:clamp(5px,1vh,8px) 0 0;font-family:system-ui;font-size:clamp(12.5px,3.5vw,14.5px);line-height:1.45;color:rgba(36,26,16,.82)">\
-You do finally get to judge the accent in person.</p>
+You have met him now. Same pitch, with evidence.</p>
     </div>
     <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.3)"></div>
   </div>
@@ -298,9 +298,9 @@ CURTAIN_SCREEN = '''
     <div style="position:relative;height:var(--noteH);overflow:hidden">
       <div style="position:absolute;inset:0;background:var(--cream);border:3px solid var(--ink);border-top:none;padding:clamp(17px,3vh,26px) 22px 0;animation:unroll 1s steps(14,end) .55s both">
         <p style="margin:0;text-align:center;font-size:11.5px;letter-spacing:.22em;color:rgba(36,26,16,.5);animation:in .5s 1.5s both">FOR PEANUT</p>
-        <h1 style="margin:14px 0 0;text-align:center;font-size:clamp(24px,7vw,29px);font-weight:600;line-height:1.08;text-wrap:balance;animation:in .5s 1.6s both">A pigeon has arrived.</h1>
+        <h1 style="margin:14px 0 0;text-align:center;font-size:clamp(24px,7vw,29px);font-weight:600;line-height:1.08;text-wrap:balance;animation:in .5s 1.6s both">The pigeon is back.</h1>
         <div style="height:3px;background:var(--honey);margin:16px 34px 0;animation:in .5s 1.75s both"></div>
-        <p style="margin:16px 0 0;text-align:center;font-family:system-ui;font-size:14px;line-height:1.5;color:rgba(36,26,16,.72);animation:in .5s 1.85s both">It is carrying something.</p>
+        <p style="margin:16px 0 0;text-align:center;font-family:system-ui;font-size:14px;line-height:1.5;color:rgba(36,26,16,.72);animation:in .5s 1.85s both">It did not take a month this time.</p>
       </div>
     </div>
     <div style="height:15px;background:var(--wood);border:3px solid var(--ink);box-shadow:0 5px 0 rgba(22,36,26,.4);transform:translateY(calc(-1 * var(--noteH)));animation:rodfall 1s steps(14,end) .55s both"></div>
@@ -355,10 +355,10 @@ COPY_FIXES = [
     # drawn from a stated dealbreaker rather than a preference.
     (">FR<", ">FRI<"),
     (">SA<", ">SAT<"),
-    # The screen lets her choose the weather, so asking her to report it reads as
-    # a question she cannot answer. Handing her the power makes the disclaimer
-    # underneath ("this is not binding") the punchline instead of a correction.
-    ("What is the sky doing?", "You decide the sky."),
+    # The weather screen is gone. Asking her to pick the sky bought exactly one
+    # repaint and then a static world for twenty screens; applyLight() in
+    # script.js runs it from golden hour into evening instead, so the world is
+    # still being repainted on the last screen of the road.
     # NOTE: "silly goose" is hers. It was briefly put in his mouth here and taken
     # straight back out. Her signature line said in his voice reads as borrowing
     # her personality, not as noticing it. If it is ever used, it has to be
@@ -395,12 +395,6 @@ COPY_FIXES = [
      'Change something</button>\n'
      '  </div>\n</div>\n</sc-if>\n\n<!-- 21 THE WAIT -->'),
 
-    # His "red" swatch was var(--terra) (#c25f2e), which is terracotta. Picking
-    # red dressed him in orange. dressUp() reads the colour straight off the
-    # swatch, so correcting it here corrects his torso on every screen.
-    ('data-set="colour:red" style="min-height:52px;border:3px solid var(--ink);background:var(--terra)',
-     'data-set="colour:red" style="min-height:52px;border:3px solid var(--ink);background:#b32330'),
-
     # Mark his figure so his skin can differ from hers.
     ('<div style="position:absolute;left:26px;bottom:32%;width:52px;height:74px">',
      '<div data-him style="position:absolute;left:26px;bottom:32%;width:52px;height:74px">'),
@@ -411,7 +405,7 @@ COPY_FIXES = [
     ('<div style="position:relative;width:104px;height:152px">',
      '<div data-him style="position:relative;width:104px;height:152px">'),
     # No em dashes anywhere in what she reads.
-    ("STOP 01 — THE DECREE", "STOP 01 · THE DECREE"),
+    ("STOP 02 — THE DECREE", "STOP 02 · THE DECREE"),
     ("Pigeon: fed and released — it may come back, they tend to.",
      "Pigeon: fed and released. It may come back, they tend to."),
 
@@ -507,12 +501,12 @@ COPY_FIXES = [
     # the heading and the button gets it back under the reservation.
     ('<div style="position:relative;margin:0 22px 24px;padding:14px 16px;'
      'background:var(--cream);border:3px solid var(--ink)">\n'
-     '    <p style="margin:0;font-size:18px;font-weight:600">Stop 01 is stamped.</p>',
+     '    <p style="margin:0;font-size:18px;font-weight:600">Stop 02 is stamped.</p>',
      '<div style="position:relative;margin:0 22px clamp(12px,2.6vh,24px);'
      'padding:clamp(10px,1.9vh,14px) 16px;'
      'background:var(--cream);border:3px solid var(--ink)">\n'
      '    <p style="margin:0;font-size:clamp(16px,4.6vw,18px);font-weight:600">'
-     'Stop 01 is stamped.</p>'),
+     'Stop 02 is stamped.</p>'),
     ('<p style="margin:8px 0 12px;font-family:system-ui;font-size:12.5px;line-height:1.4;'
      'color:rgba(36,26,16,.58)">Address and map link arrive by text. So does the hour.</p>\n'
      '    <button type="button" data-go="next" style="width:100%;min-height:52px;',
@@ -574,7 +568,7 @@ SCOPED_FIXES = [
     ("14 Construction",
      'left:11px;top:0;width:30px;height:12px;background:#6b4326',
      'left:11px;top:0;width:30px;height:12px;background:var(--hair)'),
-    ("16 Dress",
+    ("04 The green",
      'left:22px;top:0;width:60px;height:24px;background:#6b4326',
      'left:22px;top:0;width:60px;height:24px;background:var(--hair)'),
 
@@ -866,9 +860,10 @@ SPRITES = [
     ('data-set="escort:Ruby"', "span", "/art-dog.png", "swap", "contain", "bottom center", "forward"),
     ('data-set="escort:the duck"', "span", "/art-duck.png", "swap", "contain", "bottom center", "forward"),
     ('data-set="escort:the chicken"', "span", "/art-hen.png", "swap", "contain", "bottom center", "forward"),
-    ('data-set="throne:the gilded one"', "span", "/art-throne-gilded.png", "swap", "contain", "bottom center", "forward"),
-    ('data-set="throne:the beanbag"', "span", "/art-throne-beanbag.png", "swap", "contain", "bottom center", "forward"),
-    ('data-set="throne:the one with a cat on it"', "span", "/art-throne-cat.png", "swap", "contain", "bottom center", "forward"),
+    # The throne PNGs are still used — script.js paints the one she chose at stop 01
+    # onto the castle screen. They just have no picker to hang off any more: the
+    # throne slot is the tortoise now, because re-picking a throne she already owns
+    # would be a continuity error.
     # The seal keeps its label on top — the art sits behind "PRESS" / "SEALED".
     ('data-act="seal"', "button", "/art-seal.png", "behind", "86%", "center", "self"),
 ]
@@ -1016,6 +1011,10 @@ def paint_sprites(markup):
     # The image is a variable so script.js can point it at whichever animal she
     # picked, without this build knowing which.
     followers = [
+        ('<div style="position:absolute;left:57px;bottom:calc(40% - 12px);width:52px;height:40px">',
+         '<div data-art="swap" style="position:absolute;left:57px;bottom:calc(40% - 12px);'
+         'width:52px;height:40px;'
+         'background:var(--escortArt) no-repeat bottom center/contain;image-rendering:pixelated">'),
         ('<div style="position:absolute;left:74px;bottom:8px;width:52px;height:40px">',
          '<div data-art="swap" style="position:absolute;left:74px;bottom:8px;width:52px;height:40px;'
          'background:var(--escortArt) no-repeat bottom center/contain;image-rendering:pixelated">'),
@@ -1314,6 +1313,13 @@ def main():
         "   the markup as the fallback if an image ever fails to load. 'behind'\n"
         "   keeps its children, because the seal has a label on top of it. */\n"
         '[data-art="swap"]>*{display:none}\n'
+        "\n/* The green she picked at stop 01. The canvas swatch was --forest\n"
+        "   (#26492f), which this project own spec calls dark and murky — so when\n"
+        "   she said in person that it did not look green she was simply right.\n"
+        "   --moss is a real green from the same 24, and it repaints with the light. */\n"
+        ":root{--escOutfit:var(--moss)}\n"
+        "\n/* The crown. script.js repoints this at --rose for the flower one. */\n"
+        ":root{--crownA:var(--honey)}\n"
         "\n/* Her dress. Its own token so it is one knob rather than six edits, and\n"
         "   so it never drifts when the canvas restyles --rose for flowers. */\n"
         # Green, and specifically a green with blue in it. The scene's greens are
@@ -1435,6 +1441,19 @@ def main():
         "-1px -1px 0 var(--cream),1px -1px 0 var(--cream),-1px 1px 0 var(--cream)}\n"
     )
 
+    # The refresh has semantic hooks instead of coordinate-based CSS selectors.
+    # Keep its authored styles separate from the generated output.
+    from visual_refresh import refine
+    markup = refine(markup)
+    # Reading surfaces keep their daylight contrast as the garden turns dusk.
+    # These values come from the canvas, not a second hand-maintained palette.
+    paper_tokens = []
+    for token in ('cream', 'white', 'ink', 'wood', 'stone'):
+        match = re.search(r'--' + token + r'\s*:\s*([^;}]+)', base_css)
+        assert match, f'Missing paper palette token: {token}'
+        paper_tokens.append(f'--paper-{token}:{match.group(1)}')
+    sheet.append(':root{' + ';'.join(paper_tokens) + '}')
+    sheet.append((ROOT / "garden.css").read_text(encoding="utf-8"))
     css_text = "\n".join(sheet) + "\n"
 
     # A stray */ ends a comment that was never open, and the parser then discards
@@ -1513,4 +1532,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if (ROOT / 'chapter-story.js').exists() and not any(flag in sys.argv for flag in ['--legacy','--illustrated','--pixel']):
+        from build_kingdom import build
+        build()
+    elif (ROOT / 'pixel.html').exists() and '--legacy' not in sys.argv and '--illustrated' not in sys.argv:
+        from build_pixel import build
+        build()
+    elif (ROOT / 'journey.html').exists() and '--legacy' not in sys.argv:
+        from build_journey import build
+        build()
+    else:
+        main()
