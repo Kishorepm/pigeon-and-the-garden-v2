@@ -50,6 +50,7 @@
     }
     create(){
       if(this.loadFailed){fail();return;}
+      try{
       scene=this;
       this.makeFrames();this.makeGround();this.makeKingdom();this.makeVillage();this.makeForest();this.makeAtmosphere();
       this.makeChapterWorld?.();this.makeCinema?.();
@@ -63,7 +64,8 @@
       this.cameras.main.setBounds(-1024,-1024,W+2048,H+2048).setRoundPixels(true).startFollow(this.cameraPoint,true,CAMERA_FOLLOW,CAMERA_FOLLOW);
       this.resize();this.scale.on('resize',()=>this.resize());
       this.cameras.main.fadeIn(reduced?0:650,31,50,35);
-      $('loading').hidden=true;this.start();updateMotion();
+      this.start();updateMotion();$('loading').hidden=true;
+      }catch(error){console.error('Kingdom scene could not start:',error);this.scene.pause();fail();}
     }
     frame(texture,name,x,y,w=32,h=32){this.textures.get(texture).add(name,0,x,y,w,h);}
     makeFrames(){
@@ -80,7 +82,13 @@
     }
     makeGround(){
       this.frame('terrain','kingdom-grass',96,32);
-      this.add.tileSprite(-3000,-3000,7000,7000,'terrain','kingdom-grass').setOrigin(0).setDepth(-1);
+      // Reuse one small grass texture: a 7000px TileSprite allocates a
+      // 49-million-pixel canvas, beyond the canvas budget on iPhones.
+      const grass=this.textures.createCanvas('grass-block',512,512),gc=grass.context;
+      const grassSource=this.textures.get('terrain').getSourceImage();
+      for(let y=0;y<512;y+=32)for(let x=0;x<512;x+=32)gc.drawImage(grassSource,96,32,32,32,x,y,32,32);
+      grass.refresh();
+      for(let y=-3000;y<4000;y+=512)for(let x=-3000;x<4000;x+=512)this.add.image(x,y,'grass-block').setOrigin(0).setDepth(-1);
       const tx=this.textures.createCanvas('world-ground',W+512,H+320),c=tx.context,terrain=this.textures.get('terrain').getSourceImage();
       c.translate(512,320);
       for(let y=-320;y<H;y+=32)for(let x=-512;x<W;x+=32)c.drawImage(terrain,96,32,32,32,x,y,32,32);
