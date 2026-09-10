@@ -1,32 +1,16 @@
-# Secrets. The ntfy topic is a password: it lives in Vercel, never in the repo.
+node_modules/
+.vercel/
+.nitro/
+.output/
+dist/
+*.log
+.DS_Store
+screenshots/
+artifacts/
+.grok/og-pending
+.grok/*.tmp
 .env
-.env.local
-.env.*.local
-
-# Vercel
-.vercel
-
-# Python
-__pycache__/
-*.pyc
-
-# Scratch contact sheets from the art pipeline. Regenerate any time.
-assets/_*.png
-
-# Claude Design's editor runtime. Needed only to open the canvas, never shipped,
-# and 69KB of generated vendor code.
-support.js
-
-# Third-party asset packs and their extracts. CraftPix and similar licences
-# permit use in a project but not redistribution of the assets themselves, so
-# the packs stay local and only the specific sprites this page uses get committed.
-*.zip
-vendor/
-!vendor/
-vendor/*
-!vendor/anime-4.5.0.min.js
-!vendor/ANIME-LICENSE.md
-!vendor/phaser-3.90.0.min.js
-!vendor/PHASER-LICENSE.txt
-.local-review/
-__pycache__/
+.env.*
+!.env.example
+/tmp/
+hsperfdata_*

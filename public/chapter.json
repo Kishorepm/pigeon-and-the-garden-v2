@@ -1,0 +1,10 @@
+{
+  "revision": "stop02-1",
+  "stage": "inviting",
+  "current": "02",
+  "inherited": { "throne": "the gilded one" },
+  "courtyard": [],
+  "completed": [{ "stop": "01", "plaque": "Complete. Nobody starved. Nobody drank." }],
+  "itinerary": null,
+  "memory": null
+}
