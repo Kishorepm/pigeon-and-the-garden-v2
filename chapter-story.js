@@ -1,5 +1,5 @@
 window.extendChapterStory=function(Journey,h){
-  const {$,copy,action,focusAction,routes,START,WALK,reduced}=h,C=window.Chapter,KEY=document.documentElement.dataset.chapterStorage||'our-kingdom-stop02-v1';
+  const {$,copy,action,focusAction,routes,START,WALK,reduced,cameraFollow}=h,C=window.Chapter,KEY=document.documentElement.dataset.chapterStorage||'our-kingdom-stop02-v1';
   const baseStart=Journey.prototype.start;
   const isLocal=['localhost','127.0.0.1','::1'].includes(location.hostname);
   const safeRead=()=>{try{return C.restore(JSON.parse(localStorage.getItem(KEY)));}catch{return C.initial();}};
@@ -138,7 +138,7 @@ window.extendChapterStory=function(Journey,h){
     },
     decline(){this.screen('decline','We can leave this chapter open.','No problem. The castle and its slightly opinionated residents will still be here.','ANOTHER DAY');action('Back to the kingdom',()=>this.start());action('Actually, show me the plan',()=>this.review(),'secondary');},
     snapshotPanel(){return {worldLabel:$('world').getAttribute('aria-label'),phase:this.phase,title:$('line-title').textContent,line:$('line').textContent,speaker:$('speaker').textContent,progress:$('progress').textContent,hint:$('hint').textContent,nodes:[...$('actions').childNodes],className:$('actions').className,review:document.querySelector('.dialogue').classList.contains('review'),letter:document.querySelector('.dialogue').classList.contains('letter'),point:{...this.cameraPoint},zoom:this.cameras.main.zoom};},
-    restorePanel(s){this.screen(s.phase,s.title,s.line,s.progress,s.speaker);$('hint').textContent=s.hint;$('world').setAttribute('aria-label',s.worldLabel);$('actions').className=s.className;$('actions').replaceChildren(...s.nodes);document.querySelector('.dialogue').classList.toggle('review',s.review);document.querySelector('.dialogue').classList.toggle('letter',s.letter);this.cameras.main.useBounds=true;this.cameras.main.setZoom(s.zoom);Object.assign(this.cameraPoint,s.point);this.cameras.main.startFollow(this.cameraPoint,true,.09,.09);focusAction();},
+    restorePanel(s){this.screen(s.phase,s.title,s.line,s.progress,s.speaker);$('hint').textContent=s.hint;$('world').setAttribute('aria-label',s.worldLabel);$('actions').className=s.className;$('actions').replaceChildren(...s.nodes);document.querySelector('.dialogue').classList.toggle('review',s.review);document.querySelector('.dialogue').classList.toggle('letter',s.letter);this.cameras.main.useBounds=true;this.cameras.main.setZoom(s.zoom);Object.assign(this.cameraPoint,s.point);this.cameras.main.startFollow(this.cameraPoint,true,cameraFollow,cameraFollow);focusAction();},
     lookAt(x,y){const panel=document.querySelector('.dialogue').offsetTop,cam=this.cameras.main;this.cameraPoint.x=x;this.cameraPoint.y=y+(this.scale.height/2-(100+panel)/2)/cam.zoom;if(reduced())cam.centerOn(this.cameraPoint.x,this.cameraPoint.y);},
     petTour(){this.petReturn=this.snapshotPanel();this.showResident(this.ruby,true);},
     showResident(p,force=false){

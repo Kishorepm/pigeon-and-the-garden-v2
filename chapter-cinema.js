@@ -1,5 +1,6 @@
 /* Actor choreography and restrained atmosphere, using the existing Phaser renderer. */
 window.extendChapterCinema=function(Journey){
+  const ACTOR_MOTION_SCALE=.68;
   Object.assign(Journey.prototype,{
     makeCinema(){
       this.planTable=this.prop('table','table',300,460).setVisible(false);
@@ -19,7 +20,7 @@ window.extendChapterCinema=function(Journey){
       this.pondRipples=[];for(let i=0;i<7;i++)this.pondRipples.push(this.add.rectangle(-10+i*19,655+i%3*19,8,1,0xc4e4c7,.25).setDepth(3));
     },
     castMove(actor,points,done,speed=160){
-      this.finishCast(false);this.castMotion={actor,points:points.map(([x,y])=>({x,y})),index:0,done,speed};
+      this.finishCast(false);this.castMotion={actor,points:points.map(([x,y])=>({x,y})),index:0,done,speed:speed*ACTOR_MOTION_SCALE};
       if(document.getElementById('motion').getAttribute('aria-pressed')==='true')this.finishCast();
     },
     finishCast(complete=true){

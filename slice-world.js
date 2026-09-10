@@ -3,6 +3,8 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const preference = matchMedia('(prefers-reduced-motion: reduce)');
+  const STORY_MOTION_SCALE=.68;
+  const CAMERA_FOLLOW=.065;
   let reduced = preference.matches;
   let scene;
   const routes = [
@@ -58,7 +60,7 @@
       this.tweens.add({targets:this.basketGlow,alpha:.07,scale:1.2,duration:900,yoyo:true,repeat:-1});
       this.carry=this.prop('baskets','basket',0,0).setScale(.7).setVisible(false);
       this.cameraPoint={x:390,y:360};
-      this.cameras.main.setBounds(-1024,-1024,W+2048,H+2048).setRoundPixels(true).startFollow(this.cameraPoint,true,.09,.09);
+      this.cameras.main.setBounds(-1024,-1024,W+2048,H+2048).setRoundPixels(true).startFollow(this.cameraPoint,true,CAMERA_FOLLOW,CAMERA_FOLLOW);
       this.resize();this.scale.on('resize',()=>this.resize());
       this.cameras.main.fadeIn(reduced?0:650,31,50,35);
       $('loading').hidden=true;this.start();updateMotion();
@@ -198,7 +200,7 @@
       this.move(WALK,()=>this.crossroads(),90);if(this.travel)action('Skip to the crossroads',()=>this.finishTravel(),'secondary');
     }
     move(points,done,speed=85){
-      this.travel={points:points.map(([x,y])=>({x,y})),index:0,done,speed};
+      this.travel={points:points.map(([x,y])=>({x,y})),index:0,done,speed:speed*STORY_MOTION_SCALE};
       if(reduced)this.finishTravel();
     }
     finishTravel(){
@@ -229,9 +231,9 @@
         this.frameParty();
         if(this.hero.x>440&&this.hero.y>395&&this.gate.alpha===1){this.gate.alpha=.99;if(reduced)this.gate.setAlpha(0);else this.tweens.add({targets:this.gate,y:422,alpha:0,duration:450});}
         if(this.phase==='travelling'){
-          if(this.hero.x>704&&$('location').textContent!=='A village around the bend'){$('location').textContent='A village around the bend';$('line-title').textContent='Oh. There’s more out here.';$('line').textContent='A little inn. A fork in the road. A chance to do the bits we missed.';}
-          else if(this.hero.x>550&&this.hero.x<=704&&$('location').textContent!=='Over the little river'){$('location').textContent='Over the little river';$('line-title').textContent='A little further than last time.';$('line').textContent='Same company. New scenery. The pigeon appears to know the way.';}
-          else if(this.hero.x<=550&&$('location').textContent!=='Beyond the castle gate')$('location').textContent='Beyond the castle gate';
+          if(this.hero.x>704&&$('location').textContent!=='A village around the bend')$('location').textContent='A village around the bend';
+          else if(this.hero.x>585&&this.hero.x<=704&&$('location').textContent!=='Over the little river'){$('location').textContent='Over the little river';$('line-title').textContent='A little further than last time.';$('line').textContent='Same company. New scenery. The pigeon appears to know the way.';}
+          else if(this.hero.x<=585&&$('location').textContent!=='Beyond the castle gate')$('location').textContent='Beyond the castle gate';
         }
       }else {this.pigeon.setAngle(0);if(this.knight.walking&&!this.castMotion)this.pose(this.knight,this.knight.direction,false);if(!['start','pets','memory','map','completed'].includes(this.phase))this.frameParty();}
       this.hero.setDepth(this.hero.y);this.knight.setDepth(this.knight.y);this.pigeon.setDepth(this.pigeon.y);
@@ -241,6 +243,6 @@
   }
   window.extendChapterWorld?.(Journey);
   window.extendChapterCinema?.(Journey);
-  window.extendChapterStory?.(Journey,{$,copy,action,focusAction,routes,START,WALK,reduced:()=>reduced});
+  window.extendChapterStory?.(Journey,{$,copy,action,focusAction,routes,START,WALK,reduced:()=>reduced,cameraFollow:CAMERA_FOLLOW});
   new Phaser.Game({type:Phaser.AUTO,parent:'world',backgroundColor:'#60912f',pixelArt:true,roundPixels:true,antialias:false,scale:{mode:Phaser.Scale.RESIZE,width:document.querySelector('.adventure').clientWidth,height:document.querySelector('.adventure').clientHeight},scene:Journey,audio:{noAudio:true},render:{powerPreference:'low-power'},banner:false});
 })();
