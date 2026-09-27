@@ -1,7 +1,6 @@
 /* An explorable extension of the existing LPC kingdom, sharing its art and renderer. */
 window.extendLivingKingdom=function(Journey,{reduced}){
   const P=KingdomPaths,$=id=>document.getElementById(id),baseVillage=Journey.prototype.makeVillage,baseGround=Journey.prototype.makeGround;
-  const nearest=(x,y)=>Object.keys(P.nodes).reduce((a,b)=>Math.hypot(x-P.nodes[a][0],y-P.nodes[a][1])<Math.hypot(x-P.nodes[b][0],y-P.nodes[b][1])?a:b);
   Object.assign(Journey.prototype,{
     makeGround(){baseGround.call(this);this.children.list.forEach(o=>{if(o.texture?.key==='grass-block')o.setDepth(-5000);if(o.texture?.key==='world-ground')o.setDepth(-4999);});},
     paintChapterGround(c,path,terrain){
@@ -124,30 +123,81 @@ window.extendLivingKingdom=function(Journey,{reduced}){
     start(){
       this.phase='living';this.node='castle';this.walkDistance=0;this.travel=null;this.overview=false;this.hero.setPosition(180,1120);this.knight.setPosition(350,-35);this.active=this.knight;
       this.viewportObserver=new ResizeObserver(([entry])=>{const width=Math.round(entry.contentRect.width),height=Math.round(entry.contentRect.height);if(width>0&&height>0&&(width!==this.scale.width||height!==this.scale.height))this.scale.resize(width,height);});this.viewportObserver.observe($('world'));this.events.once('shutdown',()=>this.viewportObserver.disconnect());
-      this.viewportObserver=new ResizeObserver(([entry])=>{const width=Math.round(entry.contentRect.width),height=Math.round(entry.contentRect.height);if(width>0&&height>0&&(width!==this.scale.width||height!==this.scale.height))this.scale.resize(width,height);});this.viewportObserver.observe($('world'));this.events.once('shutdown',()=>this.viewportObserver.disconnect());
       this.basket.setVisible(false);this.basketGlow.setVisible(false);this.carry.setVisible(false);this.gate.setAlpha(0);this.pigeon.setPosition(300,416);
       this.cameraPoint.x=350;this.cameraPoint.y=320;this.cameras.main.centerOn(350,320);this.cameras.main.setBounds(-600,-770,2060,2390);
-      window.addEventListener('kingdom-identity',e=>this.identity(e.detail));window.addEventListener('kingdom-travel',e=>this.visit(e.detail));window.addEventListener('kingdom-overview',()=>this.showOverview());window.addEventListener('kingdom-data',e=>this.placeKeepsakes(e.detail));
-      window.addEventListener('kingdom-dialog',()=>{this.input.enabled=false;setTimeout(()=>{this.input.enabled=!$('book').open&&!$('credits').open;},250);});
-      $('arrive').onclick=()=>this.finishTravel();this.input.on('pointerdown',pointer=>{if(!this.overview||$('book').open)return;const pt=this.cameras.main.getWorldPoint(pointer.x,pointer.y);const id=Object.keys(P.places).sort((a,b)=>{const A=P.nodes[P.places[a].node],B=P.nodes[P.places[b].node];return Math.hypot(pt.x-A[0],pt.y-A[1])-Math.hypot(pt.x-B[0],pt.y-B[1]);})[0];this.visit(id);});
+      this.cameras.main.setLerp(.16,.16);
+      const obstacles=[];
+      this.children.list.forEach(o=>{
+        const key=o.texture?.key;
+        if(key==='trees')obstacles.push({type:'circle',x:o.x,y:o.y-6,r:11});
+        if(['table','barrels','crates','fence'].includes(key)){
+          const w=key==='table'?o.displayWidth-10:key==='fence'?o.displayWidth:20,h=key==='fence'?7:13;
+          obstacles.push({type:'rect',x:o.x-w/2,y:o.y-h,w,h});
+        }
+      });
+      this.navigation=KingdomNavigation.create(obstacles);
+      this.controls=new KingdomControls({allowed:()=>this.canWalk(),interact:()=>this.interactNearby()});
+      const abort=new AbortController(),on=(name,fn)=>window.addEventListener(name,fn,{signal:abort.signal});
+      on('kingdom-identity',e=>this.identity(e.detail));on('kingdom-travel',e=>this.visit(e.detail));on('kingdom-overview',()=>this.showOverview());on('kingdom-data',e=>{this.placeKeepsakes(e.detail);if(!KingdomUI.store.actor)this.cancelTravel();});
+      on('kingdom-dialog',()=>{this.controls.reset();this.input.enabled=false;});
+      on('blur',()=>{this.cancelTravel();this.setStride(this.active,this.active.direction,false);});
+      this.events.once('shutdown',()=>{abort.abort();this.controls.destroy();});
+      $('arrive').onclick=()=>this.finishTravel();
+      this.input.on('pointerdown',(pointer,objects)=>{
+        if(!$('welcome').hidden||!this.canWalk()||objects.length||pointer.event?.target!==this.game.canvas)return;
+        const pt=this.cameras.main.getWorldPoint(pointer.x,pointer.y);
+        if(this.overview){const id=Object.keys(P.places).sort((a,b)=>{const A=P.nodes[P.places[a].node],B=P.nodes[P.places[b].node];return Math.hypot(pt.x-A[0],pt.y-A[1])-Math.hypot(pt.x-B[0],pt.y-B[1]);})[0];this.visit(id);}
+        else this.walkTo([pt.x,pt.y]);
+      });
       if(KingdomUI.store.actor)this.identity(KingdomUI.store.actor);this.placeKeepsakes(KingdomUI.store.view());this.updateClock();this.clockTimer=this.time.addEvent({delay:30000,loop:true,callback:()=>this.updateClock()});this.loadWeather();
       this.time.addEvent({delay:1800000,loop:true,callback:()=>this.loadWeather()});
     },
-    identity(who){this.travel=null;this.active=who==='north'?this.knight:this.hero;this.node=who;this.active.setPosition(...P.nodes[who]);this.overview=false;this.resize();this.frameParty(true);$('location').textContent=who==='north'?'North · your little home':'South · your little home';$('travel-note').hidden=true;},
-    resize(){if(!this.cameras)return;const width=this.scale.width,height=this.scale.height,cam=this.cameras.main;cam.setSize(width,height);cam.useBounds=!this.overview;if(this.overview){cam.setZoom(Math.min((width-48)/1670,(height-180)/2150));}else cam.setZoom(width>=1000?1.75:width>=600?1.45:1.22);},
-    showOverview(){this.overview=true;this.resize();this.poiLabels.forEach(t=>t.setVisible(true).setScale(Math.min(2.2,1/this.cameras.main.zoom)));this.cameraPoint.x=400;this.cameraPoint.y=430;this.cameras.main.centerOn(400,430);},
+    canWalk(){return !!KingdomUI.store.actor&&!$('book').open&&!$('credits').open&&!document.hidden;},
+    cancelTravel(){this.travel=null;this.destinationMarker.clear();$('travel-note').hidden=true;},
+    identity(who){this.cancelTravel();this.controls?.reset();this.setStride(this.active,'down',false);this.active=who==='north'?this.knight:this.hero;this.node=who;this.active.setPosition(...P.nodes[who]);this.leaveOverview();this.setStride(this.active,'down',false);this.frameParty(true);$('location').textContent=who==='north'?'North · your little home':'South · your little home';},
+    resize(){
+      if(!this.cameras)return;const width=this.scale.width,height=this.scale.height,cam=this.cameras.main;cam.setSize(width,height);cam.useBounds=!this.overview;
+      if(this.overview){cam.setZoom(Math.min((width-48)/1670,(height-180)/2150));cam.centerOn(400,430);}
+      else{cam.setZoom(width>=1000?1.75:width>=600?1.45:1.22);this.frameParty(true);}
+    },
+    leaveOverview(){this.overview=false;this.poiLabels.forEach(t=>t.setVisible(false));this.resize();},
+    showOverview(){this.cancelTravel();this.controls?.reset();this.setStride(this.active,this.active.direction,false);this.overview=true;this.resize();this.poiLabels.forEach(t=>t.setVisible(true).setScale(Math.min(2.2,1/this.cameras.main.zoom)));this.cameraPoint.x=400;this.cameraPoint.y=430;this.cameras.main.centerOn(400,430);},
     visit(id){
       if($('book').open||$('credits').open)return;if(!$('welcome').hidden)$('welcome').hidden=true;const p=P.places[id];if(!p)return;
       if(!KingdomUI.store.actor){this.cameraPoint.x=P.nodes[p.node][0];this.cameraPoint.y=P.nodes[p.node][1]-60;this.overview=false;this.resize();this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);$('location').textContent=p.name;KingdomUI.open('login');return;}
-      this.overview=false;this.poiLabels.forEach(t=>t.setVisible(false));this.resize();const start=this.travel?nearest(this.active.x,this.active.y):this.node;
-      const ids=P.route(start,p.node);if(!this.travel&&ids[0]===this.node)ids.shift();
-      this.travel={ids,index:0,destination:id};this.destinationMarker.clear().lineStyle(2,0xf2da92,.7).strokeEllipse(...P.nodes[p.node],38,15);
-      $('location').textContent='On the way to '+p.name;$('travel-label').textContent=p.name+' · taking the little path';$('travel-note').hidden=false;
-      if(!ids.length||reduced())this.finishTravel();
+      this.walkTo(P.nodes[p.node],id);
     },
-    finishTravel(){if(!this.travel)return;const id=this.travel.destination,p=P.places[id];this.travel=null;this.node=p.node;this.active.setPosition(...P.nodes[this.node]);this.setStride(this.active,'down',false);this.frameParty(true);this.destinationMarker.clear();$('travel-note').hidden=true;$('location').textContent=p.name;KingdomSound?.place(id);KingdomUI.open(p.panel);},
-    frameParty(snap=false){if(!this.active||this.overview)return;this.cameraPoint.x=this.active.x;this.cameraPoint.y=this.active.y-65;if(snap)this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);},
-    setStride(p,dir,moving){const row=8+['up','left','down','right'].indexOf(dir),frame=row*13+(moving&&!reduced()?1+Math.floor(this.walkDistance/7)%8:0);p.parts.forEach(s=>{s.stop();s.setFrame(frame);});p.direction=dir;p.walking=moving;},
+    walkTo(point,destination=null){
+      const points=this.navigation.route([this.active.x,this.active.y],point);
+      if(!points){KingdomUI.toast('That spot is out of reach. Try a clear patch of ground.');return;}
+      this.controls.reset();this.leaveOverview();this.frameParty();this.travel={points,index:0,destination};
+      this.destinationMarker.clear().lineStyle(2,0xf2da92,.85).strokeEllipse(...point,26,11);
+      const place=P.places[destination];$('location').textContent=place?'On the way to '+place.name:'A little wander';
+      $('travel-label').textContent=place?place.name+' · walk to take over':'Following your footsteps';$('travel-note').hidden=!place;
+      if(reduced())this.finishTravel();
+    },
+    finishTravel(){
+      if(!this.travel)return;const {destination,points}=this.travel,p=P.places[destination];this.active.setPosition(...points.at(-1));this.cancelTravel();
+      this.setStride(this.active,this.active.direction,false);this.frameParty(reduced());
+      if(p){this.node=p.node;$('location').textContent=p.name;KingdomSound?.place(destination);KingdomUI.open(p.panel);}
+    },
+    nearbyPlace(){
+      const actions={north:'Daily journal',south:'Daily journal',castle:'Our memories',inn:'Rate a tasting',dwarf:'Visit the keeper',pond:'Meet the residents',memorial:'Remember Pearl'};
+      let best=null,distance=Infinity;
+      for(const [id,p] of Object.entries(P.places)){const [x,y]=P.nodes[p.node],d=Math.hypot(this.active.x-x,this.active.y-y);if(d<72&&d<distance){best={...p,id,action:actions[id]};distance=d;}}
+      for(const pet of this.residents||[]){const d=Math.hypot(this.active.x-pet.x,this.active.y-pet.y);if(d<42&&d<distance){best={id:pet.petName,name:pet.petName,panel:'residents',action:'Say hello'};distance=d;}}
+      return best;
+    },
+    interactNearby(){
+      if(!this.canWalk())return;const place=this.nearbyPlace();if(!place)return;
+      this.cancelTravel();this.controls.reset();this.setStride(this.active,this.active.direction,false);KingdomSound?.place(place.id);KingdomUI.open(place.panel);
+    },
+    frameParty(snap=false){if(!this.active||this.overview)return;this.cameraPoint.x=this.active.x;this.cameraPoint.y=this.active.y-55;if(snap||reduced())this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);},
+    setStride(p,dir,moving){
+      if(!p)return;const row=8+['up','left','down','right'].indexOf(dir),frame=row*13+(moving&&!reduced()?1+Math.floor(this.walkDistance/6)%8:0);
+      if(p.strideFrame!==frame){p.parts.forEach(s=>{s.stop();s.setFrame(frame);});p.strideFrame=frame;}
+      p.direction=dir;p.walking=moving;
+    },
     updateClock(){
       const now=new Date(),parts=new Intl.DateTimeFormat('en-NZ',{timeZone:'Pacific/Auckland',hour:'numeric',minute:'2-digit',hourCycle:'h23'}).formatToParts(now),hour=Number(parts.find(p=>p.type==='hour').value);
       $('realm-time').textContent=new Intl.DateTimeFormat('en-NZ',{timeZone:'Pacific/Auckland',weekday:'short',hour:'numeric',minute:'2-digit'}).format(now);
@@ -157,12 +207,23 @@ window.extendLivingKingdom=function(Journey,{reduced}){
     },
     async loadWeather(){try{const r=await fetch('/api/kingdom-weather');if(!r.ok)throw Error();const w=await r.json();this.weather=w;this.wet=w.rain;const stale=Date.now()-Date.parse(w.at)>3600000;$('realm-weather').textContent=`${w.temperature}° · ${w.label}${stale?' · earlier conditions':''}`;this.updateClock();KingdomSound?.weather(w.rain);}catch{$('realm-weather').textContent='Auckland time · weather unavailable';this.wet=false;}},
     update(time,delta){
-      this.input.enabled=!$('book').open&&!$('credits').open;if(!this.active)return;const dt=Math.min(delta,50)/1000;
-      if(this.travel){const t=this.travel,target=P.nodes[t.ids[t.index]];if(!target){this.finishTravel();return;}const dx=target[0]-this.active.x,dy=target[1]-this.active.y,d=Math.hypot(dx,dy),step=80*dt;
-        if(d<=step){this.active.setPosition(...target);this.node=t.ids[t.index];t.index++;if(t.index>=t.ids.length){this.finishTravel();return;}}
-        else{this.active.x+=dx/d*step;this.active.y+=dy/d*step;this.walkDistance+=step;const dir=Math.abs(dx)>Math.abs(dy)*1.1?(dx>0?'right':'left'):Math.abs(dy)>Math.abs(dx)*1.1?(dy>0?'down':'up'):this.active.direction;this.setStride(this.active,dir,true);if(Math.floor(this.walkDistance/28)!==this.lastFoot){this.lastFoot=Math.floor(this.walkDistance/28);KingdomSound?.step();}}
-        this.frameParty();
+      this.input.enabled=!$('book').open&&!$('credits').open;if(!this.active)return;const dt=Math.min(delta,50)/1000,canWalk=this.canWalk();
+      this.controls.show(!!KingdomUI.store.actor&&this.input.enabled);
+      const input=this.controls.sample(),before=[this.active.x,this.active.y];let direction=this.active.direction;
+      if(canWalk&&(input.x||input.y)){
+        this.cancelTravel();if(this.overview){this.leaveOverview();this.frameParty(true);}
+        const speed=input.fast?116:84;this.active.setPosition(...this.navigation.move(...before,input.x*speed*dt,input.y*speed*dt));
+        direction=Math.abs(input.x)>Math.abs(input.y)?input.x>0?'right':'left':input.y>0?'down':'up';
+      }else if(canWalk&&this.travel&&!this.overview){
+        const t=this.travel,target=t.points[t.index],dx=target[0]-this.active.x,dy=target[1]-this.active.y,d=Math.hypot(dx,dy),step=Math.min(d,80*dt);
+        if(d>0){this.active.x+=dx/d*step;this.active.y+=dy/d*step;direction=Math.abs(dx)>Math.abs(dy)?dx>0?'right':'left':dy>0?'down':'up';}
+        if(d<=step){t.index++;if(t.index>=t.points.length)this.finishTravel();}
       }
+      const distance=Math.hypot(this.active.x-before[0],this.active.y-before[1]);this.walkDistance+=distance;
+      this.setStride(this.active,direction,distance>.02&&this.canWalk());
+      if(distance>.02){this.frameParty();if(Math.floor(this.walkDistance/24)!==this.lastFoot){this.lastFoot=Math.floor(this.walkDistance/24);KingdomSound?.step();}}
+      const nearby=this.overview?null:this.nearbyPlace();this.controls.nearby(nearby);
+      if(!this.travel&&canWalk)$('location').textContent=this.overview?'Our little kingdom':nearby?.name||'Wandering the kingdom';
       this.hero.setDepth(this.hero.y);this.knight.setDepth(this.knight.y);
       if(!reduced()){
         this.residents?.forEach((p,i)=>{const move=!this.isNight&&((time/1000+i*2.1)%19)<3;if(p.kind==='hens'||p.kind==='hens-eat'){p.x=p.home.x+(move?Math.sin(time/800+i)*8:0);p.body.setTexture(move?'hens':'hens-eat',4+(move?Math.floor(time/240)%4:Math.floor(time/700+i)%4));}else if(p.petName==='Ruby'){p.body.setFrame(move?4+Math.floor(time/210)%3:4);p.x=p.home.x+(move?Math.sin(time/1500)*9:0);}else p.body.y=Math.round(Math.sin(time/2000+i)*.4);p.setDepth(p.y);});

@@ -32,6 +32,7 @@ The local rehearsal stores data under `kingdom-rehearsal-v1`, separate from the 
 
 ## Implemented first release
 
+- Direct exploration: WASD or arrow keys, Shift for a brisk walk, and E to interact nearby. Phones have a hold-and-drag direction pad and a contextual action button. Ground taps find a clear route; map destinations and “Arrive now” remain available. Manual movement takes over immediately. Water, building footprints, tree trunks and furniture block walking; both bridges remain traversable. Opening journals pauses walking, and losing focus clears held input.
 - Two explorable homes, shared castle, inn, workshop, pond and Pearl's memorial; improved paths, mountain art, cottages and stride-matched character animation.
 - Three completed date chapters; editable per-person memory notes; original invitation replay.
 - Daily mood/energy/support preference and recent history; food and coffee visits with independent half-point ratings, individual tasting notes and repeat visits.
