@@ -36,6 +36,7 @@ garden.css
 .local-review/
 __pycache__/
 tests/
+supabase/
 pixel.html
 build_pixel.py
 build_kingdom.py

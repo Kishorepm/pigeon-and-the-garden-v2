@@ -112,7 +112,7 @@
       for(let x=256;x<=448;x+=96){this.prop('castle','brick',x,320);this.prop('castle','top',x,256);}
       this.prop('castle','tower',208,334);this.prop('castle','tower',496,334);
       this.prop('castle','banner',242,330);this.prop('castle','banner',444,330);
-      this.add.image(331,374,'throne').setOrigin(.5,1).setDisplaySize(49,65).setDepth(374);
+      this.throne=this.add.image(331,374,'throne').setOrigin(.5,1).setDisplaySize(49,65).setDepth(374);
       this.prop('castle','brick',208,400);this.prop('castle','top',208,336);
       this.prop('castle','arch',464,459);
       this.gate=this.prop('castle','bars',464,454).setDisplaySize(38,38).setDepth(460);
@@ -252,5 +252,6 @@
   window.extendChapterWorld?.(Journey);
   window.extendChapterCinema?.(Journey);
   window.extendChapterStory?.(Journey,{$,copy,action,focusAction,routes,START,WALK,reduced:()=>reduced,cameraFollow:CAMERA_FOLLOW});
-  new Phaser.Game({type:Phaser.AUTO,parent:'world',backgroundColor:'#60912f',pixelArt:true,roundPixels:true,antialias:false,scale:{mode:Phaser.Scale.RESIZE,width:document.querySelector('.adventure').clientWidth,height:document.querySelector('.adventure').clientHeight},scene:Journey,audio:{noAudio:true},render:{powerPreference:'low-power'},banner:false});
+  window.extendLivingKingdom?.(Journey,{reduced:()=>reduced});
+  new Phaser.Game({type:document.documentElement.dataset.worldRenderer==='canvas'?Phaser.CANVAS:Phaser.AUTO,parent:'world',backgroundColor:'#60912f',pixelArt:true,roundPixels:true,antialias:false,scale:{mode:Phaser.Scale.RESIZE,width:document.querySelector('.adventure').clientWidth,height:document.querySelector('.adventure').clientHeight},scene:Journey,audio:{noAudio:true},render:{powerPreference:'low-power'},banner:false});
 })();

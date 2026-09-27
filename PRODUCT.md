@@ -16,7 +16,7 @@ The approved sequel uses the original clear pixel game, not the subsequently rej
 
 ## Anti-references
 
-No conventional romance symbols, neon, glitch, CRT effects, generic questionnaire styling, stock photography or glossy app surfaces. Preserve the existing pixel-art palette and locally vendored type.
+No neon, glitch, CRT effects, generic questionnaire styling, stock photography or glossy app surfaces. Preserve the existing pixel-art palette and locally vendored type. Personal keepsakes should refer to actual shared memories.
 
 ## Principles
 
@@ -24,4 +24,10 @@ Make choices feel like encounters in a garden. Use varied compositions while kee
 
 ## Accessibility
 
-One scene at a time, portrait mobile first, safe-area clearance, minimum 44px controls, visible keyboard focus and reduced-motion support. Fit the ordinary portrait flow without scrolling; allow accessible overflow on unusually small screens and a scrolling two-column landscape layout. Use system type for longer reading. No sound, analytics, accounts or third-party asset requests.
+One scene at a time, portrait mobile first, safe-area clearance, minimum 44px controls, visible keyboard focus and reduced-motion support. Fit the ordinary portrait flow without scrolling; allow accessible overflow on unusually small screens and a scrolling two-column landscape layout. Use system type for longer reading. No analytics or third-party asset requests.
+
+## Living kingdom expansion
+
+The user approved implementation of the shared love-app concept in docs/design-concepts/LIVING-KINGDOM.md. Build on the shipped game in a separate kingdom.html preview. North is his home, South is hers, and the central castle is shared. Three dates are complete (August 30, September 12 and September 26, 2026). Date 3 was Manawa Bay shopping mall and their first kiss. Pearl has a memorial rather than a present-day pond character; one new unnamed duckling joins the residents.
+
+Add private accounts and persistence, user-authored missions and rules, daily moods, independent food/coffee ratings, pigeon post, ideas, keepsakes and partner-awarded points. Optional sound and weather are now requested features. Keep startup resilient on iPhone, preserve the existing invitation for replay, and label disconnected/on-device previews honestly. Supabase must be configured and tested before shared-phone functionality is represented as live.

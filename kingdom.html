@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-kingdom="living" data-world-renderer="canvas">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#233d31"><meta name="robots" content="noindex,nofollow"><title>Our little kingdom</title><link rel="icon" href="favicon.svg"><link rel="stylesheet" href="fonts/pixelify.css"><link rel="stylesheet" href="kingdom.css"></head>
+<body>
+<main class="adventure" aria-label="Our living pixel kingdom">
+  <div id="world" role="img" aria-label="A pixel kingdom with two homes, a shared castle, an inn and a peaceful pond."></div><div class="world-vignette" aria-hidden="true"></div>
+  <header class="realm-header"><div class="realm-brand"><span class="compass" aria-hidden="true">N<br>✦</span><div><span class="eyebrow">OUR LITTLE KINGDOM</span><strong id="location">A place for both of us.</strong></div></div><div class="weather"><span id="realm-time">Auckland time</span><span id="realm-weather">Following the daylight</span></div><button id="settings-open" class="square" aria-label="Open settings">⚙︎</button></header>
+  <aside class="world-tools" aria-label="World controls"><button id="map-open" aria-label="Show kingdom map">Map</button><button id="home-open">My home</button><button id="sound" aria-pressed="false" aria-label="Enable ambient sound">Sound off</button><button id="motion" aria-pressed="false" aria-label="Reduce animation">≈</button></aside>
+  <div class="chapter-mark" aria-hidden="true"><span>EST. AUGUST 30</span><span>THREE CHAPTERS · ONE LITTLE WORLD</span></div>
+  <section class="welcome dialogue" id="welcome"><span class="eyebrow" id="welcome-kicker">THE NEXT CHAPTER IS EVERYDAY</span><h1 id="welcome-title">Welcome home.</h1><p id="welcome-copy">A little place for our adventures, ordinary days and everything in between.</p><div class="welcome-actions"><button class="primary" id="enter">Enter our kingdom <span>→</span></button><button class="quiet" id="explore">Look around</button></div></section>
+  <div class="travel-note" id="travel-note" hidden><span id="travel-label">Taking the little path…</span><button id="arrive">Arrive now →</button></div>
+  <nav class="bottom-dock" aria-label="Kingdom journal"><button data-panel="today"><span aria-hidden="true">☀︎</span>Today</button><button data-panel="missions"><span aria-hidden="true">⚑</span>Missions</button><button data-panel="post"><span aria-hidden="true">✉︎</span>Pigeon post</button><button data-panel="journal"><span aria-hidden="true">▤</span>Journal</button></nav>
+  <div class="save-status" id="save-status" role="status">A private world, for two.</div>
+  <p class="loading" id="loading" role="status">Opening our little kingdom…<span id="load-progress">0%</span></p>
+  <div hidden><span id="speaker"></span><span id="line-title"></span><span id="line"></span><span id="progress"></span><div id="actions"></div><span id="hint"></span><div id="inventory"></div><div id="landmark"></div><button id="credits-open">Credits</button></div>
+</main>
+<dialog id="book" aria-labelledby="book-title"><header class="book-heading"><div><span class="eyebrow" id="book-kicker">OUR SHARED JOURNAL</span><h2 id="book-title">A little more of us.</h2></div><button class="square" id="book-close" aria-label="Close journal">×</button></header><div id="book-content"></div><footer class="book-footer"><button id="journal-index" class="quiet">← Journal index</button><span id="book-status"></span></footer></dialog>
+<dialog id="credits" aria-label="Art credits"><button id="credits-close">Close</button><h2>Made with good company.</h2><p>Built on the existing Phaser and LPC world. <a href="game-art/credits/index.html">Scenery artists and licences</a> · <a href="game-art/credits/characters-AUTHORS.txt">Character artists</a> · <a href="vendor/PHASER-LICENSE.txt">Phaser MIT licence</a>.</p><p>New cottage, mountain, dwarf and keepsake details are original procedural pixel artwork. Ambient sound is synthesised in the app.</p></dialog>
+<div id="toast" role="status" hidden></div>
+<noscript><p class="loading">Please enable JavaScript to visit the kingdom.</p></noscript>
+<script src="vendor/phaser-3.90.0.min.js"></script><script src="kingdom-model.js"></script><script src="kingdom-paths.js"></script><script src="kingdom-store.js"></script><script src="kingdom-sound.js"></script><script src="kingdom-ui.js"></script><script src="chapter-world.js"></script><script src="kingdom-world.js"></script><script src="slice-world.js"></script>
+</body></html>
