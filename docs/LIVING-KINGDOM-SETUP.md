@@ -33,17 +33,19 @@ The local rehearsal stores data under `kingdom-rehearsal-v1`, separate from the 
 ## Implemented first release
 
 - Direct exploration: WASD or arrow keys, Shift for a brisk walk, and E to interact nearby. Phones have a hold-and-drag direction pad and a contextual action button. Ground taps find a clear route; map destinations and “Arrive now” remain available. Manual movement takes over immediately. Water, building footprints, tree trunks and furniture block walking; both bridges remain traversable. Opening journals pauses walking, and losing focus clears held input.
-- Two explorable homes, shared castle, inn, workshop, pond and Pearl's memorial; improved paths, mountain art, cottages and stride-matched character animation.
+- Two explorable homes, shared castle, guild hall, workshop, pond and Pearl's memorial; improved paths, mountain art, cottages and stride-matched character animation.
 - Three completed date chapters; editable per-person memory notes; original invitation replay.
-- Daily mood/energy/support preference and recent history; food and coffee visits with independent half-point ratings, individual tasting notes and repeat visits.
-- Custom missions with steps, participants, acceptance/decline, distinct-place targets, both-person ratings, notes, prerequisite, target date, partner confirmation, archiving and reusable tradition templates.
+- A visible “Us today” check-in with both moods. Pick one mood and optionally leave a note; support preferences and energy are optional extra details. Saved check-ins can be edited and remain in the daily history.
+- The guild hall brings missions, history and tastings together. Tastings store a required place name, optional area/branch, item, optional first score and note, plus each person’s independent half-point rating. The same place and branch count once toward a quest; different branches count separately. An earlier unlinked tasting can join a compatible active mission without losing its ratings.
+- Four editable mission templates: taste test, date adventure, little kindness and your own quest. Taste tests have a place target and optional final steps; other types use checklists. Participants, acceptance/decline, completion notes, prerequisites, target date, partner confirmation, archiving and reusable traditions remain available. These are hand-written templates, not AI-generated missions.
+- Refined guild scenery with slate roof, heraldic banners and a clickable outdoor noticeboard. Paths are painted as one connected network while the existing artwork, controls and original invitation remain intact.
 - Partner-decided awards with bounds and duplicate protection; shared token ledger.
 - Text pigeon post, gestures, ideas with interest, keepsake placement, time capsules and duck naming.
 - Local Auckland clock/daylight, cached approximate regional weather through Open-Meteo, opt-in original synthesised ambience, reduced-motion navigation. Mailbox flags, doorstep flowers and the dwarf's scales respond to saved entries.
 
 ## Explicit follow-ups
 
-Photo/voice-note attachments, push notifications, automatic recurring mission creation, live co-presence and a decorative shop are not implemented. Traditions can currently be recreated from a completed mission with “Use as a new template”. Tokens are recorded but do not yet purchase furniture. The weather source is the approximate Auckland region; it is not either person's live location. Weather failures never block startup.
+AI mission generation, photo/voice-note attachments, push notifications, automatic recurring mission creation, live co-presence and a decorative shop are not implemented. Traditions can currently be recreated from a completed mission with “Use as a new template”. Tokens are recorded but do not yet purchase furniture. The weather source is the approximate Auckland region; it is not either person's live location. Weather failures never block startup.
 
 ## Acceptance checks
 
@@ -58,9 +60,9 @@ Photo/voice-note attachments, push notifications, automatic recurring mission cr
 
 ## Local verification
 
-Run `node --test tests/kingdom-model.test.cjs tests/kingdom-api.test.cjs tests/kingdom-store.test.cjs tests/chapter-model.test.js tests/chapter-response.test.js`.
+Run `node --test tests/kingdom-model.test.cjs tests/kingdom-guild.test.cjs tests/kingdom-navigation.test.cjs tests/kingdom-api.test.cjs tests/kingdom-store.test.cjs tests/chapter-model.test.js tests/chapter-response.test.js`.
 Serve this worktree with `python devserver.py 8124`, then open `http://localhost:8124/kingdom.html`.
-With Playwright available, run `node --test tests/kingdom-browser.cjs tests/mobile-startup.cjs` (set `PLAYWRIGHT_MODULE` to the installed module if needed). These run WebKit with the iPhone canvas limit, test independent ratings, mission acceptance/completion/awards and canvas resize rendering. The API tests use a simulated Supabase service: they do not establish that your real project is connected.
+With Playwright available, run `node --test --test-concurrency=1 tests/kingdom-browser.cjs tests/kingdom-controls-browser.cjs tests/kingdom-guild-browser.cjs tests/mobile-startup.cjs` (set `PLAYWRIGHT_MODULE` to the installed module if needed). These run WebKit with the iPhone canvas limit, test independent ratings, mission acceptance/completion/awards, typed guild creation, linked tastings, simple mood sharing, direct movement, collision routes and canvas resize rendering. The API tests use a simulated Supabase service: they do not establish that your real project is connected.
 
 The expanded page selects Phaser's Canvas renderer. During verification, WebKit's WebGL surface could become blank when resized; the Canvas renderer retained the world at both viewport sizes. The existing invitation retains its own renderer. Generated textures remain below the iPhone canvas limit.
 Python's static preview cannot run Vercel endpoints: weather is honestly unavailable and accounts remain disabled there. Use `vercel dev` or a configured Vercel preview to test API-backed features.

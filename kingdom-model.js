@@ -4,6 +4,10 @@
   const names={north:'North · the knight',south:'South · the princess'};
   const moods=['Content','Excited','Tender','Tired','Low','Overwhelmed'];
   const needs=['A little company','Encouragement','A chat','Some quiet','Nothing in particular'];
+  const missionKinds=['tasting','date','kindness','custom'];
+  const missionKind=m=>m.kind||(m.target?'tasting':'custom');
+  const placeKey=v=>[v.venue,v.area].filter(Boolean).join(' · ').trim().replace(/\s+/g,' ').toLowerCase();
+  function rating(value){requireThat(typeof value==='number'&&value>=0&&value<=10&&Number.isInteger(value*2),'Choose a score from 0 to 10, in half-points.');return value;}
   const day=(at=new Date())=>new Intl.DateTimeFormat('en-CA',{timeZone:'Pacific/Auckland',year:'numeric',month:'2-digit',day:'2-digit'}).format(at);
   const other=p=>p==='north'?'south':'north';
   const copy=x=>JSON.parse(JSON.stringify(x));
@@ -18,7 +22,7 @@
     const checked=m.steps.filter((_,i)=>m.checks[i]).length;
     const visits=s.visits.filter(v=>v.mission===m.id);
     const rated=visits.filter(v=>people.every(p=>v.ratings[p]!==undefined));
-    const distinct=new Set((m.bothRate?rated:visits).map(v=>v.venue.trim().toLowerCase())).size;
+    const distinct=new Set((m.bothRate?rated:visits).map(placeKey)).size;
     const evidence=!m.evidence||m.people.every(p=>!!m.notes[p]?.trim());
     const ready=checked===m.steps.length&&(!m.target||distinct>=m.target)&&evidence&&(!m.prerequisite||s.missions.some(x=>x.id===m.prerequisite&&x.status==='completed'));
     return {checked,total:m.steps.length,distinct,evidence,ready};
@@ -31,29 +35,39 @@
     const s=copy(state),d=c.data,stamp=now.toISOString();
     switch(c.type){
       case 'mood':{
-        requireThat(moods.includes(d.mood)&&needs.includes(d.need),'Choose a mood and what would feel good.');
-        requireThat(['Low','Medium','High'].includes(d.energy),'Choose your energy.');
-        s.moods[day(now)+':'+actor]={author:actor,day:day(now),mood:d.mood,need:d.need,energy:d.energy,note:text(d.note||'',500),updated:stamp};break;
+        requireThat(moods.includes(d.mood),'Choose the mood that feels closest.');
+        requireThat(!d.need||needs.includes(d.need),'Choose what would feel good.');
+        requireThat(!d.energy||['Low','Medium','High'].includes(d.energy),'Choose your energy.');
+        s.moods[day(now)+':'+actor]={author:actor,day:day(now),mood:d.mood,need:d.need||'',energy:d.energy||'',note:text(d.note||'',500),updated:stamp};break;
       }
       case 'visit':{
-        if(d.mission){const m=find(s,'missions',d.mission);requireThat(m.people.includes(actor)&&m.status==='active','Choose an active mission you joined.');}
+        if(d.mission){const m=find(s,'missions',d.mission);requireThat(m.people.includes(actor)&&m.status==='active'&&missionKind(m)==='tasting','Choose an active taste-test mission you joined.');requireThat(!m.category||m.category==='Any'||m.category===d.category,'This item does not match the mission’s tasting category.');}
         requireThat(date(d.day)&&d.day<=day(now),'Choose a real visit date, today or earlier.');
         requireThat(['Coffee','Food','Other'].includes(d.category),'Choose an item category.');
-        s.visits.push({id:c.id,author:actor,venue:required(d.venue),item:required(d.item),category:d.category,day:d.day,mission:d.mission||null,ratings:{},notes:{}});break;
+        const scored=d.score!==undefined&&d.score!==null&&d.score!=='';
+        s.visits.push({id:c.id,author:actor,venue:required(d.venue),area:text(d.area||'',100),item:required(d.item),category:d.category,day:d.day,mission:d.mission||null,ratings:scored?{[actor]:rating(d.score)}:{},notes:{[actor]:text(d.note||'',300)}});break;
+      }
+      case 'link-visit':{
+        const v=find(s,'visits',d.visit),m=find(s,'missions',d.mission);
+        requireThat(m.people.includes(actor)&&m.status==='active'&&missionKind(m)==='tasting','Choose an active taste-test mission you joined.');
+        requireThat(!v.mission||v.mission===m.id,'That tasting already belongs to another mission.');
+        requireThat(!m.category||m.category==='Any'||m.category===v.category,'This item does not match the mission’s tasting category.');v.mission=m.id;break;
       }
       case 'rate':{
-        const v=find(s,'visits',d.id);requireThat(typeof d.score==='number'&&d.score>=0&&d.score<=10&&Number.isInteger(d.score*2),'Choose a score from 0 to 10, in half-points.');
-        v.ratings[actor]=d.score;v.notes[actor]=text(d.note||'',300);v.again={...v.again,[actor]:!!d.again};break;
+        const v=find(s,'visits',d.id);v.ratings[actor]=rating(d.score);v.notes[actor]=text(d.note||'',300);v.again={...v.again,[actor]:!!d.again};break;
       }
       case 'mission':{
         requireThat(['me','partner','both'].includes(d.who),'Choose who this mission is for.');
         const participants=d.who==='me'?[actor]:d.who==='partner'?[other(actor)]:people.slice();
-        const steps=(d.steps||[]).map(x=>required(x,140));requireThat(steps.length>0&&steps.length<=12,'Add between one and twelve steps.');
+        const kind=d.kind||(d.target?'tasting':'custom');requireThat(missionKinds.includes(kind),'Choose a mission type.');
+        const steps=(d.steps||[]).map(x=>required(x,140));requireThat((steps.length>0||kind==='tasting')&&steps.length<=12,kind==='tasting'?'Keep any final steps to twelve or fewer.':'Add between one and twelve steps.');
         requireThat(Number.isInteger(d.target)&&d.target>=0&&d.target<=30,'The tasting target must be between 0 and 30.');
+        requireThat(kind==='tasting'?d.target>0:!d.target&&!d.bothRate,'Place targets and tasting ratings belong to taste-test missions.');
+        const category=kind==='tasting'?(d.category||'Any'):null;requireThat(!category||['Coffee','Food','Any'].includes(category),'Choose coffee, food, or either.');
         requireThat(!d.due||date(d.due),'Choose a valid target date.');
         requireThat(['once','weekly','monthly'].includes(d.repeat||'once'),'Choose a repeat schedule.');
         if(d.prerequisite)find(s,'missions',d.prerequisite);
-        s.missions.push({id:c.id,author:actor,title:required(d.title),description:text(d.description||'',800),people:participants,steps,checks:{},notes:{},target:d.target,bothRate:!!d.bothRate,evidence:!!d.evidence,confirm:!!d.confirm,due:d.due||'',repeat:d.repeat||'once',prerequisite:d.prerequisite||null,accepted:participants.includes(actor)?[actor]:[],status:participants.every(p=>p===actor)?'active':'proposed',created:stamp,version:1});break;
+        s.missions.push({id:c.id,kind,category,author:actor,title:required(d.title),description:text(d.description||'',800),people:participants,steps,checks:{},notes:{},target:d.target,bothRate:!!d.bothRate,evidence:!!d.evidence,confirm:!!d.confirm,due:d.due||'',repeat:d.repeat||'once',prerequisite:d.prerequisite||null,accepted:participants.includes(actor)?[actor]:[],status:participants.every(p=>p===actor)?'active':'proposed',created:stamp,version:2});break;
       }
       case 'accept':{
         const m=find(s,'missions',d.id);requireThat(m.people.includes(actor)&&m.status==='proposed','Only an invited participant can accept.');
@@ -108,5 +122,5 @@
     const s=copy(state);delete s.applied;
     s.capsules.forEach(x=>{x.contributors=Object.keys(x.entries);if(x.opens>day(now)){delete x.entries;x.sealed=true;}});return s;
   }
-  return {people,names,moods,needs,day,other,initial,command,progress,visible,date};
+  return {people,names,moods,needs,missionKinds,missionKind,placeKey,day,other,initial,command,progress,visible,date};
 });

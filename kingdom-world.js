@@ -4,14 +4,43 @@ window.extendLivingKingdom=function(Journey,{reduced}){
   Object.assign(Journey.prototype,{
     makeGround(){baseGround.call(this);this.children.list.forEach(o=>{if(o.texture?.key==='grass-block')o.setDepth(-5000);if(o.texture?.key==='world-ground')o.setDepth(-4999);});},
     paintChapterGround(c,path,terrain){
-      P.edges.forEach(([a,b])=>path([P.nodes[a],P.nodes[b]],a.includes('north')||b.includes('north')?43:50));
+      // Replace the invitation's old routes and draw the whole network in two
+      // passes. Junctions share their dirt fill instead of leaving round seams.
+      const grass=document.createElement('canvas');grass.width=grass.height=32;grass.getContext('2d').drawImage(terrain,96,32,32,32,0,0,32,32);
+      c.fillStyle=c.createPattern(grass,'repeat');c.fillRect(-512,-320,1792,1664);
+      const dirt=document.createElement('canvas');dirt.width=dirt.height=32;dirt.getContext('2d').drawImage(terrain,96,128,32,32,0,0,32,32);
+      c.lineCap=c.lineJoin='round';
+      for(const [width,colour] of [[57,'#788949'],[49,c.createPattern(dirt,'repeat')]]){
+        c.beginPath();P.edges.forEach(([a,b])=>{c.moveTo(...P.nodes[a]);c.lineTo(...P.nodes[b]);});c.lineWidth=width;c.strokeStyle=colour;c.stroke();
+      }
       c.fillStyle='#6d8e4b';c.beginPath();c.ellipse(55,674,113,82,0,0,Math.PI*2);c.fill();
       c.fillStyle='#b8b282';c.beginPath();c.ellipse(55,674,100,70,0,0,Math.PI*2);c.fill();
       const tile=document.createElement('canvas');tile.width=tile.height=32;tile.getContext('2d').drawImage(terrain,32,352,32,32,0,0,32,32);c.fillStyle=c.createPattern(tile,'repeat');c.beginPath();c.ellipse(55,671,91,62,0,0,Math.PI*2);c.fill();
-      [[350,-70,180,80],[180,1080,200,95],[-165,771,115,73],[1040,810,150,105]].forEach(([x,y,w,h])=>{c.fillStyle='#a6ad71';c.fillRect(x-w/2,y-h/2,w,h);c.fillStyle='#c4bb87';c.fillRect(x-w/2+7,y-h/2+7,w-14,h-14);});
+      [[350,-70,180,80],[180,1080,200,95],[-165,771,115,73],[1040,810,150,105],[940,723,240,64]].forEach(([x,y,w,h])=>{
+        c.fillStyle='#a6ad71';c.fillRect(x-w/2,y-h/2+8,w,h-16);c.fillRect(x-w/2+8,y-h/2,w-16,h);
+        c.fillStyle='#bbb28a';c.fillRect(x-w/2+9,y-h/2+12,w-18,h-24);
+        c.fillStyle='#d3c8a0';for(let yy=y-h/2+16;yy<y+h/2-12;yy+=13)for(let xx=x-w/2+14;xx<x+w/2-18;xx+=18)c.fillRect(xx,yy,14,8);
+      });
       c.fillStyle='#a7b777';for(let i=0;i<80;i++){const x=-230+(i*59)%470,y=945+(i*31)%210;if(Math.hypot(x-180,y-1120)>100)c.fillRect(x,y,3,3);}
     },
-    makeVillage(){baseVillage.call(this);},
+    makeVillage(){
+      baseVillage.call(this);
+      const tex=this.textures.get('inn'),c=tex.context;
+      c.save();c.beginPath();c.moveTo(14,125);c.lineTo(40,48);c.lineTo(163,48);c.lineTo(194,125);c.closePath();c.clip();c.fillStyle='#344f5ca8';c.fillRect(12,45,188,88);c.restore();
+      c.fillStyle='#4c4935';c.fillRect(29,118,151,18);c.fillStyle='#c6ab6c';c.fillRect(30,118,149,3);c.fillStyle='#776748';c.fillRect(31,133,147,3);
+      c.fillStyle='#d7bc78';c.beginPath();c.moveTo(104,63);c.lineTo(114,70);c.lineTo(112,85);c.lineTo(104,91);c.lineTo(96,85);c.lineTo(94,70);c.closePath();c.fill();c.fillStyle='#42584e';c.fillRect(102,71,4,12);c.fillRect(98,75,12,3);tex.refresh();
+      this.children.list.filter(o=>o.type==='Text'&&o.text==='THE LITTLE INN').forEach(o=>o.destroy());
+      this.add.text(940,615,'THE GUILD HALL',{fontFamily:'Pixelify Sans',fontSize:'10px',color:'#eedbb0',backgroundColor:'#4c4935',padding:{x:6,y:4}}).setOrigin(.5).setDepth(701);
+      const banners=this.add.graphics().setDepth(703);
+      [879,1000].forEach(x=>{banners.fillStyle(0x7a5843).fillRect(x-12,624,27,4);banners.fillStyle(0x91604e).fillRect(x-9,628,22,40).fillTriangle(x-9,668,x+13,668,x+2,678);banners.fillStyle(0xd6b571).fillRect(x,635,4,21).fillRect(x-5,642,14,4);});
+      const board=this.textures.createCanvas('guild-board',64,76),p=board.context;p.imageSmoothingEnabled=false;
+      const r=(colour,x,y,w,h)=>{p.fillStyle=colour;p.fillRect(x,y,w,h);};
+      r('#3d4930',5,24,54,36);r('#594b33',7,23,50,34);r('#a18b5b',9,25,46,3);r('#68553a',9,57,5,19);r('#68553a',50,57,5,19);
+      r('#4b4a35',2,20,60,6);r('#71815b',7,15,50,5);r('#8b9b6c',12,11,40,4);
+      [[13,32,15,18],[34,30,17,22]].forEach(([x,y,w,h],i)=>{r('#d7c399',x+1,y+2,w,h);r('#efe0b8',x,y,w,h);r('#98734d',x+6,y+2,3,3);r('#b5a178',x+3,y+8,w-6,1);r('#b5a178',x+3,y+12,w-7,1);if(i)r('#8b6752',x+6,y+16,5,3);});board.refresh();
+      this.add.image(821,707,'guild-board').setOrigin(.5,1).setDepth(707);
+      this.add.zone(821,674,64,76).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit('inn'));
+    },
     signpost(x,y,label,right){
       const word=label==='HOME'?'CASTLE':label==='THE LONG WAY'?'SOUTH':label;
       const g=this.add.graphics().setDepth(y);g.fillStyle(0x574b32).fillRect(x-2,y-33,5,34);const w=Math.max(54,word.length*6+12);g.fillStyle(0x584c31).fillRect(x-w/2-1,y-46,w+2,19);g.fillStyle(0xbca570).fillRect(x-w/2,y-45,w,16);g.fillStyle(0xd8c089).fillRect(x-w/2+1,y-44,w-2,2);
@@ -130,8 +159,8 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       this.children.list.forEach(o=>{
         const key=o.texture?.key;
         if(key==='trees')obstacles.push({type:'circle',x:o.x,y:o.y-6,r:11});
-        if(['table','barrels','crates','fence'].includes(key)){
-          const w=key==='table'?o.displayWidth-10:key==='fence'?o.displayWidth:20,h=key==='fence'?7:13;
+        if(['table','barrels','crates','fence','guild-board'].includes(key)){
+          const w=key==='table'?o.displayWidth-10:key==='fence'?o.displayWidth:key==='guild-board'?48:20,h=key==='fence'||key==='guild-board'?7:13;
           obstacles.push({type:'rect',x:o.x-w/2,y:o.y-h,w,h});
         }
       });
@@ -182,9 +211,10 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       if(p){this.node=p.node;$('location').textContent=p.name;KingdomSound?.place(destination);KingdomUI.open(p.panel);}
     },
     nearbyPlace(){
-      const actions={north:'Daily journal',south:'Daily journal',castle:'Our memories',inn:'Rate a tasting',dwarf:'Visit the keeper',pond:'Meet the residents',memorial:'Remember Pearl'};
+      const actions={north:'Check in today',south:'Check in today',castle:'Our memories',inn:'Mission board',dwarf:'Visit the keeper',pond:'Meet the residents',memorial:'Remember Pearl'};
       let best=null,distance=Infinity;
       for(const [id,p] of Object.entries(P.places)){const [x,y]=P.nodes[p.node],d=Math.hypot(this.active.x-x,this.active.y-y);if(d<72&&d<distance){best={...p,id,action:actions[id]};distance=d;}}
+      const boardDistance=Math.hypot(this.active.x-821,this.active.y-746);if(boardDistance<55&&boardDistance<distance){best={id:'guild-board',name:'The guild noticeboard',panel:'missions',action:'Read the board'};distance=boardDistance;}
       for(const pet of this.residents||[]){const d=Math.hypot(this.active.x-pet.x,this.active.y-pet.y);if(d<42&&d<distance){best={id:pet.petName,name:pet.petName,panel:'residents',action:'Say hello'};distance=d;}}
       return best;
     },

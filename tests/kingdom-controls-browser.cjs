@@ -30,11 +30,11 @@ test('keyboard exploration stops on release, respects collision, interacts, and 
     await page.keyboard.press('e');await page.locator('#book[open]').waitFor();
     const atHome=await position(page);await page.keyboard.down('d');await page.waitForTimeout(250);await page.keyboard.up('d');assert.deepEqual(await position(page),atHome);
     await page.getByRole('button',{name:'Close journal'}).click();
-    await page.getByRole('button',{name:'Missions',exact:true}).click();await page.getByRole('button',{name:'Create a mission',exact:true}).click();
+    await page.getByRole('button',{name:'Guild hall',exact:true}).click();await page.getByRole('button',{name:'Create a mission',exact:true}).click();await page.getByRole('button',{name:/Your own quest Choose/}).click();
     await page.getByLabel('Mission name',{exact:true}).fill('We wander east');await page.getByLabel('Mission name',{exact:true}).press('End');await page.keyboard.type(' wasd');
     assert.deepEqual(await position(page),atHome);assert.match(await page.getByLabel('Mission name',{exact:true}).inputValue(),/wasd$/);
     await page.getByRole('button',{name:'Close journal'}).click();
-    await page.getByRole('button',{name:'Show kingdom map'}).click();await page.getByRole('button',{name:/The little inn Coffee/}).click();
+    await page.getByRole('button',{name:'Show kingdom map'}).click();await page.getByRole('button',{name:/The guild hall Missions/}).click();
     await page.waitForFunction(()=>testScene.travel&&testScene.walkDistance>30);
     await page.keyboard.down('s');await page.waitForFunction(()=>!testScene.travel);await page.keyboard.up('s');
     assert.equal(await page.locator('#travel-note').isVisible(),false);

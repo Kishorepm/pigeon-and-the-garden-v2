@@ -1,9 +1,9 @@
 /* DOM journals remain readable and keyboard-accessible beside the pixel world. */
 (() => {
   'use strict';
-  const M=KingdomModel,$=id=>document.getElementById(id),store=new KingdomStore();
+  const M=KingdomModel,V=KingdomPanels,$=id=>document.getElementById(id),store=new KingdomStore();
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const button=(label,act,id='',cls='')=>`<button class="${cls}" data-act="${act}" data-id="${esc(id)}">${esc(label)}</button>`;
+  const button=(label,act,id='',cls='')=>`<button type="button" class="${cls}" data-act="${act}" data-id="${esc(id)}">${esc(label)}</button>`;
   const option=(value,label,selected)=>`<option value="${esc(value)}"${value===selected?' selected':''}>${esc(label)}</option>`;
   const input=(label,name,value='',type='text',extra='')=>`<label>${esc(label)}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;
   const area=(label,name,value='',max=1000)=>`<label>${esc(label)}<textarea name="${name}" maxlength="${max}">${esc(value)}</textarea></label>`;
@@ -13,12 +13,12 @@
   const empty=(title,copy)=>`<div class="empty"><h3>${esc(title)}</h3><p>${esc(copy)}</p></div>`;
   const entry=(title,body,meta='')=>`<article class="book-row"><h3>${esc(title)}</h3>${meta?`<div class="meta">${esc(meta)}</div>`:''}${body}</article>`;
   const chapterData=[{id:'date1',day:'30 AUGUST 2026',title:'The first little adventure',place:'Ambury Regional Park',copy:'A walk, flowers and a few little gifts. A very sharp lookout. And a dark-green outfit that remains open to interpretation.',reward:'The throne',icon:'♜'}, {id:'date2',day:'12 SEPTEMBER 2026',title:'The long way through Kmart',place:'Sylvia Park',copy:'A wander through Kmart, time together, and finally an iced mocha from Starbucks. Our first entry in the tasting journal.',reward:'The crown',icon:'♛'}, {id:'date3',day:'26 SEPTEMBER 2026',title:'A chapter we’ll remember',place:'Manawa Bay shopping mall',copy:'Our third date. A shopping-mall adventure, and our first kiss. A little lantern for a moment that belongs to us.',reward:'The first-kiss lantern',icon:'✦'}];
-  let page='journal',detail='',returnFocus=null;
+  let page='journal',detail='',returnFocus=null,moodEditing=false,boardFilter='missions';
   function toast(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,4200);}
   function heading(title,kicker='OUR SHARED JOURNAL'){$('book-title').textContent=title;$('book-kicker').textContent=kicker;}
   function open(which='journal',id=''){
     if(!store.actor&&!['login','recover','recovery-sent','map','settings','pearl'].includes(which))which='login';
-    page=which;detail=id;render();if(!$('book').open){returnFocus=document.activeElement;$('book').showModal();window.dispatchEvent(new Event('kingdom-dialog'));} $('book-content').scrollTop=0;
+    if(which==='today'&&page!=='today')moodEditing=false;page=which;detail=id;render();if(!$('book').open){returnFocus=document.activeElement;$('book').showModal();window.dispatchEvent(new Event('kingdom-dialog'));} $('book-content').scrollTop=0;
   }
   function close(){$('book').close();returnFocus?.focus?.({preventScroll:true});}
   function state(){return store.view();}
@@ -30,38 +30,32 @@
       case 'recovery-sent':heading('Check your pigeon post.','PASSWORD HELP');html='<p>If that email belongs to an account, a password link is on its way. Open it on the device where you want to sign in.</p>'+button('Back to sign in','open','login','quiet');break;
       case 'password':heading('A key of your own.','YOUR PRIVATE HOME');html=form('password',input('New password','password','','password','required minlength="10" autocomplete="new-password"')+input('Confirm password','confirm','','password','required minlength="10" autocomplete="new-password"'),'Save my password');break;
       case 'login':heading('Two homes. One kingdom.','COME ON IN');html=`<p>Choose your own home and pick up where we left off.</p>${store.config?.configured?form('login',input('Email','email','','email','required autocomplete="username"')+input('Password','password','','password','required autocomplete="current-password"'),'Enter my home')+button('Forgot your password?','open','recover','quiet'):'<div class="notice">The shared homes are being prepared. This preview saves on this device only; it does not send anything to your partner.</div>'}<h3 style="margin-top:22px">Explore the preview</h3><div class="home-choice">${button('North · the knight','preview','north')}${button('South · the princess','preview','south')}</div><p class="soft-line">Preview characters share one local rehearsal. They are not signed-in accounts.</p>`;break;
-      case 'journal':heading('A little more of us.');html=`<p>Our ordinary days and our favourite adventures, kept in one place.</p><div class="index-list">${[['today','Today','A mood, a thought, a little company'],['missions','The mission board','Adventures with rules of our own'],['memories','Our chapters','Three dates, already part of us'],['tastes','The little inn','Coffee, food & honest opinions'],['post','Pigeon post','Words left just for you'],['ideas','Someday','Places and possibilities'],['keepsakes','Our keepsakes','Make yourselves at home'],['capsules','Time capsules','A little something for later'],['ledger','The dwarf’s ledger','Good deeds, duly noted'],['residents','The residents','Everyone who calls this home'],['pearl','Pearl’s garden','Always part of our story'],['settings','Settings','Sound, account & the little details']].map(([id,title,sub])=>`<button data-act="open" data-id="${id}">${esc(title)}<small>${esc(sub)}</small></button>`).join('')}</div>`;break;
-      case 'today':{
-        heading('How is your little world?','TODAY · '+M.day());
-        const mine=s.moods[M.day()+':'+who],theirs=s.moods[M.day()+':'+M.other(who)];
-        html=theirs?entry('A word from '+(who==='north'?'South':'North'),`<p>${esc(theirs.note||'A small check-in, just for today.')}</p><span class="ribbon">${esc(theirs.mood)} · ${esc(theirs.energy)} energy</span><p class="soft-line">Would welcome: ${esc(theirs.need)}</p>`,theirs.day):empty('A little room for today.','Your partner hasn’t shared a mood today. There’s no hurry.');
-        html+=form('mood',select('How do you feel?','mood',M.moods,mine?.mood)+`<div class="split">${select('Your energy','energy',['Low','Medium','High'],mine?.energy||'Medium')}${select('What would feel good?','need',M.needs,mine?.need||M.needs[0])}</div>`+area('A little note, if you like','note',mine?.note||'',500),'Share today');
-        html+=`<div class="row-actions inline-form">${button('Leave a little gesture','open','gesture','quiet')}${button('Our recent days','open','days','quiet')}</div>`;break;
-      }
+      case 'journal':heading('A little more of us.');html=`<p>Our ordinary days and our favourite adventures, kept in one place.</p><div class="index-list">${[['today','Today','A mood, a thought, a little company'],['missions','The guild hall','Our missions, taste tests & adventures'],['memories','Our chapters','Three dates, already part of us'],['post','Pigeon post','Words left just for you'],['ideas','Someday','Places and possibilities'],['keepsakes','Our keepsakes','Make yourselves at home'],['capsules','Time capsules','A little something for later'],['ledger','The dwarf’s ledger','Good deeds, duly noted'],['residents','The residents','Everyone who calls this home'],['pearl','Pearl’s garden','Always part of our story'],['settings','Settings','Sound, account & the little details']].map(([id,title,sub])=>`<button data-act="open" data-id="${id}">${esc(title)}<small>${esc(sub)}</small></button>`).join('')}</div>`;break;
+      case 'today':heading('Us, today.','A LITTLE CHECK-IN · '+M.day());html=V.today(s,who,moodEditing);break;
       case 'days':{
         heading('The ordinary days matter too.','OUR DAILY JOURNAL');const days=[...new Set(Object.values(s.moods).map(m=>m.day))].sort().reverse();
-        html=days.length?days.slice(0,30).map(day=>entry(day,M.people.map(p=>{const m=s.moods[day+':'+p];return `<div class="day-entry"><h4>${p==='north'?'North':'South'}</h4>${m?`<p>${esc(m.mood)} · ${esc(m.energy)} energy<br>${esc(m.note||'A quiet little check-in.')}</p><p class="soft-line">Would welcome: ${esc(m.need)}</p>`:'<p class="soft-line">No check-in for this day.</p>'}</div>`;}).join(''))).join(''):empty('A fresh page.','Today’s little check-in is a good place to begin.');break;
+        html=days.length?days.slice(0,30).map(day=>entry(day,M.people.map(p=>{const m=s.moods[day+':'+p];return `<div class="day-entry"><h4>${p==='north'?'North':'South'}</h4>${m?`<p>${esc(V.moodName(m.mood))}${m.energy?' · '+esc(m.energy)+' energy':''}<br>${esc(m.note||'A quiet little check-in.')}</p>${m.need?`<p class="soft-line">Would welcome: ${esc(m.need)}</p>`:''}`:'<p class="soft-line">No check-in for this day.</p>'}</div>`;}).join(''))).join(''):empty('A fresh page.','Today’s little check-in is a good place to begin.');break;
       }
       case 'memories':heading('Three chapters. Still unfolding.','OUR CHRONICLE');html=chapterData.map(c=>entry(c.title,`<p>${esc(c.place)}</p><div class="row-actions">${button('Open this memory','memory',c.id)}</div>`,c.day+' · COMPLETED')).join('')+`<p class="soft-line">The throne, crown and lantern are already yours. The next chapter is unwritten.</p><a class="quiet" href="slice.html" target="_blank" rel="noopener">Replay the original invitation ↗</a>`;break;
       case 'memory':{const c=chapterData.find(c=>c.id===detail);if(!c){open('memories');return;}heading(c.title,c.day);html=`<div class="memory-illustration"><span class="memory-emblem" aria-hidden="true">${c.icon}</span></div><p><strong>${esc(c.place)}</strong></p><p>${esc(c.copy)}</p><span class="ribbon">${esc(c.reward)} · earned together</span>${s.memories[c.id]?.[M.other(who)]?entry('Their little memory',`<p>${esc(s.memories[c.id][M.other(who)])}</p>`):''}${form('memory',area('Your memory of that day','note',s.memories[c.id]?.[who]||'',1800),'Keep this memory',c.id)}`;break;}
-      case 'tastes':{
-        heading('An excellent excuse for a detour.','THE LITTLE INN');
-        html=`<p>Finding our favourite iced mocha, one honest opinion at a time.</p><div class="row-actions">${button('Add a tasting','open','visit-new','primary')}${button('Our taste book','open','preferences','quiet')}</div>`;
-        html+=s.visits.slice().reverse().map(v=>entry(v.item,`<div class="score-pair">${M.people.map(p=>`<div class="score"><span>${p==='north'?'North':'South'}</span><strong>${v.ratings[p]??'—'}<span> / 10</span></strong>${v.notes[p]?`<p class="rating-note">${esc(v.notes[p])}</p>`:''}${v.again?.[p]?'<small>Would order again</small>':''}</div>`).join('')}</div>${M.people.every(p=>v.ratings[p]!==undefined)?`<p class="soft-line">Together: ${((v.ratings.north+v.ratings.south)/2).toFixed(1)} / 10</p>`:'<p class="soft-line">Waiting for both opinions.</p>'}<div class="row-actions">${button(v.ratings[who]===undefined?'Give your rating':'Edit your rating','rate',v.id)}</div>`,v.venue+' · '+v.day)).join('');break;
+      case 'tastes':heading('Our tasting book.','THE GUILD HALL');html=V.tastings(s,who);break;
+      case 'visit-new':{
+        const mission=s.missions.find(m=>m.id===detail),choices=s.missions.filter(m=>m.status==='active'&&m.people.includes(who)&&M.missionKind(m)==='tasting');
+        heading('Meet the next contender.',mission?'TASTE TEST · '+mission.title:'GUILD HALL · ADD A TASTING');
+        html=form('visit',input('Place name','venue','','text','required maxlength="100" placeholder="e.g. Starbucks"')+input('Area or branch (optional)','area','','text','maxlength="100" placeholder="e.g. Sylvia Park"')+input('What did you try?','item','','text','required maxlength="100" placeholder="e.g. Iced mocha"')+`<div class="split">${select('Kind','category',mission?.category&&mission.category!=='Any'?[mission.category]:['Coffee','Food','Other'])}${input('Visit date','day',M.day(),'date',`required max="${M.day()}"`)}</div>`+input('Your score / 10 (optional)','score','','number','min="0" max="10" step="0.5" placeholder="0–10"')+area('Your tasting note (optional)','note','',300)+(mission?`<input type="hidden" name="mission" value="${mission.id}"><p class="linked-quest">Adding to <strong>${esc(mission.title)}</strong></p>`:select('Mission (optional)','mission',[['','Keep in our tasting book'],...choices.map(m=>[m.id,m.title])])),'Save this tasting');break;
       }
-      case 'visit-new':heading('A new contender.','ADD A TASTING');html=form('visit',input('Place','venue','','text','required maxlength="100" placeholder="Café or restaurant"')+input('What did you try?','item','','text','required maxlength="100" placeholder="Iced mocha"')+`<div class="split">${select('Kind','category',['Coffee','Food','Other'])}${input('Visit date','day',M.day(),'date',`required max="${M.day()}"`)}</div>`+select('Link to a mission (optional)','mission',[['','Just a little tasting'],...s.missions.filter(m=>m.status==='active'&&m.people.includes(who)).map(m=>[m.id,m.title])],detail),'Add to our journal');break;
-      case 'rate':{const v=s.visits.find(x=>x.id===detail);heading(v.item,v.venue);html=form('rate',input('Your score / 10','score',v.ratings[who]??'','number','min="0" max="10" step="0.5" required')+area('What did you think?','note',v.notes[who]||'',300)+check('I would order this again','again',v.again?.[who]),'Save my opinion',detail);break;}
+      case 'rate':{const v=s.visits.find(x=>x.id===detail);if(!v){open('tastes');return;}heading('Your honest opinion.',v.venue+(v.area?' · '+v.area:''));html=`<p class="rating-item">${esc(v.item)}</p>`+form('rate',input('Your score / 10','score',v.ratings[who]??'','number','min="0" max="10" step="0.5" required')+area('What did you think?','note',v.notes[who]||'',300)+check('I would order this again','again',v.again?.[who]),'Save my opinion',detail);break;}
       case 'preferences':heading('Our taste book.','THE LITTLE THINGS WORTH REMEMBERING');html=entry('From '+(who==='north'?'South':'North'),`<p>${esc(s.preferences[M.other(who)]||'No favourites written here yet.')}</p>`)+form('taste',area('Favourite orders, too-sweet things, places to return to…','note',s.preferences[who],1200),'Save my preferences');break;
-      case 'missions':heading('What shall we get up to?','THE CASTLE NOTICEBOARD');html=`<div class="row-actions">${button('Create a mission','open','mission-new','primary')}${button('Mocha quest template','template','mocha','quiet')}</div>`+(s.missions.length?s.missions.slice().reverse().map(m=>entry(m.title,`<p>${esc(m.description)}</p><div class="row-actions">${button('Open mission','mission',m.id)}</div>`,m.status.toUpperCase()+' · '+m.people.map(p=>p==='north'?'North':'South').join(' + ')+(m.repeat!=='once'?' · '+m.repeat+' tradition':''))).join(''):empty('A blank scroll. A few possibilities.','Create your own adventure. Decide who joins, what counts as done and whether your partner should confirm it.'));break;
+      case 'missions':heading('The guild hall.','OUR MISSION BOARD');html=V.board(s,who,boardFilter);break;
+      case 'mission-types':heading('Choose our next quest.','THE GUILD HALL · NEW MISSION');html=V.typePicker();break;
       case 'mission-new':{
-        heading('Write our next adventure.','CREATE A MISSION');const template=window.KingdomUI.draft||{};
-        html=form('mission',input('Mission name','title',template.title||'','text','required maxlength="100" placeholder="Find our favourite iced mocha"')+area('The idea','description',template.description||'',800)+select('Who is it for?','who',[['both','Both of us'],['me','Just me'],['partner','My partner']],template.who||'both') + area('Steps — one per line','steps',template.steps||'',1500)+`<details><summary>Rules & little details</summary><div>${input('Different tasting places needed (0 for a checklist)','target',template.target||0,'number','min="0" max="30" step="1" required')}${check('Both of us must rate each qualifying tasting','bothRate',!!template.bothRate)}${check('Each participant adds a completion note','evidence',!!template.evidence)}${check('The other person confirms completion','confirm',template.confirm!==false)}<div class="split">${input('Target date (optional)','due',template.due||'','date')}${select('Tradition','repeat',[['once','One adventure'],['weekly','Weekly idea'],['monthly','Monthly idea']],template.repeat||'once')}</div>${select('Complete this mission first (optional)','prerequisite',[['','No prerequisite'],...s.missions.map(m=>[m.id,m.title])],template.prerequisite||'')}</div></details><p class="soft-line">A shared mission is an invitation. Your partner can accept or decline. Repeating missions keep their history; start a fresh copy when you’re ready.</p>`,'Preview the scroll');break;
+        heading('Make it our own.','THE GUILD HALL · CREATE A MISSION');const template=window.KingdomUI.draft||V.template('custom');html=V.missionForm(s,template,{input,area,select,check,form});break;
       }
       case 'mission-preview':{heading('Does this sound like us?','REVIEW YOUR MISSION');const d=window.KingdomUI.missionDraft;html=`<div class="mission-summary"><h3>${esc(d.title)}</h3><p>${esc(d.description)}</p><ol>${d.steps.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><p>${d.target?`Try ${d.target} different places. ${d.bothRate?'Both rate each tasting.':''}`:'Finish the checklist.'} ${d.evidence?'Each participant adds a note.':''} ${d.confirm?'The other person confirms completion.':''}</p><p>${d.due?'Target: '+esc(d.due):'No deadline.'} Points, if awarded, are chosen by your partner.</p></div><div class="row-actions inline-form">${button('Post this mission','post-mission','','primary')}${button('Back to edit','edit-mission','','quiet')}</div>`;break;}
       case 'mission':{
         const m=s.missions.find(x=>x.id===detail);if(!m){open('missions');return;}const p=M.progress(s,m);heading(m.title,m.status.toUpperCase()+' · MISSION SCROLL');
-        html=`<p>${esc(m.description)}</p><ul class="mission-steps">${m.steps.map((t,i)=>`<li><label><input type="checkbox" data-step="${i}" data-id="${m.id}" ${m.checks[i]?'checked':''} ${m.status==='active'&&m.people.includes(who)?'':'disabled'}>${esc(t)}</label></li>`).join('')}</ul>`;
-        if(m.target)html+=`<p class="soft-line">${p.distinct} / ${m.target} different places ${m.bothRate?'rated by both participants':'visited'}.</p>${m.status==='active'&&m.people.includes(who)?button('Add a linked tasting','visit-for',m.id):''}`;
+        html=`${m.status==='proposed'?`<div class="mission-invitation">${m.accepted.includes(who)?'Waiting for your partner to join.':'An invitation for you. Join when it feels right.'}</div>`:''}<p>${esc(m.description)}</p>${m.steps.length?'<h3 class="steps-title">Our steps</h3>':''}<ul class="mission-steps">${m.steps.map((t,i)=>`<li><label><input type="checkbox" data-step="${i}" data-id="${m.id}" ${m.checks[i]?'checked':''} ${m.status==='active'&&m.people.includes(who)?'':'disabled'}>${esc(t)}</label></li>`).join('')}</ul>`;
+        html+=V.missionTastings(s,m,who,{form,select});
         if(m.due)html+=`<p class="soft-line">Target date: ${esc(m.due)}. No penalty for taking your time.</p>`;
         if(m.evidence&&m.status==='active'&&m.people.includes(who))html+=form('mission-note',area('Your completion note','note',m.notes[who]||'',800),'Save my note',m.id);
         html+='<div class="row-actions inline-form">';
@@ -70,7 +64,7 @@
         if(m.status==='awaiting')html+=m.submittedBy!==who?button('Confirm our adventure','confirm',m.id,'primary'):'<p>Waiting for your partner to confirm.</p>';
         if(m.status==='completed'){if(m.people.includes(M.other(who))&&!s.awards.some(a=>a.author===who&&a.mission===m.id))html+=button('Acknowledge their part','award',m.id);html+=button('Use as a new template','repeat',m.id,'quiet');}
         if(m.author===who&&!['completed','archived'].includes(m.status))html+=button('Archive mission','archive',m.id,'quiet');
-        html+='</div>';if(!p.ready&&m.status==='active')html+='<p class="soft-line">Finish the required steps, tasting contributions, notes and prerequisite before completing.</p>';html+=M.people.filter(person=>m.notes[person]&&(person!==who||m.status!=='active')).map(person=>entry((person==='north'?'North':'South')+' · completion note',`<p>${esc(m.notes[person])}</p>`)).join('');break;
+        html+='</div>';if(!p.ready&&m.status==='active')html+=`<p class="soft-line">Still needed: ${[p.checked<p.total?'finish our steps':'',m.target&&p.distinct<m.target?`${m.target-p.distinct} more place(s) ${m.bothRate?'rated by both of us':'visited'}`:'',!p.evidence?'a completion note from each participant':'',m.prerequisite&&!s.missions.some(x=>x.id===m.prerequisite&&x.status==='completed')?'the earlier mission':''].filter(Boolean).join(' · ')}.</p>`;html+=M.people.filter(person=>m.notes[person]&&(person!==who||m.status!=='active')).map(person=>entry((person==='north'?'North':'South')+' · completion note',`<p>${esc(m.notes[person])}</p>`)).join('');break;
       }
       case 'post':{
         heading('A familiar pair of wings.','PIGEON POST');html=`<div class="row-actions">${button('Write a letter','open','letter-new','primary')}${button('Leave a gesture','open','gesture','quiet')}</div>`;
@@ -91,25 +85,39 @@
       default:heading('Our little journal.');html=empty('A page is missing.','Return to the journal index.');
     }
     content.innerHTML=html;
+    $('book').dataset.page=page;
+    const guildPages=['missions','tastes','mission-types','mission-new','mission-preview','mission','visit-new','rate'];
+    $('book').dataset.section=guildPages.includes(page)?'guild':page==='today'?'daily':'journal';
+    $('journal-index').hidden=['journal','login','map'].includes(page);
+    $('journal-index').textContent=['missions','today'].includes(page)?'← Back to the world':guildPages.includes(page)?'← Mission board':'← Journal index';
+    document.querySelectorAll('.bottom-dock [data-panel]').forEach(b=>b.setAttribute('aria-current',b.dataset.panel===(guildPages.includes(page)?'missions':page)?'page':'false'));
   }
   async function perform(type,data,after){await store.send(type,data);toast('A little piece of our story, saved.');if(after)open(after);else render();}
   async function act(action,id){
     const s=state();
-    if(action==='open'){if(id==='mission-new')window.KingdomUI.draft=null;open(id);return;}if(['mission','memory','rate','award'].includes(action)){open(action,id);return;}
+    if(action==='open'){if(id==='mission-types')window.KingdomUI.draft=null;open(id);return;}
+    if(action==='guild-tab'){if(id==='tastes')open('tastes');else{boardFilter=id;open('missions');}return;}
+    if(action==='edit-mood'){moodEditing=true;render();$('book-content').querySelector('.daily-form')?.scrollIntoView({block:'nearest'});return;}
+    if(action==='change-type'){const f=$('book-content').querySelector('form');const draft=Object.fromEntries(new FormData(f));for(const k of ['bothRate','evidence','confirm'])draft[k]=!!draft[k];window.KingdomUI.draft=draft;open('mission-types');return;}
+    if(action==='choose-type'){
+      if(!M.missionKinds.includes(id))return;const old=window.KingdomUI.draft,next=V.template(id);
+      if(old){for(const k of ['title','description','steps','who','evidence','confirm','due','repeat','prerequisite'])if(k in old)next[k]=old[k];if(old.kind===id)for(const k of ['target','category','bothRate'])if(k in old)next[k]=old[k];}
+      window.KingdomUI.draft=next;open('mission-new');return;
+    }if(['mission','memory','rate','award'].includes(action)){open(action,id);return;}
     if(action==='preview'){store.preview(id);close();window.dispatchEvent(new CustomEvent('kingdom-identity',{detail:id}));$('welcome').hidden=true;toast('Exploring '+(id==='north'?'North':'South')+' · on this device only');return;}
     if(action==='logout'){if(store.busy)throw Error('Please let this save finish before changing homes.');store.logout();open('login');return;}
     if(action==='travel'){close();window.dispatchEvent(new CustomEvent('kingdom-travel',{detail:id}));return;}
     if(action==='credits'){close();$('credits').showModal();return;}
     if(action==='export'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(store.state,null,2)],{type:'application/json'}));a.download='our-kingdom-rehearsal.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);return;}
-    if(action==='template'){window.KingdomUI.draft={title:'Find our favourite iced mocha',description:'A very good excuse to try somewhere new together.',steps:'Choose three cafés together\nTry the iced mochas\nPick our current favourite',target:3,bothRate:true};open('mission-new');return;}
+    if(action==='template'){window.KingdomUI.draft={...V.template('tasting'),title:'Find our favourite iced mocha',category:'Coffee',steps:'Choose our current favourite together'};open('mission-new');return;}
     if(action==='repeat'){const m=s.missions.find(x=>x.id===id);window.KingdomUI.draft={...m,due:'',who:m.people.length===2?'both':m.people.includes(store.actor)?'me':'partner',steps:m.steps.join('\n')};open('mission-new');return;}
     if(action==='idea-mission'){const i=s.ideas.find(x=>x.id===id);window.KingdomUI.draft={title:i.title,description:i.note,steps:'Choose the details together\nEnjoy our adventure'};open('mission-new');return;}
     if(action==='visit-for'){open('visit-new',id);return;}
-    if(action==='post-mission'){await perform('mission',window.KingdomUI.missionDraft,'missions');window.KingdomUI.draft=null;return;}
+    if(action==='post-mission'){const id=await store.send('mission',window.KingdomUI.missionDraft);window.KingdomUI.draft=null;open('mission',id);toast('Our new quest is on the board.');return;}
     if(action==='edit-mission'){const d=window.KingdomUI.missionDraft;window.KingdomUI.draft={...d,steps:d.steps.join('\n')};open('mission-new');return;}
     if(['accept','decline','complete','confirm','archive','interest','read-letter'].includes(action))await perform(action,{id});
   }
-  $('book-content').addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;b.disabled=true;try{await act(b.dataset.act,b.dataset.id);}catch(error){toast(error.message);}finally{b.disabled=false;}});
+  $('book-content').addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;e.preventDefault();b.disabled=true;try{await act(b.dataset.act,b.dataset.id);}catch(error){toast(error.message);}finally{b.disabled=false;}});
   $('book-content').addEventListener('change',async e=>{if(!e.target.matches('[data-step]'))return;try{await perform('step',{id:e.target.dataset.id,index:Number(e.target.dataset.step),done:e.target.checked});}catch(error){toast(error.message);render();}});
   $('book-content').addEventListener('submit',async e=>{
     e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f)),type=f.dataset.form,submit=f.querySelector('[type=submit]');submit.disabled=true;f.querySelector('.form-error').textContent='';
@@ -123,17 +131,22 @@
         M.command({...store.state,applied:store.state.applied||[]},store.actor,{id:crypto.randomUUID(),type,data:d});window.KingdomUI.missionDraft=d;open('mission-preview');return;
       }
       if(['rate','memory','mission-note','award','capsule-note'].includes(type))d.id=f.dataset.id;
-      if(type==='rate'){d.score=Number(d.score);d.again=!!d.again;target='tastes';}
-      if(type==='visit')target='tastes';if(type==='letter'||type==='gesture')target='post';if(type==='award'){d.points=Number(d.points);target='ledger';}
+      if(type==='rate'){d.score=Number(d.score);d.again=!!d.again;target=state().visits.find(v=>v.id===d.id)?.mission?'mission':'tastes';}
+      if(type==='visit'){if(d.score==='')delete d.score;else d.score=Number(d.score);target=d.mission?'mission':'tastes';}if(type==='link-visit')target='mission';if(type==='letter'||type==='gesture')target='post';if(type==='award'){d.points=Number(d.points);target='ledger';}
       if(type==='place'){d.item=f.dataset.id;target='keepsakes';}
-      await store.send(type,d);toast(type==='award'?'The dwarf has entered it in the ledger.':'Saved, with a little care.');if(target===page)render();else open(target);
+      await store.send(type,d);if(type==='mood')moodEditing=false;
+      toast(type==='award'?'The dwarf has entered it in the ledger.':type==='mood'?(store.mode==='live'?'Your mood is shared.':'Your mood is saved on this device.'):'Saved, with a little care.');
+      if(target==='mission')open('mission',type==='mission-note'?d.id:d.mission||state().visits.find(v=>v.id===d.id)?.mission);else if(target===page)render();else open(target);
     }catch(error){f.querySelector('.form-error').textContent=error.message;}finally{submit.disabled=false;}
   });
-  $('book-close').onclick=close;$('journal-index').onclick=()=>open('journal');$('book').addEventListener('click',e=>{if(e.target===$('book')){const r=$('book').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
-  document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>open(b.dataset.panel));
+  function updateGlance(){const el=$('daily-glance');if(!el)return;el.hidden=!store.actor;if(store.actor)el.innerHTML=V.glance(state(),store.actor);}
+  setInterval(updateGlance,60000);
+  $('settings-open').innerHTML=V.icon('settings');
+  $('book-close').onclick=close;$('journal-index').onclick=()=>{if(['missions','today'].includes(page))close();else if($('book').dataset.section==='guild'){boardFilter='missions';open('missions');}else open('journal');};$('book').addEventListener('click',e=>{if(e.target===$('book')){const r=$('book').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
+  document.querySelectorAll('[data-panel]').forEach(b=>{b.onclick=()=>open(b.dataset.panel);const mark=b.querySelector('span[aria-hidden]');if(mark)mark.innerHTML=V.icon(({today:'kindness',missions:'guild',post:'post',journal:'journal'})[b.dataset.panel]);});
   $('enter').onclick=()=>open(store.actor?'today':'login');$('explore').onclick=()=>{$('welcome').hidden=true;open('map');};$('settings-open').onclick=()=>open('settings');$('map-open').onclick=()=>{window.dispatchEvent(new Event('kingdom-overview'));open('map');};$('home-open').onclick=()=>{if(store.actor)window.dispatchEvent(new CustomEvent('kingdom-travel',{detail:store.actor}));else open('login');};
-  store.addEventListener('change',()=>{$('save-status').textContent=store.status;$('book-status').textContent=store.status;window.dispatchEvent(new CustomEvent('kingdom-data',{detail:state()}));if($('book').open&&!store.busy&&!$('book-content').querySelector('form')&&!['mission-preview','login'].includes(page)){const scroll=$('book-content').scrollTop;render();$('book-content').scrollTop=scroll;}});
-  $('book').addEventListener('close',()=>window.dispatchEvent(new Event('kingdom-dialog')));
+  store.addEventListener('change',()=>{updateGlance();$('save-status').textContent=store.status;$('book-status').textContent=store.status;window.dispatchEvent(new CustomEvent('kingdom-data',{detail:state()}));if($('book').open&&!store.busy&&!$('book-content').querySelector('form')&&!['mission-preview','login'].includes(page)){const scroll=$('book-content').scrollTop;render();$('book-content').scrollTop=scroll;}});
+  $('book').addEventListener('close',()=>{document.querySelectorAll('.bottom-dock [data-panel]').forEach(b=>b.removeAttribute('aria-current'));window.dispatchEvent(new Event('kingdom-dialog'));});
   $('credits').addEventListener('close',()=>window.dispatchEvent(new Event('kingdom-dialog')));
   window.KingdomUI={store,open,toast,draft:null,missionDraft:null};
   window.addEventListener('kingdom-place',e=>open(e.detail));
