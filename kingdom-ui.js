@@ -7,7 +7,7 @@
   const option=(value,label,selected)=>`<option value="${esc(value)}"${value===selected?' selected':''}>${esc(label)}</option>`;
   const input=(label,name,value='',type='text',extra='')=>`<label>${esc(label)}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;
   const area=(label,name,value='',max=1000)=>`<label>${esc(label)}<textarea name="${name}" maxlength="${max}">${esc(value)}</textarea></label>`;
-  const select=(label,name,values,selected)=>`<label>${esc(label)}<select name="${name}">${values.map(v=>option(...(Array.isArray(v)?v:[v,v]),selected)).join('')}</select></label>`;
+  const select=(label,name,values,selected)=>`<label>${esc(label)}<select name="${name}" aria-label="${esc(label)}">${values.map(v=>option(...(Array.isArray(v)?v:[v,v]),selected)).join('')}</select></label>`;
   const check=(label,name,on=false)=>`<label class="check"><input type="checkbox" name="${name}" ${on?'checked':''}>${esc(label)}</label>`;
   const form=(type,fields,label='Save',id='')=>`<form class="form" data-form="${type}" data-id="${esc(id)}">${fields}<p class="form-error" role="alert"></p><button class="primary" type="submit">${esc(label)} <span>→</span></button></form>`;
   const empty=(title,copy)=>`<div class="empty"><h3>${esc(title)}</h3><p>${esc(copy)}</p></div>`;
@@ -17,7 +17,7 @@
   function toast(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,4200);}
   function heading(title,kicker='OUR SHARED JOURNAL'){$('book-title').textContent=title;$('book-kicker').textContent=kicker;}
   function open(which='journal',id=''){
-    if(!store.actor&&!['login','recover','recovery-sent','map','settings','pearl'].includes(which))which='login';
+    if(!store.actor&&!['login','recover','recovery-sent','map','settings','weather','pearl'].includes(which))which='login';
     if(which==='today'&&page!=='today')moodEditing=false;page=which;detail=id;render();if(!$('book').open){returnFocus=document.activeElement;$('book').showModal();window.dispatchEvent(new Event('kingdom-dialog'));} $('book-content').scrollTop=0;
   }
   function close(){$('book').close();returnFocus?.focus?.({preventScroll:true});}
@@ -30,7 +30,13 @@
       case 'recovery-sent':heading('Check your pigeon post.','PASSWORD HELP');html='<p>If that email belongs to an account, a password link is on its way. Open it on the device where you want to sign in.</p>'+button('Back to sign in','open','login','quiet');break;
       case 'password':heading('A key of your own.','YOUR PRIVATE HOME');html=form('password',input('New password','password','','password','required minlength="10" autocomplete="new-password"')+input('Confirm password','confirm','','password','required minlength="10" autocomplete="new-password"'),'Save my password');break;
       case 'login':heading('Two homes. One kingdom.','COME ON IN');html=`<p>Choose your own home and pick up where we left off.</p>${store.config?.configured?form('login',input('Email','email','','email','required autocomplete="username"')+input('Password','password','','password','required autocomplete="current-password"'),'Enter my home')+button('Forgot your password?','open','recover','quiet'):'<div class="notice">The shared homes are being prepared. This preview saves on this device only; it does not send anything to your partner.</div>'}<h3 style="margin-top:22px">Explore the preview</h3><div class="home-choice">${button('North · the knight','preview','north')}${button('South · the princess','preview','south')}</div><p class="soft-line">Preview characters share one local rehearsal. They are not signed-in accounts.</p>`;break;
-      case 'journal':heading('A little more of us.');html=`<p>Our ordinary days and our favourite adventures, kept in one place.</p><div class="index-list">${[['today','Today','A mood, a thought, a little company'],['missions','The guild hall','Our missions, taste tests & adventures'],['story','Our growing castle','Restore a home from our adventures'],['garden','The memory garden','Plant a chapter, leave a little memory'],['ruby','Ruby’s meadow','A ball, three throws, a happy dog'],['memories','Our chapters','Three dates, already part of us'],['post','Pigeon post','Words left just for you'],['ideas','Someday','Places and possibilities'],['keepsakes','Our keepsakes','Make yourselves at home'],['capsules','Time capsules','A little something for later'],['ledger','The dwarf’s ledger','Good deeds, duly noted'],['residents','The residents','Everyone who calls this home'],['pearl','Pearl’s garden','Always part of our story'],['settings','Settings','Sound, account & the little details']].map(([id,title,sub])=>`<button data-act="open" data-id="${id}">${esc(title)}<small>${esc(sub)}</small></button>`).join('')}</div>`;break;
+      case 'journal':{
+        heading('A little more of us.');
+        const links=items=>`<div class="index-list">${items.map(([id,title,sub])=>`<button data-act="open" data-id="${id}">${esc(title)}<small>${esc(sub)}</small></button>`).join('')}</div>`;
+        const group=(title,sub,items)=>`<details class="journal-group"><summary>${title}<small>${sub}</small></summary>${links(items)}</details>`;
+        html='<p>Our ordinary days and our favourite adventures, kept in one place.</p>'+links([['today','Today','A mood, a thought, a little company'],['missions','The guild hall','Our missions, taste tests & adventures'],['story','Our growing castle','Restore a home from our adventures'],['garden','The memory garden','Plant a chapter, leave a little memory'],['ruby','Ruby’s meadow','A ball, three throws, a happy dog'],['memories','Our chapters','Three dates, already part of us']])+group('Letters & possibilities','Pigeon post, someday ideas & time capsules',[['post','Pigeon post','Words left just for you'],['ideas','Someday','Places and possibilities'],['capsules','Time capsules','A little something for later']])+group('Life around the castle','Keepsakes, residents, the ledger & Pearl’s garden',[['keepsakes','Our keepsakes','Make yourselves at home'],['ledger','The dwarf’s ledger','Good deeds, duly noted'],['residents','The residents','Everyone who calls this home'],['pearl','Pearl’s garden','Always part of our story']])+links([['weather','Weather & sky','Follow Auckland or preview another sky'],['settings','Settings & controls','Walking, zoom, sound & your home']]);break;
+      }
+      case 'weather':heading('Today’s sky.','WEATHER & TIME');html=KingdomSky.panel({form,select,button});break;
       case 'today':heading('Us, today.','A LITTLE CHECK-IN · '+M.day());html=KingdomLifePanels.comfort(s,who,'received')+V.today(s,who,moodEditing)+KingdomLifePanels.comfort(s,who,'send');break;
       case 'story':heading('A home, chapter by chapter.','OUR GROWING CASTLE');html=KingdomLifePanels.story(s);break;
       case 'garden':heading('The things we keep.','THE MEMORY GARDEN');html=KingdomLifePanels.garden(s,who,{form,select,area});break;
@@ -84,7 +90,7 @@
       case 'residents':heading('Quite the little household.','AT HOME IN THE KINGDOM');html=`<p>Ruby, with her red harness. Topaz, the ginger cat. Mini, the tortoiseshell mum. Dil, the lady duck, the original eight ducklings, the ladies and their rooster.</p><div class="row-actions">${button('Play fetch with Ruby','open','ruby','primary')}</div><div class="pet-list">${['Ruby','Topaz','Mini','Dil','The lady duck','8 ducklings','The ladies','The rooster'].map(n=>`<span>${n}</span>`).join('')}</div>${entry(s.duckName||'The new little duckling',`<p>A new small resident. ${s.duckName?'A name of their very own.':'No name yet. A whole pond to discover.'}</p>`)}${who==='south'?form('duck-name',input('A name for the newest duckling','name',s.duckName,'text','required maxlength="40"'),'Give me a name'):'<p class="soft-line">South can give the new duckling a name here.</p>'}<div class="row-actions">${button('Visit Pearl’s garden','open','pearl','quiet')}</div>`;break;
       case 'pearl':heading('Pearl.','ALWAYS PART OF OUR STORY');html=`<div class="memory-illustration"><span class="memory-emblem" aria-hidden="true">❀</span></div><p>A quiet place beside the pond. A place to sit, remember, and leave a little love.</p><p class="season-note">Still part of this little kingdom.</p>${who?form('memory',area('A memory of Pearl','note',s.memories.pearl?.[who]||'',1800),'Keep this memory','pearl'):''}${who&&s.memories.pearl?.[M.other(who)]?entry('A shared memory',`<p>${esc(s.memories.pearl[M.other(who)])}</p>`):''}`;break;
       case 'map':heading('Take the little path.','OUR KINGDOM');html=`<p>Two homes, one shared castle. Choose a destination to walk there.</p><div class="index-list">${Object.entries(KingdomPaths.places).map(([id,p])=>`<button data-act="travel" data-id="${id}">${esc(p.name)}<small>${esc(p.sub)}</small></button>`).join('')}</div><p class="soft-line">Walks can be skipped. You can also open journals directly from the dock.</p>`;break;
-      case 'settings':heading('The little details.','SETTINGS');html=`<p>${store.actor?esc(M.names[store.actor]):'You are looking around.'}</p><div class="notice">${store.mode==='live'?'Connected to your private shared kingdom.': 'On-device preview. Nothing here is synchronised to another phone yet.'}</div><div class="row-actions">${button(store.actor?'Change home / sign out':'Choose a home','logout')}${button('Art & sound credits','credits')}</div><p class="soft-line">Use the world controls for sound and reduced animation. The clock follows Pacific/Auckland. Weather is approximate and never tracks your device location.</p>${store.mode==='preview'?button('Export this rehearsal','export','','quiet'):''}`;break;
+      case 'settings':heading('The little details.','SETTINGS');html=`<p>${store.actor?esc(M.names[store.actor]):'You are looking around.'}</p><div class="notice">${store.mode==='live'?'Connected to your private shared kingdom.': 'On-device preview. Nothing here is synchronised to another phone yet.'}</div><div class="row-actions">${button(store.actor?'Change home / sign out':'Choose a home','logout')}${button('Art & sound credits','credits')}</div><div class="row-actions">${button("Weather & sky","open","weather")}</div><ul class="control-guide"><li><strong>Wander at your own pace</strong>Hold the direction pad, use WASD / arrow keys, or tap clear ground. Shift walks faster.</li><li><strong>Make the world yours</strong>Use − and +, scroll over the world, or pinch with two fingers. Tap the percentage to reset. On a keyboard, use +, − and 0.</li><li><strong>Stop by somewhere</strong>Press E or the nearby-place button. Map lets you choose a destination; Arrive now skips the walk.</li><li><strong>Settle in</strong>Sound starts only when you turn it on. The ≈ button reduces animation. Reading a journal pauses your walk.</li></ul>${store.mode==='preview'?button('Export this rehearsal','export','','quiet'):''}`;break;
       default:heading('Our little journal.');html=empty('A page is missing.','Return to the journal index.');
     }
     content.innerHTML=html;
@@ -100,6 +106,8 @@
   async function perform(type,data,after){const previous=M.story(state()).projects;await store.send(type,data);const unlocked=M.story(state()).projects.find(p=>p.available&&!previous.find(x=>x.id===p.id).available);toast(unlocked?unlocked.title+' is ready to restore. Find it in Our growing castle.':'A little piece of our story, saved.');if(after)open(after);else render();}
   async function act(action,id){
     const s=state();
+    if(action==='sky-live'){KingdomSky.preview('live');close();toast('Following Auckland weather again.');return;}
+    if(action==='sky-refresh'){await KingdomSky.refresh();if(page==='weather')render();return;}
     if(action==='open'){if(id==='mission-types')window.KingdomUI.draft=null;open(id);return;}
     if(action==='restore'){await store.send('restore',{project:id});close();window.dispatchEvent(new CustomEvent('kingdom-restored',{detail:id}));toast('Restored with our adventures. Walk whenever you’re ready.');return;}
     if(action==='comfort'){await store.send('comfort',{kind:id,day:M.day()});render();toast(store.mode==='live'?'A little comfort, left at their home.':'Left at their home in this device’s preview.');return;}
@@ -132,6 +140,7 @@
     e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f)),type=f.dataset.form,submit=f.querySelector('[type=submit]');submit.disabled=true;f.querySelector('.form-error').textContent='';
     try{
       let target=page;
+      if(type==='sky'){KingdomSky.preview(d.sky);close();toast(KingdomWeatherModel.modes[d.sky]+' · sky preview on this device.');return;}
       if(type==='recover'){await store.recover(d.email);open('recovery-sent');return;}
       if(type==='password'){if(d.password!==d.confirm)throw Error('Those passwords do not match yet.');await store.password(d.password);open('today');toast('Your new key is ready.');return;}
       if(type==='login'){await store.login(d.email,d.password);close();$('welcome').hidden=true;window.dispatchEvent(new CustomEvent('kingdom-identity',{detail:store.actor}));return;}
@@ -151,6 +160,14 @@
   });
   function updateGlance(){const el=$('daily-glance');if(!el)return;el.hidden=!store.actor;if(store.actor){const s=state(),r=M.life(s).responses.find(r=>r.day===M.day()&&r.to===store.actor);el.innerHTML=V.glance(s,store.actor)+(r?'<span class="glance-comfort">'+(r.author==='north'?'North':'South')+' '+esc(M.comforts[r.kind].received)+' ↗</span>':'');}}
   setInterval(updateGlance,60000);
+  $('weather-open').onclick=()=>open('weather');
+  KingdomSky.addEventListener('change',()=>{
+    if(page!=='weather'||!$('book').open)return;
+    const expanded=$('book-content').querySelector('details')?.open,choice=$('book-content').querySelector('select')?.value;
+    // Keep a choice in progress intact when a background weather request returns.
+    if(expanded)return;
+    render();if(choice)$('book-content').querySelector('select').value=choice;
+  });
   $('settings-open').innerHTML=V.icon('settings');
   $('book-close').onclick=close;$('journal-index').onclick=()=>{if(['missions','today'].includes(page))close();else if($('book').dataset.section==='guild'){boardFilter='missions';open('missions');}else open('journal');};$('book').addEventListener('click',e=>{if(e.target===$('book')){const r=$('book').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
   document.querySelectorAll('[data-panel]').forEach(b=>{b.onclick=()=>open(b.dataset.panel);const mark=b.querySelector('span[aria-hidden]');if(mark)mark.innerHTML=V.icon(({today:'kindness',missions:'guild',post:'post',journal:'journal'})[b.dataset.panel]);});

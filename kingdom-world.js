@@ -39,7 +39,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       r('#4b4a35',2,20,60,6);r('#71815b',7,15,50,5);r('#8b9b6c',12,11,40,4);
       [[13,32,15,18],[34,30,17,22]].forEach(([x,y,w,h],i)=>{r('#d7c399',x+1,y+2,w,h);r('#efe0b8',x,y,w,h);r('#98734d',x+6,y+2,3,3);r('#b5a178',x+3,y+8,w-6,1);r('#b5a178',x+3,y+12,w-7,1);if(i)r('#8b6752',x+6,y+16,5,3);});board.refresh();
       this.add.image(821,707,'guild-board').setOrigin(.5,1).setDepth(707);
-      this.add.zone(821,674,64,76).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit('inn'));
+      this.add.zone(821,674,64,76).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit('inn')));
     },
     signpost(x,y,label,right){
       const word=label==='HOME'?'CASTLE':label==='THE LONG WAY'?'SOUTH':label;
@@ -72,8 +72,8 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       const flag=this.add.graphics().setDepth(y+30);flag.fillStyle(0x8d564a).fillRect(x-70,y-35,3,18).fillRect(x-67,y-35,10,7);flag.setVisible(false);
       const flowers=this.prop('flowers','flowers',x-42,y+24).setVisible(false),lantern=this.add.circle(x,y-40,24,0xffdf9c,.055).setDepth(y+1);
       this.homeDetails[home]={flag,flowers,lantern};
-      this.add.zone(x-78,y-10,36,48).setInteractive({useHandCursor:true}).on('pointerdown',()=>{if(!$('book').open)KingdomUI.open('post');});
-      this.add.zone(x,y-55,200,170).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit(north?'north':'south'));
+      this.add.zone(x-78,y-10,36,48).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>KingdomUI.open('post')));
+      this.add.zone(x,y-55,200,170).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit(north?'north':'south')));
       this.smokePuffs??=[];for(let i=0;i<3;i++)this.smokePuffs.push({shape:this.add.rectangle(x+57,y-163-i*13,9+i*3,9+i*3,0xe8e5c6,.18).setDepth(y+1),x:x+57,y:y-163-i*13,i});
     },
     makeChapterWorld(){
@@ -82,17 +82,16 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       this.residents=[];this.buildPets();
       this.ducks=this.ducks.filter(d=>{if(d.petName==='Pearl'){d.destroy();return false;}d.kind=d.petName.startsWith('Duckling')?'duckling':'duck';return true;});
       this.ducks.forEach(d=>{d.description=d.petName==='Dil'?'Dil, keeping a watchful eye on the little ones.':d.kind==='duckling'?'One of the original eight little ducklings.':'At home on the pond.';});
-      const little=this.add.image(58,692,'duckling0').setScale(.48).setOrigin(.5,1).setDepth(692);little.kind='duckling';little.petName='Little Duckling';little.home={x:58,y:692};this.ducks.push(little);little.setInteractive({useHandCursor:true}).on('pointerdown',()=>KingdomUI.open('residents'));
+      const little=this.add.image(58,692,'duckling0').setScale(.48).setOrigin(.5,1).setDepth(692);little.kind='duckling';little.petName='Little Duckling';little.home={x:58,y:692};this.ducks.push(little);little.setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>KingdomUI.open('residents')));
       const spots={Ruby:[215,1110],Topaz:[128,1040],Mini:[234,1048]};this.residents.forEach(p=>{const xy=spots[p.petName]||[165+(this.residents.indexOf(p)-3)*24,1190];p.setPosition(...xy);p.home={x:xy[0],y:xy[1]};});
       this.memorial();this.makeMountains();this.makeDwarf();this.makeKeepsakes();
-      this.add.zone(350,350,250,170).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit('castle'));
-      this.add.zone(940,638,195,130).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit('inn'));
-      this.add.zone(55,675,160,100).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit('pond'));
+      this.add.zone(350,350,250,170).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit('castle')));
+      this.add.zone(940,638,195,130).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit('inn')));
+      this.add.zone(55,675,160,100).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit('pond')));
       this.night=document.createElement('div');this.night.className='realm-light';$('world').append(this.night);
       this.lamps=[];[[398,417],[541,428],[723,581],[917,712],[329,-60],[209,1100],[1020,806],[-184,761]].forEach(([x,y])=>{this.prop('lamps','lamp',x,y);const halo=this.add.circle(x,y-37,29,0xffd683,.09).setDepth(3900);this.lamps.push(halo);});
-      this.rain=this.add.graphics().setScrollFactor(0).setDepth(4200);
       this.destinationMarker=this.add.graphics().setDepth(6);
-      this.poiLabels=[];Object.entries(P.places).forEach(([id,p])=>{const [x,y]=P.nodes[p.node];const t=this.add.text(x,y+35,p.name.toUpperCase(),{fontFamily:'Pixelify Sans',fontSize:'11px',color:'#f8edc7',backgroundColor:'#294932df',padding:{x:7,y:5}}).setOrigin(.5).setDepth(4500).setVisible(false).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit(id));this.poiLabels.push(t);});
+      this.poiLabels=[];Object.entries(P.places).forEach(([id,p])=>{const [x,y]=P.nodes[p.node];const t=this.add.text(x,y+35,p.name.toUpperCase(),{fontFamily:'Pixelify Sans',fontSize:'11px',color:'#f8edc7',backgroundColor:'#294932df',padding:{x:7,y:5}}).setOrigin(.5).setDepth(4500).setVisible(false).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit(id)));this.poiLabels.push(t);});
     },
     makeCinema(){},
     memorial(){
@@ -100,7 +99,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       this.add.text(-170,724,'PEARL',{fontFamily:'Pixelify Sans',fontSize:'7px',color:'#56664e'}).setOrigin(.5).setDepth(779);
       [-226,-117,-203,-89].forEach((x,i)=>this.prop('wildflowers','white',x,738+i%2*14));
       g.fillStyle(0x695d3b).fillRect(-244,795,55,6).fillRect(-240,800,4,15).fillRect(-199,800,4,15).fillRect(-244,780,55,6);g.fillStyle(0xaf9765).fillRect(-244,780,55,2).fillRect(-244,794,55,2);
-      this.add.zone(-166,740,190,150).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit('memorial'));
+      this.add.zone(-166,740,190,150).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit('memorial')));
       this.signpost(-108,830,'PEARL',false);
     },
     makeMountains(){
@@ -126,7 +125,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       const t=this.textures.createCanvas('keeper',32,44),c=t.context;const r=(col,x,y,w,h)=>{c.fillStyle=col;c.fillRect(x,y,w,h);};
       r('#273e32',5,37,9,5);r('#273e32',20,37,8,5);r('#98634b',7,22,20,16);r('#b48759',6,21,5,11);r('#b48759',26,21,4,11);r('#92735e',10,8,17,18);r('#c6a079',11,9,14,16);r('#57684b',8,3,20,8);r('#8b9b6b',11,1,13,4);r('#c7c4a0',7,18,23,11);r('#c7c4a0',10,29,17,5);r('#d9d2ac',13,32,10,5);r('#3d4030',12,13,3,3);r('#3d4030',22,13,3,3);r('#a67e59',17,17,5,4);r('#d0ad66',14,27,9,3);t.refresh();this.keeper=this.add.image(1045,787,'keeper').setOrigin(.5,1).setDepth(787);
       this.scales=this.add.container(1027,781).setDepth(835);const g=this.add.graphics();g.fillStyle(0x796138).fillRect(-2,-33,4,37).fillRect(-14,3,28,4);g.lineStyle(2,0xc4a15d).lineBetween(-22,-29,22,-29).lineBetween(-17,-29,-17,-12).lineBetween(17,-29,17,-12);g.fillStyle(0xcfb473).fillTriangle(-26,-12,-8,-12,-17,-6).fillTriangle(8,-12,26,-12,17,-6);this.scales.add(g);
-      this.add.zone(1040,788,140,100).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.visit('dwarf'));this.signpost(1123,870,'THE LEDGER',false);
+      this.add.zone(1040,788,140,100).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit('dwarf')));this.signpost(1123,870,'THE LEDGER',false);
     },
     makeKeepsakes(){
       const crown=this.add.graphics();crown.fillStyle(0x70582d).fillRect(-12,-8,25,9);crown.fillStyle(0xd6b367).fillPoints([{x:-12,y:-5},{x:-14,y:-20},{x:-5,y:-13},{x:0,y:-23},{x:5,y:-13},{x:14,y:-20},{x:12,y:-5}],true);crown.fillStyle(0x9f6552).fillRect(-2,-12,4,4);
@@ -148,7 +147,8 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       if(this.awardCount!==undefined&&s.awards.length>this.awardCount&&!reduced())this.tweens.add({targets:this.scales,angle:{from:-5,to:5},duration:260,yoyo:true,repeat:2,onComplete:()=>this.scales.setAngle(0)});
       this.awardCount=s.awards.length;this.life?.refresh(s);
     },
-    showResident(p){if(!this.life?.game)KingdomUI.open(p?.petName==='Ruby'?'ruby':'residents');},
+    worldAction(action){const run=()=>{if(!$('book').open&&!$('credits').open)action();};if(this.view)this.view.guard(run);else run();},
+    showResident(p){this.worldAction(()=>{if(!this.life?.game)KingdomUI.open(p?.petName==='Ruby'?'ruby':'residents');});},
     start(){
       this.phase='living';this.node='castle';this.walkDistance=0;this.travel=null;this.overview=false;this.hero.setPosition(180,1120);this.knight.setPosition(350,-35);this.active=this.knight;
       this.viewportObserver=new ResizeObserver(([entry])=>{const width=Math.round(entry.contentRect.width),height=Math.round(entry.contentRect.height);if(width>0&&height>0&&(width!==this.scale.width||height!==this.scale.height))this.scale.resize(width,height);});this.viewportObserver.observe($('world'));this.events.once('shutdown',()=>this.viewportObserver.disconnect());
@@ -166,6 +166,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       });
       this.navigation=KingdomNavigation.create(obstacles);
       this.controls=new KingdomControls({allowed:()=>this.canWalk(),interact:()=>this.interactNearby()});
+      this.view=new KingdomView.Controls(this);
       this.life=new KingdomLifeWorld(this,reduced);
       const abort=new AbortController(),on=(name,fn)=>window.addEventListener(name,fn,{signal:abort.signal});
       on('kingdom-identity',e=>this.identity(e.detail));on('kingdom-travel',e=>this.visit(e.detail));on('kingdom-overview',()=>this.showOverview());on('kingdom-data',e=>{this.placeKeepsakes(e.detail);if(!KingdomUI.store.actor)this.cancelTravel();});
@@ -176,12 +177,12 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       this.input.on('pointerdown',(pointer,objects)=>{
         if(!$('welcome').hidden||!this.canWalk()||pointer.event?.target!==this.game.canvas)return;
         const pt=this.cameras.main.getWorldPoint(pointer.x,pointer.y);
-        if(this.life.game){this.life.toss(pt);return;}if(objects.length)return;
+        if(objects.length&&!this.life.game)return;
+        this.worldAction(()=>{if(!this.canWalk())return;if(this.life.game){this.life.toss(pt);return;}
         if(this.overview){const id=Object.keys(P.places).sort((a,b)=>{const A=P.nodes[P.places[a].node],B=P.nodes[P.places[b].node];return Math.hypot(pt.x-A[0],pt.y-A[1])-Math.hypot(pt.x-B[0],pt.y-B[1]);})[0];this.visit(id);}
-        else this.walkTo([pt.x,pt.y]);
+        else this.walkTo([pt.x,pt.y]);});
       });
-      if(KingdomUI.store.actor)this.identity(KingdomUI.store.actor);this.placeKeepsakes(KingdomUI.store.view());this.updateClock();this.clockTimer=this.time.addEvent({delay:30000,loop:true,callback:()=>this.updateClock()});this.loadWeather();
-      this.time.addEvent({delay:1800000,loop:true,callback:()=>this.loadWeather()});
+      if(KingdomUI.store.actor)this.identity(KingdomUI.store.actor);this.placeKeepsakes(KingdomUI.store.view());this.updateClock();this.clockTimer=setInterval(()=>{if(!document.hidden)this.updateClock();},30000);this.events.once('shutdown',()=>clearInterval(this.clockTimer));this.atmosphere=new KingdomAtmosphere(this,reduced);
     },
     canWalk(){return !!KingdomUI.store.actor&&!$('book').open&&!$('credits').open&&!document.hidden;},
     cancelTravel(){if(this.life)this.life.pending=false;this.travel=null;this.destinationMarker.clear();$('travel-note').hidden=true;},
@@ -189,7 +190,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
     resize(){
       if(!this.cameras)return;const width=this.scale.width,height=this.scale.height,cam=this.cameras.main;cam.setSize(width,height);cam.useBounds=!this.overview;
       if(this.overview){cam.setZoom(Math.min((width-48)/1670,(height-180)/2150));cam.centerOn(400,430);}
-      else{cam.setZoom(width>=1000?1.75:width>=600?1.45:1.22);this.frameParty(true);}
+      else if(this.view)this.view.apply();else{cam.setZoom(KingdomView.base(width));this.frameParty(true);}
     },
     leaveOverview(){this.overview=false;this.poiLabels.forEach(t=>t.setVisible(false));this.resize();},
     showOverview(){this.life?.end();this.cancelTravel();this.controls?.reset();this.setStride(this.active,this.active.direction,false);this.overview=true;this.resize();this.poiLabels.forEach(t=>t.setVisible(true).setScale(Math.min(2.2,1/this.cameras.main.zoom)));this.cameraPoint.x=400;this.cameraPoint.y=430;this.cameras.main.centerOn(400,430);},
@@ -226,20 +227,18 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       if(!this.canWalk())return;if(this.life?.revealTime){this.life.clearReveal();return;}if(this.life?.game){this.life.toss();return;}const place=this.nearbyPlace();if(!place)return;
       this.cancelTravel();this.controls.reset();this.setStride(this.active,this.active.direction,false);KingdomSound?.place(place.id);KingdomUI.open(place.panel);
     },
-    frameParty(snap=false){if(!this.active||this.overview)return;if(this.life?.camera(snap))return;if(this.life?.revealTime){if(snap)this.cameras.main.centerOn(350,380);return;}this.cameraPoint.x=this.active.x;this.cameraPoint.y=this.active.y-55;if(snap||reduced())this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);},
+    frameParty(snap=false){if(!this.active||this.overview)return;if(this.life?.camera(snap))return;if(this.life?.revealTime){if(snap)this.cameras.main.centerOn(350,380);return;}const lead=this.scale.width<600&&this.scale.height<780?-12:55;this.cameraPoint.x=this.active.x;this.cameraPoint.y=this.active.y-lead;if(snap||reduced())this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);},
     setStride(p,dir,moving){
       if(!p)return;const row=8+['up','left','down','right'].indexOf(dir),frame=row*13+(moving&&!reduced()?1+Math.floor(this.walkDistance/6)%8:0);
       if(p.strideFrame!==frame){p.parts.forEach(s=>{s.stop();s.setFrame(frame);});p.strideFrame=frame;}
       p.direction=dir;p.walking=moving;
     },
     updateClock(){
-      const now=new Date(),parts=new Intl.DateTimeFormat('en-NZ',{timeZone:'Pacific/Auckland',hour:'numeric',minute:'2-digit',hourCycle:'h23'}).formatToParts(now),hour=Number(parts.find(p=>p.type==='hour').value);
+      const now=Date.now(),light=KingdomWeatherModel.daylight(KingdomSky.data,now);
       $('realm-time').textContent=new Intl.DateTimeFormat('en-NZ',{timeZone:'Pacific/Auckland',weekday:'short',hour:'numeric',minute:'2-digit'}).format(now);
-      let dark=hour<6||hour>=20?.23:hour<8||hour>=18?.10:0;const w=this.weather;
-      if(w?.sunrise&&w?.sunset){const minute=hour*60+Number(parts.find(p=>p.type==='minute').value);const parse=x=>Number(x.slice(11,13))*60+Number(x.slice(14,16));const rise=parse(w.sunrise),set=parse(w.sunset);dark=minute<rise||minute>set?.23:Math.min(minute-rise,set-minute)<60?.09:0;}
-      if(this.night)this.night.style.opacity=dark;this.lamps?.forEach(l=>l.setAlpha(dark>.1?.18:.035));this.isNight=dark>.1;this.life?.refresh(KingdomUI.store.view());
+      if(this.night){this.night.style.opacity=light.dark;this.night.style.background=light.tint;}
+      this.lamps?.forEach(l=>l.setAlpha(light.dark>.1?.18:.035));this.isNight=light.night;this.life?.refresh(KingdomUI.store.view());this.atmosphere?.reflect();
     },
-    async loadWeather(){try{const r=await fetch('/api/kingdom-weather');if(!r.ok)throw Error();const w=await r.json();this.weather=w;this.wet=w.rain;const stale=Date.now()-Date.parse(w.at)>3600000;$('realm-weather').textContent=`${w.temperature}° · ${w.label}${stale?' · earlier conditions':''}`;this.updateClock();KingdomSound?.weather(w.rain);}catch{$('realm-weather').textContent='Auckland time · weather unavailable';this.wet=false;}},
     update(time,delta){
       this.input.enabled=!$('book').open&&!$('credits').open;if(!this.active)return;const dt=Math.min(delta,50)/1000,canWalk=this.canWalk();
       this.controls.show(!!KingdomUI.store.actor&&this.input.enabled);
@@ -265,7 +264,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
         this.ducks?.forEach((d,i)=>{d.x=d.home.x+Math.sin(time/5000+i*.7)*14;d.y=d.home.y+Math.cos(time/7000+i*.6)*5;d.setTexture(d.kind+Math.floor(time/650+i)%2).setDepth(d.y);d.setFlipX(Math.cos(time/5000+i*.7)<0);});
         this.smokePuffs?.forEach(({shape,x,y,i})=>{const t=(time/7000+i/3)%1;shape.setPosition(x+Math.sin(t*3)*8,y-t*20).setAlpha((1-t)*.18);});
       }
-      const cam=this.cameras.main;this.rain?.setPosition(cam.width/2-cam.width/(2*cam.zoom),cam.height/2-cam.height/(2*cam.zoom)).setScale(1/cam.zoom).clear();if(this.wet&&!reduced()){this.rain.lineStyle(1,0xc6e0d1,.25);for(let i=0;i<50;i++){const x=(i*79+time*.01)%this.scale.width,y=(i*137+time*.13)%this.scale.height;this.rain.lineBetween(x,y,x-3,y+8);}}
+      this.atmosphere?.update();
     }
   });
 };

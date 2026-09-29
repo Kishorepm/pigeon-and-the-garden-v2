@@ -46,7 +46,9 @@ The local rehearsal stores data under `kingdom-rehearsal-v1`, separate from the 
 - Refined guild scenery with slate roof, heraldic banners and a clickable outdoor noticeboard. Paths are painted as one connected network while the existing artwork, controls and original invitation remain intact.
 - Partner-decided awards with bounds and duplicate protection; shared token ledger.
 - Text pigeon post, gestures, ideas with interest, keepsake placement, time capsules and duck naming.
-- Local Auckland clock/daylight, cached approximate regional weather through Open-Meteo, opt-in original synthesised ambience, reduced-motion navigation. Mailbox flags, doorstep flowers and the dwarf's scales respond to saved entries.
+- Auckland clock with solar dawn/dusk, current regional weather from Open-Meteo checked every 15 minutes, cloud shadows, rain, wet-ground details, mist, wind, snowfall when reported, and opt-in weather-aware synthesised ambience. The weather readout opens freshness/source details, refresh and clearly labelled device-only sky previews. Failure uses earlier labelled conditions for at most six hours, then daylight only. Preview skies reset to regional weather on reload. Mailbox flags, doorstep flowers and the dwarf's scales respond to saved entries.
+- World zoom with − / + buttons, a percentage reset button, mouse wheel, + / − / 0 keys and two-finger pinch. The 60–190% preference is stored locally, survives map travel and rotation, and is temporarily fitted during Ruby's game. Touch scenery actions wait until a single tap finishes; pinching does not start a walk or open a building. Browser Ctrl/Cmd zoom is untouched.
+- Grouped journal navigation and a walking, interaction and camera guide in Settings. See `CONSUMER-EXPERIENCE-REVIEW.md` for the consumer assessment and remaining priorities.
 
 ## Explicit follow-ups
 
@@ -68,13 +70,15 @@ AI mission generation, photo/voice-note attachments, push notifications, automat
 
 ## Local verification
 
-Run `node --test tests/kingdom-model.test.cjs tests/kingdom-guild.test.cjs tests/kingdom-life.test.cjs tests/kingdom-navigation.test.cjs tests/kingdom-api.test.cjs tests/kingdom-store.test.cjs tests/chapter-model.test.js tests/chapter-response.test.js`.
+Run `node --test tests/kingdom-weather.test.cjs tests/kingdom-model.test.cjs tests/kingdom-guild.test.cjs tests/kingdom-life.test.cjs tests/kingdom-navigation.test.cjs tests/kingdom-api.test.cjs tests/kingdom-store.test.cjs tests/chapter-model.test.js tests/chapter-response.test.js`.
 Serve this worktree with `python devserver.py 8124`, then open `http://localhost:8124/kingdom.html`.
 With Playwright available, run `node --test --test-concurrency=1 tests/kingdom-browser.cjs tests/kingdom-controls-browser.cjs tests/kingdom-guild-browser.cjs tests/kingdom-tasting-modes-browser.cjs tests/kingdom-portrait-browser.cjs tests/mobile-startup.cjs` (set `PLAYWRIGHT_MODULE` to the installed module if needed). These run WebKit with the iPhone canvas limit, test independent ratings, mission acceptance/completion/awards, typed guild creation, linked tastings, favourite/forever goals, delayed or failed portrait clothing, simple mood sharing, direct movement, collision routes and canvas resize rendering. The API tests use a simulated Supabase service: they do not establish that your real project is connected.
 
 Run `node --test tests/kingdom-life-browser.cjs` for restoration, memory planting and retry, separately authored notes, daily support, the full fetch loop, journal pauses, replay, cancellation, persistence and phone rotation. Screenshot artifacts go into the ignored `.local-review` directory. The new game layer reuses the existing Phaser renderer and LPC dog sprites; restoration scenery and ambient sound cues are generated locally, with no new remote asset dependency.
 
+Run `node --test tests/kingdom-weather-browser.cjs` for regional-weather fallback, labelled sky previews, offline startup, stale cache, keyboard/wheel/pinch zoom, gesture safety, small-screen layout, saved camera preferences and Ruby's camera restoration. The pinch test combines real single-tap browser input with synthetic multi-pointer events; verify a full pinch on a physical iPhone before release.
+
 The expanded page selects Phaser's Canvas renderer. During verification, WebKit's WebGL surface could become blank when resized; the Canvas renderer retained the world at both viewport sizes. The existing invitation retains its own renderer. Generated textures remain below the iPhone canvas limit.
-Python's static preview cannot run Vercel endpoints: weather is honestly unavailable and accounts remain disabled there. Use `vercel dev` or a configured Vercel preview to test API-backed features.
+Python's static preview cannot run Vercel endpoints. Weather now falls back to the public Open-Meteo endpoint for the fixed Auckland region, while accounts remain disabled. If both weather requests fail, entry still works with daylight only or labelled earlier conditions. Use `vercel dev` or a configured Vercel preview to test account-backed features.
 
 Official references: [Supabase password authentication](https://supabase.com/docs/guides/auth/passwords), [email delivery setup](https://supabase.com/docs/guides/auth/auth-smtp), [redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls), [access control](https://supabase.com/docs/guides/database/postgres/row-level-security), [Open-Meteo weather fields](https://open-meteo.com/en/docs).

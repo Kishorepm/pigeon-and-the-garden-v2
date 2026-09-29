@@ -43,7 +43,7 @@ window.KingdomLifeWorld=class {
     plot.fillStyle(0xcec29a);for(let y=462;y<516;y+=11)plot.fillRect(349,y,13,8);
     this.sprites.garden=plot.setVisible(false);
     this.gardenSign=s.add.text(355,539,'THE MEMORY GARDEN',{fontFamily:'Pixelify Sans',fontSize:'8px',color:'#e9e1b8',backgroundColor:'#4f6643',padding:{x:5,y:4}}).setOrigin(.5).setDepth(541).setVisible(false);
-    s.add.zone(355,486,130,64).setInteractive({useHandCursor:true}).on('pointerdown',()=>{if(!this.game)s.visit('garden');});
+    s.add.zone(355,486,130,64).setInteractive({useHandCursor:true}).on('pointerdown',()=>s.worldAction(()=>{if(!this.game)s.visit('garden');}));
     // A meadow made for a phone-sized camera: open ground, a path, and a few familiar props.
     const meadow=s.add.graphics().setDepth(-4000);meadow.fillStyle(0xa5b775,.22).fillEllipse(418,1180,216,150);
     for(let i=0;i<75;i++){const x=315+(i*47)%211,y=1118+(i*31)%152;meadow.fillStyle(i%3?0x819c58:0xb8c385,.5).fillRect(x,y,2,3);}
@@ -101,7 +101,7 @@ window.KingdomLifeWorld=class {
     this.pending=false;this.revealTime=0;KingdomUI.rubyResult=null;this.actor=KingdomUI.store.actor;
     this.game=KingdomFetch.create(this.reduced());this.s.ruby.setPosition(this.game.dog.x,this.game.dog.y);this.lastPhase='';
     document.querySelector('.adventure').classList.add('is-fetching');document.getElementById('fetch-hud').hidden=false;
-    this.ring.setVisible(true);this.aim.setVisible(true);this.s.controls.reset();this.camera(true);this.draw();
+    this.ring.setVisible(true);this.aim.setVisible(true);this.s.controls.reset();this.s.view?.apply();this.camera(true);this.draw();
   }
   camera(snap=false){if(!this.game)return false;this.s.cameraPoint.x=416;this.s.cameraPoint.y=1168;if(snap||this.reduced())this.s.cameras.main.centerOn(416,1168);return true;}
   toss(point={x:420,y:1150}){if(!this.game||!this.s.canWalk())return;if(KingdomFetch.toss(this.game,point,this.s.active)){this.s.controls.reset();KingdomSound.effect('throw');this.draw();}}
@@ -110,7 +110,7 @@ window.KingdomLifeWorld=class {
     this.pending=false;this.clearReveal();if(!this.game)return;
     this.game=null;this.ring.setVisible(false);this.aim.setVisible(false);this.ball.setVisible(false);this.ballShadow.setVisible(false);
     this.s.ruby.setPosition(this.s.ruby.home.x,this.s.ruby.home.y).setScale(1);this.s.ruby.body.setFrame(4);this.s.controls?.reset();
-    document.getElementById('fetch-hud').hidden=true;document.querySelector('.adventure').classList.remove('is-fetching');this.s.frameParty(true);
+    document.getElementById('fetch-hud').hidden=true;document.querySelector('.adventure').classList.remove('is-fetching');this.s.view?.apply();this.s.frameParty(true);
   }
   draw(){
     const g=this.game;if(!g)return;const r=KingdomFetch.ring(g);
