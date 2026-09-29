@@ -42,3 +42,40 @@ test('a tasting note survives without a score and a taste test can use just its 
   assert.equal(M.progress(s,s.missions[0]).ready,true);
   assert.throws(()=>send(s,'north','mission',{...quest,kind:'custom',target:0,bothRate:false,steps:[]}));
 });
+
+test('a favourite search ends only with an eligible tasting and partner confirmation',()=>{
+  let s=send(M.initial(),'north','mission',{...quest,goal:'favourite',target:0,steps:[]},'favourite-quest');
+  s=send(s,'south','accept',{id:'favourite-quest'});
+  assert.equal(M.progress(s,s.missions[0]).ready,false);
+  assert.throws(()=>send(s,'north','complete',{id:'favourite-quest'}));
+  assert.throws(()=>send(s,'north','favourite',{id:'favourite-quest',visit:'starbucks-02'}));
+  s=send(s,'north','visit',{venue:'Our café',item:'Mocha',category:'Coffee',day:'2026-09-28',mission:'favourite-quest',score:8},'favourite-visit');
+  assert.throws(()=>send(s,'north','favourite',{id:'favourite-quest',visit:'favourite-visit'}));
+  s=send(s,'south','rate',{id:'favourite-visit',score:9});
+  assert.equal(M.progress(s,s.missions[0]).ready,false,'ratings alone do not end the search');
+  s=send(s,'south','favourite',{id:'favourite-quest',visit:'favourite-visit'});
+  assert.equal(M.progress(s,s.missions[0]).ready,true);
+  s=send(s,'south','complete',{id:'favourite-quest'});assert.equal(s.missions[0].status,'awaiting');
+  assert.throws(()=>send(s,'south','confirm',{id:'favourite-quest'}));
+  s=send(s,'north','confirm',{id:'favourite-quest'});
+  assert.equal(s.missions[0].status,'completed');assert.equal(s.missions[0].favouriteVisit,'favourite-visit');
+});
+
+test('a forever quest remains open across visits and can be archived without losing them',()=>{
+  let s=send(M.initial(),'north','mission',{...quest,goal:'forever',target:0,steps:[],who:'me',bothRate:false,evidence:true,due:'2099-01-01'},'forever-quest');
+  assert.equal(s.missions[0].confirm,false);assert.equal(s.missions[0].evidence,false);assert.equal(s.missions[0].due,'');
+  for(let i=0;i<4;i++)s=send(s,'north','visit',{venue:'Café '+i,item:'Mocha',category:'Coffee',day:'2026-09-28',mission:'forever-quest'});
+  s=JSON.parse(JSON.stringify(s));assert.equal(M.progress(s,s.missions[0]).distinct,4);assert.equal(M.progress(s,s.missions[0]).ready,false);
+  assert.throws(()=>send(s,'north','complete',{id:'forever-quest'}),/stays open/);
+  assert.throws(()=>send(s,'south','archive',{id:'forever-quest'}));
+  s=send(s,'north','archive',{id:'forever-quest'});assert.equal(s.missions[0].status,'archived');assert.equal(s.visits.length,5);
+});
+
+test('unlimited modes validate their rules and legacy tasting goals still use their count',()=>{
+  assert.equal(M.tastingGoal({target:2}),'places');
+  for(const goal of ['favourite','forever'])assert.throws(()=>send(M.initial(),'north','mission',{...quest,goal}));
+  assert.throws(()=>send(M.initial(),'north','mission',{...quest,goal:'unknown'}));
+  let s=send(M.initial(),'north','mission',{...quest,goal:'favourite',target:0,who:'partner'},'partner-favourite');
+  s=send(s,'south','accept',{id:'partner-favourite'});s=send(s,'south','link-visit',{visit:'starbucks-02',mission:'partner-favourite'});
+  assert.throws(()=>send(s,'north','favourite',{id:'partner-favourite',visit:'starbucks-02'}),/joined/);
+});

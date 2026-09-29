@@ -6,6 +6,8 @@
   const needs=['A little company','Encouragement','A chat','Some quiet','Nothing in particular'];
   const missionKinds=['tasting','date','kindness','custom'];
   const missionKind=m=>m.kind||(m.target?'tasting':'custom');
+  const tastingGoals=['places','favourite','forever'];
+  const tastingGoal=m=>missionKind(m)==='tasting'?(m.goal||'places'):null;
   const placeKey=v=>[v.venue,v.area].filter(Boolean).join(' · ').trim().replace(/\s+/g,' ').toLowerCase();
   function rating(value){requireThat(typeof value==='number'&&value>=0&&value<=10&&Number.isInteger(value*2),'Choose a score from 0 to 10, in half-points.');return value;}
   const day=(at=new Date())=>new Intl.DateTimeFormat('en-CA',{timeZone:'Pacific/Auckland',year:'numeric',month:'2-digit',day:'2-digit'}).format(at);
@@ -24,8 +26,10 @@
     const rated=visits.filter(v=>people.every(p=>v.ratings[p]!==undefined));
     const distinct=new Set((m.bothRate?rated:visits).map(placeKey)).size;
     const evidence=!m.evidence||m.people.every(p=>!!m.notes[p]?.trim());
-    const ready=checked===m.steps.length&&(!m.target||distinct>=m.target)&&evidence&&(!m.prerequisite||s.missions.some(x=>x.id===m.prerequisite&&x.status==='completed'));
-    return {checked,total:m.steps.length,distinct,evidence,ready};
+    const goal=tastingGoal(m),favourite=(m.bothRate?rated:visits).find(v=>v.id===m.favouriteVisit);
+    const goalReached=goal==='forever'?false:goal==='favourite'?!!favourite:!m.target||distinct>=m.target;
+    const ready=checked===m.steps.length&&goalReached&&evidence&&(!m.prerequisite||s.missions.some(x=>x.id===m.prerequisite&&x.status==='completed'));
+    return {checked,total:m.steps.length,distinct,evidence,ready,goal,goalReached};
   }
   function command(state,actor,c,now=new Date()){
     requireThat(people.includes(actor),'Sign in to your own home first.');
@@ -56,18 +60,27 @@
       case 'rate':{
         const v=find(s,'visits',d.id);v.ratings[actor]=rating(d.score);v.notes[actor]=text(d.note||'',300);v.again={...v.again,[actor]:!!d.again};break;
       }
+      case 'favourite':{
+        const m=find(s,'missions',d.id),v=find(s,'visits',d.visit);
+        requireThat(m.status==='active'&&m.people.includes(actor)&&tastingGoal(m)==='favourite','Choose a favourite for an active search you joined.');
+        requireThat(v.mission===m.id,'Choose a tasting from this mission.');
+        requireThat(!m.bothRate||people.every(p=>v.ratings[p]!==undefined),'Both of you need to rate this tasting first.');
+        m.favouriteVisit=v.id;break;
+      }
       case 'mission':{
         requireThat(['me','partner','both'].includes(d.who),'Choose who this mission is for.');
         const participants=d.who==='me'?[actor]:d.who==='partner'?[other(actor)]:people.slice();
         const kind=d.kind||(d.target?'tasting':'custom');requireThat(missionKinds.includes(kind),'Choose a mission type.');
+        const goal=kind==='tasting'?(d.goal||'places'):null;
+        requireThat(!goal||tastingGoals.includes(goal),'Choose a set number, a favourite search, or an ongoing quest.');
         const steps=(d.steps||[]).map(x=>required(x,140));requireThat((steps.length>0||kind==='tasting')&&steps.length<=12,kind==='tasting'?'Keep any final steps to twelve or fewer.':'Add between one and twelve steps.');
         requireThat(Number.isInteger(d.target)&&d.target>=0&&d.target<=30,'The tasting target must be between 0 and 30.');
-        requireThat(kind==='tasting'?d.target>0:!d.target&&!d.bothRate,'Place targets and tasting ratings belong to taste-test missions.');
+        requireThat(kind==='tasting'?(goal==='places'?d.target>0:d.target===0):!d.target&&!d.bothRate,'Use a place count only for a taste test with a set number of places.');
         const category=kind==='tasting'?(d.category||'Any'):null;requireThat(!category||['Coffee','Food','Any'].includes(category),'Choose coffee, food, or either.');
         requireThat(!d.due||date(d.due),'Choose a valid target date.');
         requireThat(['once','weekly','monthly'].includes(d.repeat||'once'),'Choose a repeat schedule.');
         if(d.prerequisite)find(s,'missions',d.prerequisite);
-        s.missions.push({id:c.id,kind,category,author:actor,title:required(d.title),description:text(d.description||'',800),people:participants,steps,checks:{},notes:{},target:d.target,bothRate:!!d.bothRate,evidence:!!d.evidence,confirm:!!d.confirm,due:d.due||'',repeat:d.repeat||'once',prerequisite:d.prerequisite||null,accepted:participants.includes(actor)?[actor]:[],status:participants.every(p=>p===actor)?'active':'proposed',created:stamp,version:2});break;
+        s.missions.push({id:c.id,kind,goal,category,favouriteVisit:null,author:actor,title:required(d.title),description:text(d.description||'',800),people:participants,steps,checks:{},notes:{},target:d.target,bothRate:!!d.bothRate,evidence:goal!=='forever'&&!!d.evidence,confirm:goal!=='forever'&&!!d.confirm,due:goal==='forever'?'':d.due||'',repeat:goal==='forever'?'once':d.repeat||'once',prerequisite:goal==='forever'?null:d.prerequisite||null,accepted:participants.includes(actor)?[actor]:[],status:participants.every(p=>p===actor)?'active':'proposed',created:stamp,version:3});break;
       }
       case 'accept':{
         const m=find(s,'missions',d.id);requireThat(m.people.includes(actor)&&m.status==='proposed','Only an invited participant can accept.');
@@ -84,7 +97,7 @@
         const m=find(s,'missions',d.id);requireThat(m.people.includes(actor)&&m.status==='active','Join this mission before adding a note.');m.notes[actor]=required(d.note,800);break;
       }
       case 'complete':{
-        const m=find(s,'missions',d.id);requireThat(m.status==='active'&&m.people.includes(actor),'Only an active participant can finish this mission.');requireThat(progress(s,m).ready,'There are still mission rules to finish.');
+        const m=find(s,'missions',d.id);requireThat(m.status==='active'&&m.people.includes(actor),'Only an active participant can finish this mission.');requireThat(tastingGoal(m)!=='forever','This quest stays open. Its creator can archive it when you are ready.');requireThat(progress(s,m).ready,'There are still mission rules to finish.');
         m.submittedBy=actor;m.status=m.confirm?'awaiting':'completed';if(!m.confirm)m.completed=stamp;break;
       }
       case 'confirm':{
@@ -122,5 +135,5 @@
     const s=copy(state);delete s.applied;
     s.capsules.forEach(x=>{x.contributors=Object.keys(x.entries);if(x.opens>day(now)){delete x.entries;x.sealed=true;}});return s;
   }
-  return {people,names,moods,needs,missionKinds,missionKind,placeKey,day,other,initial,command,progress,visible,date};
+  return {people,names,moods,needs,missionKinds,missionKind,tastingGoals,tastingGoal,placeKey,day,other,initial,command,progress,visible,date};
 });

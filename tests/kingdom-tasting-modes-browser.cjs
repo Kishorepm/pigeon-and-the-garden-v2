@@ -1,0 +1,53 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+require('node:fs').mkdirSync(require('node:path').join(__dirname,'../.local-review'),{recursive:true});
+const {webkit}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const url=process.env.PREVIEW_URL||'http://localhost:8124/kingdom.html';
+async function switchHome(page,name){await page.getByRole('button',{name:'Close journal'}).click();await page.getByRole('button',{name:'Open settings'}).click();await page.getByRole('button',{name:'Change home / sign out'}).click();await page.getByRole('button',{name,exact:true}).click();await page.getByRole('button',{name:'Guild hall',exact:true}).click();}
+test('favourite and forever quests work from the phone builder through their full lifecycle',async()=>{
+  const browser=await webkit.launch({headless:true});
+  try{
+    const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,reducedMotion:'reduce'}),errors=[];
+    page.on('pageerror',e=>errors.push(e.message));
+    await page.goto(url);await page.locator('#loading').waitFor({state:'hidden'});
+    await page.getByRole('button',{name:'Enter our kingdom'}).click();await page.getByRole('button',{name:'North · the knight',exact:true}).click();
+    await page.getByRole('button',{name:'Guild hall',exact:true}).click();await page.getByRole('button',{name:'Create a mission'}).click();await page.getByRole('button',{name:/Taste test Try places/}).click();
+    await page.getByLabel('Mission name',{exact:true}).fill('Find the one mocha');
+    await page.getByLabel('Different places to try').fill('5');
+    await page.getByLabel('How long is this quest?').selectOption('forever');
+    assert.equal(await page.locator('[name=target]').isDisabled(),true);assert.equal(await page.locator('[data-ending-rules]').isVisible(),false);
+    await page.getByLabel('How long is this quest?').selectOption('places');assert.equal(await page.getByLabel('Different places to try').inputValue(),'5');
+    await page.getByLabel('How long is this quest?').selectOption('favourite');
+    assert.equal(await page.getByLabel('Different places to try').isVisible(),false);
+    await page.screenshot({path:'.local-review/tasting-favourite-builder.png'});
+    await page.getByRole('button',{name:'Preview the scroll'}).click();await page.getByRole('button',{name:'Back to edit'}).click();
+    assert.equal(await page.getByLabel('How long is this quest?').inputValue(),'favourite');
+    await page.getByRole('button',{name:'Preview the scroll'}).click();await page.getByRole('button',{name:'Post this mission'}).click();
+    await switchHome(page,'South · the princess');await page.getByRole('button',{name:'View invitation'}).click();await page.getByRole('button',{name:'I’m in',exact:true}).click();
+    await page.getByText('Bring an earlier tasting into this quest',{exact:true}).click();await page.getByRole('button',{name:'Link this tasting'}).click();
+    assert.equal(await page.getByRole('button',{name:'Send for confirmation'}).isDisabled(),true);
+    await page.getByRole('button',{name:'Give your rating'}).click();await page.getByLabel('Your score / 10',{exact:true}).fill('9');await page.getByRole('button',{name:'Save my opinion'}).click();
+    assert.equal(await page.getByRole('button',{name:'Choose this favourite'}).count(),0);
+    await switchHome(page,'North · the knight');await page.getByRole('button',{name:'Open mission'}).click();
+    await page.getByRole('button',{name:'Give your rating'}).click();await page.getByLabel('Your score / 10',{exact:true}).fill('8');await page.getByRole('button',{name:'Save my opinion'}).click();
+    await page.getByLabel('Our favourite so far').selectOption('starbucks-02');await page.getByRole('button',{name:'Choose this favourite'}).click();
+    await page.locator('.chosen-favourite').waitFor();await page.getByRole('button',{name:'Send for confirmation'}).click();
+    await switchHome(page,'South · the princess');await page.getByRole('button',{name:'Open mission'}).click();await page.getByRole('button',{name:'Confirm our adventure'}).click();
+    assert.equal(await page.evaluate(()=>KingdomUI.store.state.missions[0].status),'completed');
+    await page.getByRole('button',{name:'Mission board',exact:false}).click();await page.getByRole('button',{name:'History',exact:true}).click();await page.getByRole('button',{name:'Open mission'}).click();await page.locator('.chosen-favourite').waitFor();
+    await page.getByRole('button',{name:'Mission board',exact:false}).click();await page.getByRole('button',{name:'Create a mission'}).click();await page.getByRole('button',{name:/Taste test Try places/}).click();
+    await page.getByLabel('Mission name',{exact:true}).fill('Every little coffee');await page.getByLabel('Who is it for?').selectOption('me');await page.getByLabel('How long is this quest?').selectOption('forever');await page.getByLabel('Both of us rate each place').uncheck();
+    await page.setViewportSize({width:320,height:740});
+    assert.equal(await page.locator('#book-content').evaluate(e=>e.scrollWidth>e.clientWidth),false);
+    await page.screenshot({path:'.local-review/tasting-forever-builder-320.png'});
+    await page.getByRole('button',{name:'Preview the scroll'}).click();await page.getByRole('button',{name:'Post this mission'}).click();
+    assert.equal(await page.getByRole('button',{name:/Send for confirmation|Complete this adventure/}).count(),0);
+    await page.getByRole('button',{name:'Add a tasting',exact:true}).click();await page.getByLabel('Place name',{exact:true}).fill('The little café');await page.getByLabel('What did you try?').fill('Iced mocha');await page.getByRole('button',{name:'Save this tasting'}).click();
+    await page.getByRole('heading',{name:'The little café',exact:true}).waitFor();
+    await page.reload();await page.locator('#loading').waitFor({state:'hidden'});await page.getByRole('button',{name:'Guild hall',exact:true}).click();
+    await page.getByText('An ongoing adventure',{exact:true}).waitFor();assert.doesNotMatch(await page.locator('.mission-board').innerText(),/\/ 0|NaN/);
+    await page.getByRole('button',{name:'Open mission'}).click();await page.getByRole('button',{name:'Archive mission'}).click();
+    await page.getByRole('heading',{name:'The little café',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'Add a tasting',exact:true}).count(),0);
+    assert.deepEqual(errors,[]);
+  }finally{await browser.close();}
+});
