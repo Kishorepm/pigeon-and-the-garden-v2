@@ -20,7 +20,7 @@ test('keyboard exploration stops on release, respects collision, interacts, and 
   try{
     const {page,errors}=await enter(browser);
     assert.ok(await page.evaluate(()=>{testScene.controls.keys.add('KeyD');testScene.controls.keys.add('KeyS');const {x,y}=testScene.controls.sample();testScene.controls.reset();return Math.abs(Math.hypot(x,y)-1)<.001;}),'diagonal speed is normalised');
-    await page.keyboard.down('d');await page.waitForFunction(()=>testScene.active.x>380);await page.keyboard.up('d');
+    await page.keyboard.down('d');await page.evaluate(()=>window.dispatchEvent(new Event('kingdom-dialog')));await page.waitForFunction(()=>testScene.active.x>380);await page.keyboard.up('d');
     const stopped=await position(page);await page.waitForTimeout(250);assert.deepEqual(await position(page),stopped);
     assert.equal(await page.evaluate(()=>testScene.active.walking),false);
     await page.evaluate(()=>{testScene.active.setPosition(350,-35);testScene.frameParty(true);});

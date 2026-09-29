@@ -14,5 +14,5 @@ window.KingdomSound=(()=>{
   }
   document.getElementById('sound').onclick=()=>toggle().catch(()=>{enabled=false;gain?.gain.setValueAtTime(0,ctx.currentTime);ctx?.suspend().catch(()=>{});reflect();KingdomUI.toast('Sound could not start. Try tapping again.');});
   document.addEventListener('visibilitychange',()=>{if(!ctx)return;if(document.hidden)ctx.suspend();else if(enabled)ctx.resume().catch(()=>{});});
-  return {toggle,place(id){current=id;if(filter)filter.frequency.setTargetAtTime(id==='pond'||id==='memorial'?1100:rain?1500:650,ctx.currentTime,1);if(id==='dwarf')tone(580,.6,.15,'triangle');},weather(wet){rain=wet;if(filter)filter.frequency.setTargetAtTime(wet?1500:650,ctx.currentTime,1);},step(){tone(130,.07,.07,'triangle');}};
+  return {toggle,effect(name){if(name==='throw')tone(380,.12,.12,'triangle');else if(name==='return')tone(740,.18,.12,'triangle');else{tone(523,.65,.10,'triangle');setTimeout(()=>tone(659,.7,.09,'triangle'),180);setTimeout(()=>tone(784,.9,.08,'triangle'),360);}},place(id){current=id;if(filter)filter.frequency.setTargetAtTime(id==='pond'||id==='memorial'?1100:rain?1500:650,ctx.currentTime,1);if(id==='dwarf')tone(580,.6,.15,'triangle');},weather(wet){rain=wet;if(filter)filter.frequency.setTargetAtTime(wet?1500:650,ctx.currentTime,1);},step(){tone(130,.07,.07,'triangle');}};
 })();

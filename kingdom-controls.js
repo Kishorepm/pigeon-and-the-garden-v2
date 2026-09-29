@@ -21,7 +21,9 @@ window.KingdomControls=class {
     });
     on(window,'keyup',e=>this.keys.delete(e.code));
     on(window,'blur',()=>this.reset());on(document,'visibilitychange',()=>this.reset());
-    on(window,'kingdom-dialog',()=>this.reset());on(window,'kingdom-identity',()=>this.reset());
+    // Closing a native dialog can dispatch its close event on a later frame.
+    // Reset on opening only, so that event cannot cancel newly pressed movement.
+    on(window,'kingdom-dialog',()=>{if(document.getElementById('book').open||document.getElementById('credits').open)this.reset();});on(window,'kingdom-identity',()=>this.reset());
     on(this.pad,'pointerdown',e=>{
       if(!this.allowed()||this.pointer!==null||e.button>0)return;e.preventDefault();
       this.pointer=e.pointerId;this.pad.setPointerCapture(e.pointerId);this.drag(e);

@@ -9,6 +9,15 @@
   const tastingGoals=['places','favourite','forever'];
   const tastingGoal=m=>missionKind(m)==='tasting'?(m.goal||'places'):null;
   const placeKey=v=>[v.venue,v.area].filter(Boolean).join(' · ').trim().replace(/\s+/g,' ').toLowerCase();
+  const restorations=[
+    {id:'garden',title:'The memory garden',threshold:3,copy:'A flower for each chapter. A place for both of your words.',gift:'Plant your first memory'},
+    {id:'balcony',title:'The lantern balcony',threshold:5,copy:'A quiet place above the courtyard, lit by the adventures you keep.',gift:'A new silhouette for the castle'},
+    {id:'library',title:'The little story tower',threshold:8,copy:'A warm-windowed tower for a growing collection of your days.',gift:'A home for all your chapters'}
+  ];
+  const comforts={company:{label:'Sit with you',received:'left a little company',copy:'No need to say anything. I’m here.'},hug:{label:'Leave a hug',received:'left you a hug',copy:'A little hug, for whenever you need it.'},flowers:{label:'Bring flowers',received:'brought you flowers',copy:'Something small to brighten your doorstep.'},quiet:{label:'Give you quiet',received:'left a quiet light on',copy:'Take your time. No reply needed.'}};
+  function life(s){return {builds:s.life?.builds||{},flowers:s.life?.flowers||[],responses:s.life?.responses||[],ruby:s.life?.ruby||{}};}
+  function storySeeds(s){return [{id:'date1',title:'A walk at Ambury',kind:'chapter',detail:'30 August · the throne'},{id:'date2',title:'The long way through Kmart',kind:'chapter',detail:'12 September · the crown'},{id:'date3',title:'Our first kiss',kind:'chapter',detail:'Manawa Bay · the lantern'},...s.missions.filter(m=>m.status==='completed').map(m=>({id:'mission:'+m.id,title:m.title,kind:'mission',detail:'An adventure, completed together'}))];}
+  function story(s){const count=storySeeds(s).length,built=life(s).builds;return {count,projects:restorations.map(p=>({...p,built:!!built[p.id],available:count>=p.threshold})),next:restorations.find(p=>!built[p.id])||null};}
   function rating(value){requireThat(typeof value==='number'&&value>=0&&value<=10&&Number.isInteger(value*2),'Choose a score from 0 to 10, in half-points.');return value;}
   const day=(at=new Date())=>new Intl.DateTimeFormat('en-CA',{timeZone:'Pacific/Auckland',year:'numeric',month:'2-digit',day:'2-digit'}).format(at);
   const other=p=>p==='north'?'south':'north';
@@ -36,8 +45,35 @@
     requireThat(c&&typeof c.id==='string'&&/^[\w-]{8,80}$/.test(c.id),'This change needs a valid identifier.');
     requireThat(c.data&&typeof c.data==='object','Invalid change.');
     if(state.applied.includes(c.id))return state;
-    const s=copy(state),d=c.data,stamp=now.toISOString();
+    const s=copy(state),d=c.data,stamp=now.toISOString();s.life=life(s);
     switch(c.type){
+      case 'restore':{
+        const p=restorations.find(p=>p.id===d.project);requireThat(p,'Choose a castle project.');
+        requireThat(storySeeds(s).length>=p.threshold,'A few more completed adventures will open this project.');
+        requireThat(!s.life.builds[p.id],'This part of the castle is already restored.');
+        s.life.builds[p.id]={author:actor,at:stamp};break;
+      }
+      case 'plant':{
+        requireThat(s.life.builds.garden,'Restore the memory garden first.');
+        requireThat(storySeeds(s).some(x=>x.id===d.source),'Choose one of your completed chapters.');
+        requireThat(!s.life.flowers.some(f=>f.source===d.source),'This memory already has a flower.');
+        requireThat(['daisy','sunflower','bluebell'].includes(d.species),'Choose a flower.');
+        s.life.flowers.push({id:c.id,source:d.source,species:d.species,author:actor,notes:{[actor]:text(d.note||'',500)},at:stamp});break;
+      }
+      case 'garden-note':{
+        const f=s.life.flowers.find(f=>f.id===d.id);requireThat(f,'That flower is no longer here.');f.notes[actor]=required(d.note,500);break;
+      }
+      case 'comfort':{
+        requireThat(Object.hasOwn(comforts,d.kind),'Choose a little way to be there.');
+        requireThat(d.day===day(now)&&s.moods[d.day+':'+other(actor)],'Your partner needs a check-in for today first.');
+        const entry={id:c.id,author:actor,to:other(actor),day:day(now),kind:d.kind,at:stamp};
+        const i=s.life.responses.findIndex(x=>x.author===actor&&x.day===entry.day);
+        if(i<0)s.life.responses.push(entry);else s.life.responses[i]=entry;break;
+      }
+      case 'ruby-play':{
+        requireThat(d.rounds===3&&Number.isInteger(d.accurate)&&d.accurate>=0&&d.accurate<=3,'Finish three throws to keep this playtime.');
+        const previous=s.life.ruby[actor];s.life.ruby[actor]={plays:(previous?.plays||0)+1,best:Math.max(previous?.best||0,d.accurate),first:previous?.first||stamp,last:stamp};break;
+      }
       case 'mood':{
         requireThat(moods.includes(d.mood),'Choose the mood that feels closest.');
         requireThat(!d.need||needs.includes(d.need),'Choose what would feel good.');
@@ -129,11 +165,12 @@
       default:throw new Error('That action is not supported.');
     }
     for(const key of collection)requireThat(s[key].length<=2000,'The journal is full. Export your memories before adding more.');
+    requireThat(s.life.flowers.length<=2000&&s.life.responses.length<=5000,'This part of the journal is full. Export your memories before adding more.');
     s.applied.push(c.id);s.revision++;return s;
   }
   function visible(state,now=new Date()){
     const s=copy(state);delete s.applied;
     s.capsules.forEach(x=>{x.contributors=Object.keys(x.entries);if(x.opens>day(now)){delete x.entries;x.sealed=true;}});return s;
   }
-  return {people,names,moods,needs,missionKinds,missionKind,tastingGoals,tastingGoal,placeKey,day,other,initial,command,progress,visible,date};
+  return {people,names,moods,needs,missionKinds,missionKind,tastingGoals,tastingGoal,placeKey,restorations,comforts,life,storySeeds,story,day,other,initial,command,progress,visible,date};
 });
