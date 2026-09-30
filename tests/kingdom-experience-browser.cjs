@@ -12,7 +12,7 @@ async function enter(b,{width=390,height=844,tour=false}={}){
 test('the character introduces the real world, starts a guild visit, and respects skip and replay',async()=>{
   const b=await webkit.launch();try{
     const {p,errors}=await enter(b,{tour:true});await p.locator('#character-intro').waitFor({state:'visible'});
-    await p.locator('#intro-portrait .is-ready').waitFor();assert.match(await p.locator('#intro-copy').textContent(),/Three dates/);
+    await p.locator('#intro-portrait .is-ready').waitFor();assert.match(await p.locator('#intro-copy').textContent(),/Three dates/);assert.equal(await p.locator('#toast').isHidden(),true,'the entry status must not obscure the introduction');
     await p.locator('#intro-next').click();assert.match(await p.locator('#intro-copy').textContent(),/Release to stop/);
     const before=await p.evaluate(()=>testScene.active.x);await p.keyboard.down('d');await p.waitForFunction(x=>testScene.active.x>x+10,before);await p.keyboard.up('d');
     await p.locator('#intro-next').click();await p.locator('#intro-next').click();await p.getByRole('heading',{name:'The guild hall.'}).waitFor();assert.equal(await p.locator('#character-intro').isHidden(),true);

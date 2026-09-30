@@ -121,7 +121,7 @@
       if(old){for(const k of ['title','description','steps','who','evidence','confirm','due','repeat','prerequisite'])if(k in old)next[k]=old[k];if(old.kind===id)for(const k of ['target','category','bothRate','goal'])if(k in old)next[k]=old[k];}
       window.KingdomUI.draft=next;open('mission-new');return;
     }if(['mission','memory','rate','award'].includes(action)){open(action,id);return;}
-    if(action==='preview'){store.preview(id);close();window.dispatchEvent(new CustomEvent('kingdom-identity',{detail:id}));$('welcome').hidden=true;toast('Exploring '+(id==='north'?'North':'South')+' · on this device only');return;}
+    if(action==='preview'){store.preview(id);close();window.dispatchEvent(new CustomEvent('kingdom-identity',{detail:id}));$('welcome').hidden=true;if($('character-intro').hidden)toast('Exploring '+(id==='north'?'North':'South')+' · on this device only');return;}
     if(action==='logout'){if(store.busy)throw Error('Please let this save finish before changing homes.');store.logout();open('login');return;}
     if(action==='travel'){close();window.dispatchEvent(new CustomEvent('kingdom-travel',{detail:id}));return;}
     if(action==='credits'){close();$('credits').showModal();return;}
