@@ -37,6 +37,7 @@
         html='<p>Our ordinary days and our favourite adventures, kept in one place.</p>'+links([['today','Today','A mood, a thought, a little company'],['missions','The guild hall','Our missions, taste tests & adventures'],['story','Our growing castle','Restore a home from our adventures'],['garden','The memory garden','Plant a chapter, leave a little memory'],['ruby','Ruby’s meadow','A ball, three throws, a happy dog'],['memories','Our chapters','Three dates, already part of us']])+group('Letters & possibilities','Pigeon post, someday ideas & time capsules',[['post','Pigeon post','Words left just for you'],['ideas','Someday','Places and possibilities'],['capsules','Time capsules','A little something for later']])+group('Life around the castle','Keepsakes, residents, the ledger & Pearl’s garden',[['keepsakes','Our keepsakes','Make yourselves at home'],['ledger','The dwarf’s ledger','Good deeds, duly noted'],['residents','The residents','Everyone who calls this home'],['pearl','Pearl’s garden','Always part of our story']])+links([['weather','Weather & sky','Follow Auckland or preview another sky'],['settings','Settings & controls','Walking, zoom, sound & your home']]);break;
       }
       case 'weather':heading('Today’s sky.','WEATHER & TIME');html=KingdomSky.panel({form,select,button});break;
+      case 'room-guide':{const room=KingdomUI.room;if(!room){open('journal');return;}heading(room.name,'A PLACE TO MAKE YOURSELF AT HOME');html='<p>Tap an object in the room, walk up and press E, or choose something here.</p><div class="room-guide-list">'+room.stations.map(st=>`<button data-act="room-object" data-id="${esc(st.id)}"><strong>${esc(st.name)}</strong><small>${esc(st.action)}</small><span aria-hidden="true">→</span></button>`).join('')+'</div>';break;}
       case 'today':heading('Us, today.','A LITTLE CHECK-IN · '+M.day());html=KingdomLifePanels.comfort(s,who,'received')+V.today(s,who,moodEditing)+KingdomLifePanels.comfort(s,who,'send');break;
       case 'story':heading('A home, chapter by chapter.','OUR GROWING CASTLE');html=KingdomLifePanels.story(s);break;
       case 'garden':heading('The things we keep.','THE MEMORY GARDEN');html=KingdomLifePanels.garden(s,who,{form,select,area});break;
@@ -105,6 +106,7 @@
   }
   async function perform(type,data,after){const previous=M.story(state()).projects;await store.send(type,data);const unlocked=M.story(state()).projects.find(p=>p.available&&!previous.find(x=>x.id===p.id).available);toast(unlocked?unlocked.title+' is ready to restore. Find it in Our growing castle.':'A little piece of our story, saved.');if(after)open(after);else render();}
   async function act(action,id){
+    if(action==='room-object'){close();window.dispatchEvent(new CustomEvent('kingdom-room-use',{detail:id}));return;}
     const s=state();
     if(action==='sky-live'){KingdomSky.preview('live');close();toast('Following Auckland weather again.');return;}
     if(action==='sky-refresh'){await KingdomSky.refresh();if(page==='weather')render();return;}

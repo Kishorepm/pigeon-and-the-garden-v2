@@ -39,7 +39,7 @@ test('guild type builder keeps places, independent ratings and earlier tastings 
     const cafe=page.locator('.tasting-entry').filter({has:page.getByRole('heading',{name:'The Corner Café',exact:true})});await cafe.getByRole('button',{name:'Give your rating'}).click();await page.getByLabel('Your score / 10',{exact:true}).fill('7.5');await page.getByRole('button',{name:'Save my opinion'}).click();await page.getByText('Together: 8.0 / 10',{exact:true}).waitFor();
     assert.equal(await page.locator('#book').getAttribute('data-page'),'mission');await page.screenshot({path:path.join(out,'guild-tasting-mission.png')});
     await page.getByRole('button',{name:'Mission board',exact:false}).click();await page.screenshot({path:path.join(out,'guild-board-desktop.png')});
-    await page.getByRole('button',{name:'Close journal'}).click();await satchel(page,'Show kingdom map');await page.getByRole('button',{name:/The guild hall Missions/}).click();await page.getByRole('button',{name:'Close journal'}).click();await page.waitForTimeout(800);await page.screenshot({path:path.join(out,'guild-world.png')});
+    await page.getByRole('button',{name:'Close journal'}).click();await satchel(page,'Show kingdom map');await page.getByRole('button',{name:/The guild hall Missions/}).click();await page.waitForFunction(()=>testScene.interiors.active);await page.waitForTimeout(800);await page.screenshot({path:path.join(out,'guild-world.png')});
     assert.deepEqual(errors,[]);
   }finally{await browser.close();}
 });

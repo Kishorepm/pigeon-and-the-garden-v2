@@ -12,7 +12,7 @@
       on(this.out,'click',()=>this.set(this.factor-.1));on(this.ins,'click',()=>this.set(this.factor+.1));on(this.reset,'click',()=>this.set(1));
       on(canvas,'wheel',e=>{if(!this.allowed()||e.ctrlKey||e.metaKey)return;e.preventDefault();this.set(this.factor*Math.exp(-Math.max(-100,Math.min(100,e.deltaY))*.002));},{passive:false});
       on(window,'keydown',e=>{
-        if(!this.allowed()||e.target.closest?.('input,textarea,select,dialog,[contenteditable]')||e.ctrlKey||e.metaKey||e.altKey)return;
+        if(!this.allowed()||e.target.closest?.('input,textarea,select,dialog[open],[contenteditable]')||e.ctrlKey||e.metaKey||e.altKey)return;
         if(['Equal','NumpadAdd','Minus','NumpadSubtract','Digit0','Numpad0'].includes(e.code)){e.preventDefault();this.set(['Digit0','Numpad0'].includes(e.code)?1:this.factor+(['Equal','NumpadAdd'].includes(e.code)?.1:-.1));}
       });
       on(canvas,'pointerdown',e=>{
@@ -50,7 +50,7 @@
       if(this.scene.overview)this.scene.leaveOverview();else this.apply();
       if(save)this.persist();this.reflect();
     }
-    apply(){if(this.scene.overview)return;this.scene.cameras.main.setZoom(base(this.scene.scale.width)*(this.scene.life?.game?1:this.factor));this.scene.frameParty(true);this.reflect();}
+    apply(){if(this.scene.overview)return;if(this.scene.interiors?.active){this.scene.interiors.camera(true);return;}this.scene.cameras.main.setZoom(base(this.scene.scale.width)*(this.scene.life?.game?1:this.factor));this.scene.frameParty(true);this.reflect();}
     reflect(){this.reset.textContent=Math.round(this.factor*100)+'%';this.reset.setAttribute('aria-label','Reset world zoom · '+Math.round(this.factor*100)+' percent');this.out.disabled=this.factor<=.601;this.ins.disabled=this.factor>=1.899;}
   }
   return {base,limit,Controls};

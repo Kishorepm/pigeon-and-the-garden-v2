@@ -225,5 +225,71 @@
     "file": "game-art/lpc/castle.png",
     "source": "https://opengameart.org/sites/default/files/lpc_castle_2.png",
     "sha256": "4dd697c44f32ca5b387dfcd5019c952be356cf35ce600ce2ebae1be315fe8669"
+  },
+  {
+    "file": "game-art/lpc/room-rug.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Rugs/Swirling%20Vine%20Rug.png",
+    "sha256": "40255017b36b59fbd08166dd77195df7b12397d69912a6f8395ece3dfebcef1d",
+    "bytes": 6843
+  },
+  {
+    "file": "game-art/lpc/room-wood.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Structure/Floor/Wood%20Floor%20A.png",
+    "sha256": "dbce22679bc0469c4063c626504d98b469b2fdf279e9630b7021ffbcfb113f9d",
+    "bytes": 2036
+  },
+  {
+    "file": "game-art/lpc/room-bed.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Beds/Beds%2C%20Single%20B.png",
+    "sha256": "f49959d936a85bc424f183e2ba650f5a9e6d98bd362163fbf2e63afe6966856d",
+    "bytes": 32465
+  },
+  {
+    "file": "game-art/lpc/room-desk.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Desk%2C%20Office.png",
+    "sha256": "670e1d6ca399f2207ea4c074d8e29c7ddc6fff92c58752ecdd0b076a67a39eda",
+    "bytes": 2742
+  },
+  {
+    "file": "game-art/lpc/room-seat.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Seating/Loveseat%2C%20Small%20-%20Casual%20Solid%20A.png",
+    "sha256": "15a35f492f06073414548605cb0ebe586a94e4b1301c68a8c96ac685799f3b03",
+    "bytes": 15860
+  },
+  {
+    "file": "game-art/lpc/room-chest.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Chest.png",
+    "sha256": "4a2982eccfdae791240e69125537071cd2d4406d7a516d8e0914c8a0589c1f7e",
+    "bytes": 4556
+  },
+  {
+    "file": "game-art/lpc/room-shelf.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Shelf.png",
+    "sha256": "7e2bed1a15206af3d3024c8caedcf6809566024bf849911c9bd40ccdbf7ca01e",
+    "bytes": 1735
+  },
+  {
+    "file": "game-art/lpc/room-painting.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Wall%20Items/Paintings%2C%20Landscape.png",
+    "sha256": "93c6e7a4f1bb3365e4a5ef60ccf8dcacc0bf19d27a2cbd578f1aff1b631735c8",
+    "bytes": 8258
+  },
+  {
+    "file": "game-art/lpc/room-throne.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Seating/Thrones.png",
+    "sha256": "7b68db99ba76ea5c60afab8ec2f91b4fb777c824f01bf1af7d2bce7bfebab89e",
+    "bytes": 6204
+  },
+  {
+    "file": "game-art/lpc/room-mirror.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Mirror%2C%20Standing.png",
+    "sha256": "3a431606ee7cbffe19168ad67f82d5124112a9c223bd08dc6fbe7910c82cf932",
+    "bytes": 3190
+  },
+  {
+    "file": "game-art/lpc/room-fire.png",
+    "source": "https://raw.githubusercontent.com/ElizaWy/LPC/main/Objects/Furniture/Fireplace.png",
+    "sha256": "8536955ed50a551b8417c620b387f32fcfd5bb9a26acdef18fe159379f71144b",
+    "bytes": 4864
   }
 ]

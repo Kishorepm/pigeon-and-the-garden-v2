@@ -8,14 +8,17 @@
     [-251,682,-244,757], [-68,682,-59,757], [-250,748,-60,757],
     [-190,715,-151,749]
   ];
-  function create(obstacles=[],radius=7){
-    const rects=[...buildings,...obstacles.filter(o=>o.type==='rect').map(o=>[o.x,o.y,o.x+o.w,o.y+o.h])];
+  function create(obstacles=[],radius=7,options={}){
+    const area=options.bounds||bounds;
+    const rects=[...(options.buildings||buildings),...obstacles.filter(o=>o.type==='rect').map(o=>[o.x,o.y,o.x+o.w,o.y+o.h])];
     const circles=obstacles.filter(o=>o.type==='circle');
     function walkable(x,y){
-      if(!Number.isFinite(x)||!Number.isFinite(y)||x<bounds.left+radius||x>bounds.right-radius||y<bounds.top+radius||y>bounds.bottom-radius)return false;
+      if(!Number.isFinite(x)||!Number.isFinite(y)||x<area.left+radius||x>area.right-radius||y<area.top+radius||y>area.bottom-radius)return false;
       // Both timber bridges are the only dry crossings of the river.
-      if(x>576-radius&&x<672+radius&&!((y>=528+radius&&y<=576-radius)||(y>=1024+radius&&y<=1072-radius)))return false;
-      if(((x-55)/(91+radius))**2+((y-671)/(62+radius))**2<1)return false;
+      if(options.water!==false){
+        if(x>576-radius&&x<672+radius&&!((y>=528+radius&&y<=576-radius)||(y>=1024+radius&&y<=1072-radius)))return false;
+        if(((x-55)/(91+radius))**2+((y-671)/(62+radius))**2<1)return false;
+      }
       for(const [l,t,r,b] of rects){const nx=Math.max(l,Math.min(r,x)),ny=Math.max(t,Math.min(b,y));if((x-nx)**2+(y-ny)**2<radius**2)return false;}
       for(const o of circles)if((x-o.x)**2+(y-o.y)**2<(radius+o.r)**2)return false;
       return true;
@@ -34,12 +37,12 @@
       }
       return [x,y];
     }
-    const cell=16,cols=Math.ceil((bounds.right-bounds.left)/cell),rows=Math.ceil((bounds.bottom-bounds.top)/cell);
-    const point=id=>[bounds.left+(id%cols)*cell,bounds.top+Math.floor(id/cols)*cell];
+    const cell=options.cell||16,cols=Math.ceil((area.right-area.left)/cell),rows=Math.ceil((area.bottom-area.top)/cell);
+    const point=id=>[area.left+(id%cols)*cell,area.top+Math.floor(id/cols)*cell];
     const grid=new Uint8Array(cols*rows);
     for(let i=0;i<grid.length;i++)grid[i]=walkable(...point(i))?1:0;
     function anchor(p){
-      const cx=Math.round((p[0]-bounds.left)/cell),cy=Math.round((p[1]-bounds.top)/cell);let best=-1,distance=Infinity;
+      const cx=Math.round((p[0]-area.left)/cell),cy=Math.round((p[1]-area.top)/cell);let best=-1,distance=Infinity;
       for(let yy=cy-3;yy<=cy+3;yy++)for(let xx=cx-3;xx<=cx+3;xx++){
         if(xx<0||xx>=cols||yy<0||yy>=rows)continue;const id=yy*cols+xx;if(!grid[id])continue;
         const q=point(id),d=Math.hypot(q[0]-p[0],q[1]-p[1]);if(d<distance&&clear(p,q)){best=id;distance=d;}

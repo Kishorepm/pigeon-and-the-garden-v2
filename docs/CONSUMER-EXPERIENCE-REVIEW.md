@@ -78,3 +78,15 @@ Asset direction: keep the existing LPC artists' masonry, cliff and vegetation la
 Consumer tradeoffs: the second tap to open less frequent tools buys a clearer playing area. The floating controller needs one initial instruction, so the introduction teaches it and the optional pad is easy to find. Physical iPhone testing remains necessary for thumb comfort, full pinch input and long-session performance. Shared accounts still require the prepared Supabase setup; this remains an on-device preview until configured.
 
 Validation for this pass: 56 model/API checks and 13 distinct WebKit flows pass, covering movement/collision, controller release and centre dead zone, pinch arbitration, resize, intro skip/replay, satchel navigation, independent moods/ratings, memory gardening, pet play and live/offline weather. Dedicated experience startup also enforces the iPhone per-canvas pixel budget. These are automated browser checks, not a claim of testing on a physical phone.
+
+## 30 September — homes as places to play
+
+The home doors previously led straight to the daily form. They now enter furnished, walkable cutaway rooms. North uses cool stone, blue bedding and a quiet writing corner; South uses warmer timber, sage seating and a nook for Ruby, Topaz and Mini. The guild and castle have their own interiors, making missions, memories and keepsakes part of the physical world.
+
+Discovery is supported by familiar objects and a compact Room guide. The guide supplies labelled native buttons for every station rather than relying on hidden canvas hotspots. Each object routes to an unobstructed approach point. The same floating controller, keyboard, tap-to-walk and pinch conventions apply indoors. Furniture and walls block walking. Return exits include the visible Outside button, physical doorway, Escape and the map.
+
+The iced mocha ritual provides a small skill activity without making affection a score: hold to pour and release in a clear target band. It is explicitly a visual activity for this visit, not a real-world tasting or a message from the other person. Resting at the seat and tending the fire offer slower interactions alongside useful journals. Room titles stay clear of back-wall objects; cameras fit the playing area around the HUD on narrow and short phones. A toast no longer obscures the drink activity.
+
+No new relationship schema or shared service is required for these rooms. Existing letters, moods and keepsakes use the established persistence path; shared accounts still require the prepared backend. Physical iPhone thumb comfort, actual pinch events, full accessibility and long-session performance remain release checks.
+
+Validation: 62 model/API checks and 19 distinct WebKit browser flows passed (17 kingdom flows plus 2 original-invitation startup checks). Focused reruns cover the final seat pose and 320×568 / 844×390 camera layouts. The 11 new source sheets total 88,753 bytes and their recorded hashes match.

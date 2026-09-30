@@ -18,7 +18,7 @@ window.KingdomControls=class {
       });
     }
     const movement=['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowLeft','ArrowDown','ArrowRight','ShiftLeft','ShiftRight'];
-    const editing=target=>target?.closest('input,textarea,select,[contenteditable="true"],dialog');
+    const editing=target=>target?.closest('input,textarea,select,[contenteditable="true"],dialog[open]');
     on(window,'keydown',e=>{
       if(!this.allowed()||editing(e.target)||e.ctrlKey||e.altKey||e.metaKey)return;
       if(movement.includes(e.code)){e.preventDefault();this.keys.add(e.code);}

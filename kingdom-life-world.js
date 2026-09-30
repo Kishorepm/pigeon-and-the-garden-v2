@@ -86,6 +86,7 @@ window.KingdomLifeWorld=class {
     if(!KingdomUI.store.actor)this.end();
   }
   reveal(project){
+    this.s.interiors?.exit();
     const sprite=this.sprites[project];if(!sprite)return;
     this.end();this.s.cancelTravel();this.s.controls.reset();this.s.leaveOverview();this.revealTime=this.reduced()?2.5:5;document.querySelector('.adventure').classList.add('is-restoring');
     this.s.cameraPoint.x=350;this.s.cameraPoint.y=380;this.s.cameras.main.centerOn(350,380);
@@ -94,6 +95,7 @@ window.KingdomLifeWorld=class {
   }
   clearReveal(){this.revealTime=0;document.querySelector('.adventure').classList.remove('is-restoring');this.s.frameParty(true);}
   requestPlay(){
+    this.s.interiors?.exit();
     this.end();this.pending=true;this.s.walkTo(KingdomPaths.nodes.ruby,'ruby');
     if(!this.s.travel&&!this.game)this.pending=false;
   }

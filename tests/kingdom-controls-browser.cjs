@@ -28,13 +28,13 @@ test('keyboard exploration stops on release, respects collision, interacts, and 
     await page.keyboard.down('w');await page.waitForTimeout(1500);await page.keyboard.up('w');
     assert.ok((await position(page))[1]>-100,'cottage wall stops the character');
     await page.evaluate(()=>{testScene.active.setPosition(350,-35);testScene.frameParty(true);});
-    await page.keyboard.press('e');await page.locator('#book[open]').waitFor();
+    await page.keyboard.press('e');await page.waitForFunction(()=>testScene.interiors.active);await page.getByRole('button',{name:'Us today',exact:true}).click();await page.locator('#book[open]').waitFor();
     const atHome=await position(page);await page.keyboard.down('d');await page.waitForTimeout(250);await page.keyboard.up('d');assert.deepEqual(await position(page),atHome);
     await page.getByRole('button',{name:'Close journal'}).click();
     await page.getByRole('button',{name:'Guild hall',exact:true}).click();await page.getByRole('button',{name:'Create a mission',exact:true}).click();await page.getByRole('button',{name:/Your own quest Choose/}).click();
     await page.getByLabel('Mission name',{exact:true}).fill('We wander east');await page.getByLabel('Mission name',{exact:true}).press('End');await page.keyboard.type(' wasd');
     assert.deepEqual(await position(page),atHome);assert.match(await page.getByLabel('Mission name',{exact:true}).inputValue(),/wasd$/);
-    await page.getByRole('button',{name:'Close journal'}).click();
+    await page.getByRole('button',{name:'Close journal'}).click();await page.locator('#room-exit').click();
     await satchel(page,'Show kingdom map');await page.getByRole('button',{name:/The guild hall Missions/}).click();
     await page.waitForFunction(()=>testScene.travel&&testScene.walkDistance>30);
     await page.keyboard.down('s');await page.waitForFunction(()=>!testScene.travel);await page.keyboard.up('s');

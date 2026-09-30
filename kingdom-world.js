@@ -2,7 +2,7 @@
 window.extendLivingKingdom=function(Journey,{reduced}){
   const P=KingdomPaths,$=id=>document.getElementById(id),baseVillage=Journey.prototype.makeVillage,baseGround=Journey.prototype.makeGround,basePreload=Journey.prototype.preloadChapter;
   Object.assign(Journey.prototype,{
-    preloadChapter(){basePreload?.call(this);this.load.image('cliffs','game-art/lpc/cliffs.png');},
+    preloadChapter(){basePreload?.call(this);this.load.image('cliffs','game-art/lpc/cliffs.png');for(const key of ['bed','seat','fire','shelf','desk','chest','mirror','wood','rug','painting','throne'])this.load.image('room-'+key,'game-art/lpc/room-'+key+'.png');},
     makeGround(){baseGround.call(this);this.children.list.forEach(o=>{if(o.texture?.key==='grass-block')o.setDepth(-5000);if(o.texture?.key==='world-ground')o.setDepth(-4999);});},
     paintChapterGround(c,path,terrain){
       // Replace the invitation's old routes and draw the whole network in two
@@ -40,7 +40,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       r('#4b4a35',2,20,60,6);r('#71815b',7,15,50,5);r('#8b9b6c',12,11,40,4);
       [[13,32,15,18],[34,30,17,22]].forEach(([x,y,w,h],i)=>{r('#d7c399',x+1,y+2,w,h);r('#efe0b8',x,y,w,h);r('#98734d',x+6,y+2,3,3);r('#b5a178',x+3,y+8,w-6,1);r('#b5a178',x+3,y+12,w-7,1);if(i)r('#8b6752',x+6,y+16,5,3);});board.refresh();
       this.add.image(821,707,'guild-board').setOrigin(.5,1).setDepth(707);
-      this.add.zone(821,674,64,76).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>this.visit('inn')));
+      this.add.zone(821,674,64,76).setInteractive({useHandCursor:true}).on('pointerdown',()=>this.worldAction(()=>KingdomUI.open('missions')));
     },
     signpost(x,y,label,right){
       const word=label==='HOME'?'CASTLE':label==='THE LONG WAY'?'SOUTH':label;
@@ -134,6 +134,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       this.keepsakeSprites={crown,lantern};this.placeKeepsakes(KingdomModel.initial());
     },
     placeKeepsakes(s){
+      if(this.interiors?.active&&!this.refreshingExterior){this.interiors.exteriorChange(()=>{this.refreshingExterior=true;try{this.placeKeepsakes(s);}finally{this.refreshingExterior=false;}});this.interiors.reflect();return;}
       if(!this.keepsakeSprites)return;
       const slots={castle:[386,370],north:[419,-59],south:[245,1085]};
       for(const [id,sprite] of Object.entries(this.keepsakeSprites)){const [x,y]=slots[s.placements[id]]||slots.castle;sprite.setPosition(x+(id==='lantern'?36:0),y).setDepth(y+1);}
@@ -170,8 +171,9 @@ window.extendLivingKingdom=function(Journey,{reduced}){
         }
       });
       this.navigation=KingdomNavigation.create([...obstacles,...this.scenery.obstacles]);
+      this.interiors=new KingdomInteriors(this,reduced);
       const abort=new AbortController(),on=(name,fn)=>window.addEventListener(name,fn,{signal:abort.signal});
-      on('kingdom-identity',e=>this.identity(e.detail));on('kingdom-travel',e=>this.visit(e.detail));on('kingdom-overview',()=>this.showOverview());on('kingdom-data',e=>{this.placeKeepsakes(e.detail);if(!KingdomUI.store.actor)this.cancelTravel();});
+      on('kingdom-identity',e=>this.identity(e.detail));on('kingdom-travel',e=>this.visit(e.detail));on('kingdom-overview',()=>this.showOverview());on('kingdom-data',e=>{this.placeKeepsakes(e.detail);if(!KingdomUI.store.actor){this.cancelTravel();this.interiors.exit();}});
       on('kingdom-dialog',()=>{if($('book').open||$('credits').open){this.controls.reset();this.input.enabled=false;}});
       on('blur',()=>{this.cancelTravel();this.setStride(this.active,this.active.direction,false);});
       this.events.once('shutdown',()=>{abort.abort();this.controls.destroy();});
@@ -187,21 +189,23 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       if(KingdomUI.store.actor)this.identity(KingdomUI.store.actor);this.placeKeepsakes(KingdomUI.store.view());this.updateClock();this.clockTimer=setInterval(()=>{if(!document.hidden)this.updateClock();},30000);this.events.once('shutdown',()=>clearInterval(this.clockTimer));this.atmosphere=new KingdomAtmosphere(this,reduced);
     },
     canWalk(){return !!KingdomUI.store.actor&&!$('book').open&&!$('credits').open&&$('explorer').hidden&&!document.hidden;},
-    cancelTravel(){if(this.life)this.life.pending=false;this.travel=null;this.destinationMarker.clear();$('travel-note').hidden=true;},
-    identity(who){this.life?.end();this.cancelTravel();this.controls?.reset();this.setStride(this.active,'down',false);this.active=who==='north'?this.knight:this.hero;this.node=who;this.active.setPosition(...P.nodes[who]);this.leaveOverview();this.setStride(this.active,'down',false);this.frameParty(true);$('location').textContent=who==='north'?'North · your little home':'South · your little home';},
+    cancelTravel(){this.interiors?.cancelTravel();if(this.life)this.life.pending=false;this.travel=null;this.destinationMarker.clear();$('travel-note').hidden=true;},
+    identity(who){this.interiors?.exit();this.life?.end();this.cancelTravel();this.controls?.reset();this.setStride(this.active,'down',false);this.active=who==='north'?this.knight:this.hero;this.node=who;this.active.setPosition(...P.nodes[who]);this.leaveOverview();this.setStride(this.active,'down',false);this.frameParty(true);$('location').textContent=who==='north'?'North · your little home':'South · your little home';},
     resize(){
       if(!this.cameras)return;const width=this.scale.width,height=this.scale.height,cam=this.cameras.main;cam.setSize(width,height);cam.useBounds=!this.overview;
       if(this.overview){cam.setZoom(Math.min((width-48)/1670,(height-180)/2150));cam.centerOn(400,430);}
       else if(this.view)this.view.apply();else{cam.setZoom(KingdomView.base(width));this.frameParty(true);}
     },
     leaveOverview(){this.overview=false;this.poiLabels.forEach(t=>t.setVisible(false));this.resize();},
-    showOverview(){this.life?.end();this.cancelTravel();this.controls?.reset();this.setStride(this.active,this.active.direction,false);this.overview=true;this.resize();this.poiLabels.forEach(t=>t.setVisible(true).setScale(Math.min(2.2,1/this.cameras.main.zoom)));this.cameraPoint.x=400;this.cameraPoint.y=430;this.cameras.main.centerOn(400,430);},
+    showOverview(){this.interiors?.exit();this.life?.end();this.cancelTravel();this.controls?.reset();this.setStride(this.active,this.active.direction,false);this.overview=true;this.resize();this.poiLabels.forEach(t=>t.setVisible(true).setScale(Math.min(2.2,1/this.cameras.main.zoom)));this.cameraPoint.x=400;this.cameraPoint.y=430;this.cameras.main.centerOn(400,430);},
     visit(id){
       if($('book').open||$('credits').open)return;if(this.life?.game)this.life.end();if(!$('welcome').hidden)$('welcome').hidden=true;const p=P.places[id];if(!p)return;
+      this.interiors?.exit();
       if(!KingdomUI.store.actor){this.cameraPoint.x=P.nodes[p.node][0];this.cameraPoint.y=P.nodes[p.node][1]-60;this.overview=false;this.resize();this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);$('location').textContent=p.name;KingdomUI.open('login');return;}
       this.walkTo(P.nodes[p.node],id);
     },
     walkTo(point,destination=null){
+      if(this.interiors?.active){this.interiors.walkTo(point);return;}
       const points=this.navigation.route([this.active.x,this.active.y],point);
       if(!points){KingdomUI.toast('That spot is out of reach. Try a clear patch of ground.');return;}
       this.controls.reset();this.leaveOverview();this.frameParty();this.travel={points,index:0,destination};
@@ -214,11 +218,12 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       if(!this.travel)return;const play=this.life?.pending&&this.travel.destination==='ruby';const {destination,points}=this.travel,p=P.places[destination];this.active.setPosition(...points.at(-1));this.cancelTravel();
       this.setStride(this.active,this.active.direction,false);this.frameParty(reduced());
       if(play){this.life.startPlay();return;}
-      if(p){this.node=p.node;$('location').textContent=p.name;KingdomSound?.place(destination);KingdomUI.open(p.panel);}
+      if(p){this.node=p.node;$('location').textContent=p.name;KingdomSound?.place(destination);if(this.interiors.has(destination))this.interiors.enter(destination);else KingdomUI.open(p.panel);}
     },
     nearbyPlace(){
+      if(this.interiors?.active)return this.interiors.nearby();
       if(this.life?.game)return this.life.nearby();if(this.life?.revealTime)return {id:'restoration',name:'Our growing castle',action:'Back to my footsteps'};
-      const actions={garden:'Our memory garden',ruby:'Play with Ruby',north:'Check in today',south:'Check in today',castle:'Our growing castle',inn:'Mission board',dwarf:'Visit the keeper',pond:'Meet the residents',memorial:'Remember Pearl'};
+      const actions={garden:'Our memory garden',ruby:'Play with Ruby',north:'Step inside',south:'Step inside',castle:'Enter the great hall',inn:'Enter the guild',dwarf:'Visit the keeper',pond:'Meet the residents',memorial:'Remember Pearl'};
       let best=null,distance=Infinity;
       for(const [id,p] of Object.entries(P.places)){const [x,y]=P.nodes[p.node],d=Math.hypot(this.active.x-x,this.active.y-y);if(d<72&&d<distance){best={...p,id,action:actions[id]};distance=d;}}
       const boardDistance=Math.hypot(this.active.x-821,this.active.y-746);if(boardDistance<55&&boardDistance<distance){best={id:'guild-board',name:'The guild noticeboard',panel:'missions',action:'Read the board'};distance=boardDistance;}
@@ -226,10 +231,11 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       return best;
     },
     interactNearby(){
-      if(!this.canWalk())return;if(this.life?.revealTime){this.life.clearReveal();return;}if(this.life?.game){this.life.toss();return;}const place=this.nearbyPlace();if(!place)return;
+      if(!this.canWalk())return;if(this.interiors?.active){this.interiors.interact();return;}if(this.life?.revealTime){this.life.clearReveal();return;}if(this.life?.game){this.life.toss();return;}const place=this.nearbyPlace();if(!place)return;
+      if(this.interiors.has(place.id)){this.interiors.enter(place.id);return;}
       this.cancelTravel();this.controls.reset();this.setStride(this.active,this.active.direction,false);KingdomSound?.place(place.id);KingdomUI.open(place.panel);
     },
-    frameParty(snap=false){if(!this.active||this.overview)return;if(this.life?.camera(snap))return;if(this.life?.revealTime){if(snap)this.cameras.main.centerOn(350,380);return;}const lead=this.scale.width<600&&this.scale.height<780?-12:55;this.cameraPoint.x=this.active.x;this.cameraPoint.y=this.active.y-lead;if(snap||reduced())this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);},
+    frameParty(snap=false){if(!this.active||this.overview)return;if(this.interiors?.active){this.interiors.camera(snap);return;}if(this.life?.camera(snap))return;if(this.life?.revealTime){if(snap)this.cameras.main.centerOn(350,380);return;}const lead=this.scale.width<600&&this.scale.height<780?-12:55;this.cameraPoint.x=this.active.x;this.cameraPoint.y=this.active.y-lead;if(snap||reduced())this.cameras.main.centerOn(this.cameraPoint.x,this.cameraPoint.y);},
     setStride(p,dir,moving){
       if(!p)return;const row=8+['up','left','down','right'].indexOf(dir),frame=row*13+(moving&&!reduced()?1+Math.floor(this.walkDistance/6)%8:0);
       if(p.strideFrame!==frame){p.parts.forEach(s=>{s.stop();s.setFrame(frame);});p.strideFrame=frame;}
@@ -239,11 +245,12 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       const now=Date.now(),light=KingdomWeatherModel.daylight(KingdomSky.data,now);
       $('realm-time').textContent=new Intl.DateTimeFormat('en-NZ',{timeZone:'Pacific/Auckland',weekday:'short',hour:'numeric',minute:'2-digit'}).format(now);
       if(this.night){this.night.style.opacity=light.dark;this.night.style.background=light.tint;}
-      this.lamps?.forEach(l=>l.setAlpha(light.dark>.1?.18:.035));this.isNight=light.night;this.life?.refresh(KingdomUI.store.view());this.atmosphere?.reflect();
+      this.lamps?.forEach(l=>l.setAlpha(light.dark>.1?.18:.035));this.isNight=light.night;if(this.interiors?.active){this.interiors.exteriorChange(()=>this.life?.refresh(KingdomUI.store.view()));this.interiors.light();}else this.life?.refresh(KingdomUI.store.view());this.atmosphere?.reflect();
     },
     update(time,delta){
       this.input.enabled=!$('book').open&&!$('credits').open;if(!this.active)return;const dt=Math.min(delta,50)/1000,canWalk=this.canWalk();
       this.controls.show(!!KingdomUI.store.actor&&this.input.enabled);
+      if(this.interiors?.active){this.interiors.update(time,dt,canWalk);return;}
       const input=this.controls.sample(),before=[this.active.x,this.active.y];let direction=this.active.direction;
       if(canWalk&&(input.x||input.y)){
         this.cancelTravel();if(this.overview){this.leaveOverview();this.frameParty(true);}

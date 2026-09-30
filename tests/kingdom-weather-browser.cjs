@@ -30,7 +30,7 @@ test('live regional weather, preview skies, zoom and a return from the map stay 
     await satchel(p,'Zoom in world');assert.equal(await p.locator('#zoom-reset').textContent(),'110%');
     await p.mouse.move(620,450);await p.mouse.wheel(0,-100);await p.waitForFunction(()=>testScene.view.factor>1.2);
     await p.keyboard.press('0');assert.equal(await p.evaluate(()=>testScene.view.factor),1);await p.keyboard.press('-');assert.equal(await p.evaluate(()=>testScene.view.factor),.9);
-    await satchel(p,'Show kingdom map');await p.getByRole('button',{name:/Our castle A home/}).click();await p.getByRole('button',{name:'Arrive now'}).click();await p.getByRole('button',{name:'Close journal'}).click();
+    await satchel(p,'Show kingdom map');await p.getByRole('button',{name:/Our castle A home/}).click();await p.getByRole('button',{name:'Arrive now'}).click();await p.waitForFunction(()=>testScene.interiors.active);await p.getByRole('button',{name:'Leave room',exact:true}).click();
     assert.equal(await p.evaluate(()=>testScene.view.factor),.9);assert.ok(Math.abs(await p.evaluate(()=>testScene.cameras.main.zoom)-1.575)<.001);
     const before=await p.evaluate(()=>JSON.stringify(KingdomUI.store.state));await sky(p,'storm');assert.equal(await p.evaluate(()=>KingdomSky.status()),'preview');assert.match(await p.locator('#realm-weather').textContent(),/Preview · Storm/);
     await p.bringToFront();
