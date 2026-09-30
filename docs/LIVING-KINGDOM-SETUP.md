@@ -82,3 +82,12 @@ The expanded page selects Phaser's Canvas renderer. During verification, WebKit'
 Python's static preview cannot run Vercel endpoints. Weather now falls back to the public Open-Meteo endpoint for the fixed Auckland region, while accounts remain disabled. If both weather requests fail, entry still works with daylight only or labelled earlier conditions. Use `vercel dev` or a configured Vercel preview to test account-backed features.
 
 Official references: [Supabase password authentication](https://supabase.com/docs/guides/auth/passwords), [email delivery setup](https://supabase.com/docs/guides/auth/auth-smtp), [redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls), [access control](https://supabase.com/docs/guides/database/postgres/row-level-security), [Open-Meteo weather fields](https://open-meteo.com/en/docs).
+
+
+## World-first experience
+
+`kingdom-experience.js` owns the optional character introduction and Explore satchel. `kingdom-controls.js` handles keyboard, optional pad and floating controller input; `kingdom-view.js` arbitrates single-tap, dragging and pinch before any scenery callback runs. Local preferences use `kingdom-intro-v2:north`, `kingdom-intro-v2:south`, `kingdom-direction-pad` and `kingdom-view-scale`. They do not change shared relationship data.
+
+`kingdom-scenery.js` refreshes small building textures and layers artist-authored LPC materials with original architecture and environmental details. It reuses the existing attribution in `game-art/credits/`; no extra asset download or package is required. The invitation pages keep their established world.
+
+Run `node --test --test-concurrency=1 tests/kingdom-controls-browser.cjs tests/kingdom-experience-browser.cjs tests/kingdom-guild-browser.cjs tests/kingdom-life-browser.cjs tests/kingdom-weather-browser.cjs` for movement, tutorial skip/replay, satchel navigation, nearby actions, layout, memories, missions, pet play and weather. Browser helpers mark the introduction seen for unrelated flows; the dedicated experience test exercises the full introduction. Held-key WebKit checks should run serially, since separate headless windows can steal focus.

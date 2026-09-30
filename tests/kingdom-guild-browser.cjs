@@ -1,10 +1,11 @@
+const {prepare,satchel}=require('./kingdom-browser-helpers.cjs');
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');
 const {webkit}=require(process.env.PLAYWRIGHT_MODULE||'playwright');const url=process.env.PREVIEW_URL||'http://localhost:8124/kingdom.html';
 const out=path.join(__dirname,'../.local-review');fs.mkdirSync(out,{recursive:true});
 async function enter(browser,viewport={width:390,height:844}){
   const page=await browser.newPage({viewport,isMobile:viewport.width<600,hasTouch:true,reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/kingdom-world.js',async route=>{const r=await route.fetch();await route.fulfill({response:r,body:(await r.text()).replace("this.phase='living';","window.testScene=this;this.phase='living';")});});
-  await page.goto(url);await page.locator('#loading').waitFor({state:'hidden',timeout:30000});await page.getByRole('button',{name:'Enter our kingdom'}).click();await page.getByRole('button',{name:'North · the knight',exact:true}).click();return {page,errors};
+  await prepare(page);await page.goto(url);await page.locator('#loading').waitFor({state:'hidden',timeout:30000});await page.getByRole('button',{name:'Enter our kingdom'}).click();await page.getByRole('button',{name:'North · the knight',exact:true}).click();return {page,errors};
 }
 async function home(page,name){await page.getByRole('button',{name:'Close journal'}).click();await page.getByRole('button',{name:'Open settings'}).click();await page.getByRole('button',{name:'Change home / sign out'}).click();await page.getByRole('button',{name,exact:true}).click();}
 
@@ -38,7 +39,7 @@ test('guild type builder keeps places, independent ratings and earlier tastings 
     const cafe=page.locator('.tasting-entry').filter({has:page.getByRole('heading',{name:'The Corner Café',exact:true})});await cafe.getByRole('button',{name:'Give your rating'}).click();await page.getByLabel('Your score / 10',{exact:true}).fill('7.5');await page.getByRole('button',{name:'Save my opinion'}).click();await page.getByText('Together: 8.0 / 10',{exact:true}).waitFor();
     assert.equal(await page.locator('#book').getAttribute('data-page'),'mission');await page.screenshot({path:path.join(out,'guild-tasting-mission.png')});
     await page.getByRole('button',{name:'Mission board',exact:false}).click();await page.screenshot({path:path.join(out,'guild-board-desktop.png')});
-    await page.getByRole('button',{name:'Close journal'}).click();await page.getByRole('button',{name:'Show kingdom map'}).click();await page.getByRole('button',{name:/The guild hall Missions/}).click();await page.getByRole('button',{name:'Close journal'}).click();await page.waitForTimeout(800);await page.screenshot({path:path.join(out,'guild-world.png')});
+    await page.getByRole('button',{name:'Close journal'}).click();await satchel(page,'Show kingdom map');await page.getByRole('button',{name:/The guild hall Missions/}).click();await page.getByRole('button',{name:'Close journal'}).click();await page.waitForTimeout(800);await page.screenshot({path:path.join(out,'guild-world.png')});
     assert.deepEqual(errors,[]);
   }finally{await browser.close();}
 });

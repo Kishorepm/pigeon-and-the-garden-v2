@@ -25,7 +25,7 @@
   }
   function focusAction(){requestAnimationFrame(()=>$('actions').querySelector('button')?.focus({preventScroll:true}));}
   function fail(){ $('loading').hidden=false; $('loading').replaceChildren(); const p=document.createElement('span');p.textContent='The garden didn’t finish opening.';$('loading').append(p);const b=document.createElement('button');b.className='primary';b.textContent='Try again';b.onclick=()=>location.reload();$('loading').append(b); }
-  function updateMotion(){ $('motion').setAttribute('aria-pressed',String(reduced));$('motion').setAttribute('aria-label',reduced?'Enable full animation':'Reduce animation');if(scene){scene.tweens.timeScale=reduced?0:1;if(reduced&&scene.travel)scene.finishTravel();if(reduced&&scene.castMotion)scene.finishCast();document.documentElement.dataset.motion=reduced?'reduced':'full';} }
+  function updateMotion(){ if(document.documentElement.dataset.kingdom==='living')$('motion').textContent=reduced?'Gentle motion on':'Full animation';$('motion').setAttribute('aria-pressed',String(reduced));$('motion').setAttribute('aria-label',reduced?'Enable full animation':'Reduce animation');if(scene){scene.tweens.timeScale=reduced?0:1;if(reduced&&scene.travel)scene.finishTravel();if(reduced&&scene.castMotion)scene.finishCast();document.documentElement.dataset.motion=reduced?'reduced':'full';} }
   $('motion').onclick=()=>{reduced=!reduced;updateMotion();};
   preference.addEventListener('change',e=>{reduced=e.matches;updateMotion();});updateMotion();
   $('credits-open').onclick=()=>{$('credits').showModal();if(scene)scene.scene.pause();};

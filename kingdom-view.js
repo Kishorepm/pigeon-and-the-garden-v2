@@ -16,18 +16,19 @@
         if(['Equal','NumpadAdd','Minus','NumpadSubtract','Digit0','Numpad0'].includes(e.code)){e.preventDefault();this.set(['Digit0','Numpad0'].includes(e.code)?1:this.factor+(['Equal','NumpadAdd'].includes(e.code)?.1:-.1));}
       });
       on(canvas,'pointerdown',e=>{
-        if(e.pointerType!=='touch'||!this.allowed())return;
+        if(e.pointerType!=='touch'||!this.scene.canWalk())return;
         this.points.set(e.pointerId,{x:e.clientX,y:e.clientY});
-        if(this.points.size===1){this.first={x:e.clientX,y:e.clientY};this.moved=false;this.pinched=false;this.tapAction=null;}
+        if(this.points.size===1){this.first={x:e.clientX,y:e.clientY};this.moved=false;this.pinched=false;this.tapAction=null;if(!scene.overview)scene.controls?.touchStart(e);}
         if(this.points.size===2){this.pinched=true;this.tapAction=null;this.initialDistance=this.distance();this.initialFactor=this.factor;scene.cancelTravel();scene.controls?.reset();}
       },{capture:true});
       on(window,'pointermove',e=>{
         if(!this.points.has(e.pointerId))return;this.points.set(e.pointerId,{x:e.clientX,y:e.clientY});
         if(Math.hypot(e.clientX-this.first.x,e.clientY-this.first.y)>12)this.moved=true;
-        if(this.points.size===2&&this.initialDistance>0){e.preventDefault();this.set(this.initialFactor*this.distance()/this.initialDistance,false);}
+        if(this.points.size===1&&!this.pinched)scene.controls?.touchMove(e);
+        if(this.points.size===2&&this.initialDistance>0&&this.allowed()){e.preventDefault();this.set(this.initialFactor*this.distance()/this.initialDistance,false);}
       },{passive:false});
       const release=(e,cancelled=false)=>{
-        if(!this.points.has(e.pointerId))return;this.points.delete(e.pointerId);
+        if(!this.points.has(e.pointerId))return;scene.controls?.touchEnd(e);this.points.delete(e.pointerId);
         if(this.points.size)return;
         const action=!cancelled&&!this.pinched&&!this.moved?this.tapAction:null;this.tapAction=null;this.ignoreUntil=performance.now()+300;
         this.persist();if(action)action();
@@ -38,7 +39,7 @@
     }
     allowed(){return !document.getElementById('book').open&&!document.getElementById('credits').open&&!document.hidden&&!this.scene.life?.game;}
     distance(){const [a,b]=[...this.points.values()];return a&&b?Math.hypot(a.x-b.x,a.y-b.y):0;}
-    cancel(){this.points.clear();this.tapAction=null;this.pinched=false;}
+    cancel(){this.points.clear();this.tapAction=null;this.pinched=false;this.scene.controls?.reset();}
     guard(action){
       if(this.points.size){if(!this.pinched)this.tapAction=action;return;}
       if(performance.now()<this.ignoreUntil)return;action();

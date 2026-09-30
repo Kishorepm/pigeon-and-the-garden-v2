@@ -1,7 +1,8 @@
 /* An explorable extension of the existing LPC kingdom, sharing its art and renderer. */
 window.extendLivingKingdom=function(Journey,{reduced}){
-  const P=KingdomPaths,$=id=>document.getElementById(id),baseVillage=Journey.prototype.makeVillage,baseGround=Journey.prototype.makeGround;
+  const P=KingdomPaths,$=id=>document.getElementById(id),baseVillage=Journey.prototype.makeVillage,baseGround=Journey.prototype.makeGround,basePreload=Journey.prototype.preloadChapter;
   Object.assign(Journey.prototype,{
+    preloadChapter(){basePreload?.call(this);this.load.image('cliffs','game-art/lpc/cliffs.png');},
     makeGround(){baseGround.call(this);this.children.list.forEach(o=>{if(o.texture?.key==='grass-block')o.setDepth(-5000);if(o.texture?.key==='world-ground')o.setDepth(-4999);});},
     paintChapterGround(c,path,terrain){
       // Replace the invitation's old routes and draw the whole network in two
@@ -147,7 +148,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       if(this.awardCount!==undefined&&s.awards.length>this.awardCount&&!reduced())this.tweens.add({targets:this.scales,angle:{from:-5,to:5},duration:260,yoyo:true,repeat:2,onComplete:()=>this.scales.setAngle(0)});
       this.awardCount=s.awards.length;this.life?.refresh(s);
     },
-    worldAction(action){const run=()=>{if(!$('book').open&&!$('credits').open)action();};if(this.view)this.view.guard(run);else run();},
+    worldAction(action){const run=()=>{if(!$('book').open&&!$('credits').open&&$('explorer').hidden)action();};if(this.view)this.view.guard(run);else run();},
     showResident(p){this.worldAction(()=>{if(!this.life?.game)KingdomUI.open(p?.petName==='Ruby'?'ruby':'residents');});},
     start(){
       this.phase='living';this.node='castle';this.walkDistance=0;this.travel=null;this.overview=false;this.hero.setPosition(180,1120);this.knight.setPosition(350,-35);this.active=this.knight;
@@ -155,6 +156,10 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       this.basket.setVisible(false);this.basketGlow.setVisible(false);this.carry.setVisible(false);this.gate.setAlpha(0);this.pigeon.setPosition(300,416);
       this.cameraPoint.x=350;this.cameraPoint.y=320;this.cameras.main.centerOn(350,320);this.cameras.main.setBounds(-600,-770,2060,2390);
       this.cameras.main.setLerp(.16,.16);
+      this.controls=new KingdomControls({allowed:()=>this.canWalk(),interact:()=>this.interactNearby()});
+      this.view=new KingdomView.Controls(this);
+      this.life=new KingdomLifeWorld(this,reduced);
+      this.experience=new KingdomExperience(this);this.scenery=new KingdomScenery(this,reduced);
       const obstacles=[];
       this.children.list.forEach(o=>{
         const key=o.texture?.key;
@@ -164,10 +169,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
           obstacles.push({type:'rect',x:o.x-w/2,y:o.y-h,w,h});
         }
       });
-      this.navigation=KingdomNavigation.create(obstacles);
-      this.controls=new KingdomControls({allowed:()=>this.canWalk(),interact:()=>this.interactNearby()});
-      this.view=new KingdomView.Controls(this);
-      this.life=new KingdomLifeWorld(this,reduced);
+      this.navigation=KingdomNavigation.create([...obstacles,...this.scenery.obstacles]);
       const abort=new AbortController(),on=(name,fn)=>window.addEventListener(name,fn,{signal:abort.signal});
       on('kingdom-identity',e=>this.identity(e.detail));on('kingdom-travel',e=>this.visit(e.detail));on('kingdom-overview',()=>this.showOverview());on('kingdom-data',e=>{this.placeKeepsakes(e.detail);if(!KingdomUI.store.actor)this.cancelTravel();});
       on('kingdom-dialog',()=>{if($('book').open||$('credits').open){this.controls.reset();this.input.enabled=false;}});
@@ -184,7 +186,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
       });
       if(KingdomUI.store.actor)this.identity(KingdomUI.store.actor);this.placeKeepsakes(KingdomUI.store.view());this.updateClock();this.clockTimer=setInterval(()=>{if(!document.hidden)this.updateClock();},30000);this.events.once('shutdown',()=>clearInterval(this.clockTimer));this.atmosphere=new KingdomAtmosphere(this,reduced);
     },
-    canWalk(){return !!KingdomUI.store.actor&&!$('book').open&&!$('credits').open&&!document.hidden;},
+    canWalk(){return !!KingdomUI.store.actor&&!$('book').open&&!$('credits').open&&$('explorer').hidden&&!document.hidden;},
     cancelTravel(){if(this.life)this.life.pending=false;this.travel=null;this.destinationMarker.clear();$('travel-note').hidden=true;},
     identity(who){this.life?.end();this.cancelTravel();this.controls?.reset();this.setStride(this.active,'down',false);this.active=who==='north'?this.knight:this.hero;this.node=who;this.active.setPosition(...P.nodes[who]);this.leaveOverview();this.setStride(this.active,'down',false);this.frameParty(true);$('location').textContent=who==='north'?'North · your little home':'South · your little home';},
     resize(){
@@ -265,6 +267,7 @@ window.extendLivingKingdom=function(Journey,{reduced}){
         this.smokePuffs?.forEach(({shape,x,y,i})=>{const t=(time/7000+i/3)%1;shape.setPosition(x+Math.sin(t*3)*8,y-t*20).setAlpha((1-t)*.18);});
       }
       this.atmosphere?.update();
+      this.scenery?.update(time,canWalk);
     }
   });
 };

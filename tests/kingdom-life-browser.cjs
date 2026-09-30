@@ -1,3 +1,4 @@
+const {prepare,satchel}=require('./kingdom-browser-helpers.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path');
 const {webkit}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const url=process.env.PREVIEW_URL||'http://localhost:8124/kingdom.html',out=path.join(__dirname,'../.local-review');
@@ -5,9 +6,9 @@ async function enter(b,{gentle=true,width=390,height=844}={}){
   const p=await b.newPage({viewport:{width,height},isMobile:width<600,hasTouch:true,reducedMotion:gentle?'reduce':'no-preference'}),errors=[];
   p.on('pageerror',e=>errors.push(e.message));
   await p.route('**/kingdom-world.js',async r=>{const response=await r.fetch();await r.fulfill({response,body:(await response.text()).replace("this.phase='living';","window.testScene=this;this.phase='living';")});});
-  await p.goto(url);await p.locator('#loading').waitFor({state:'hidden',timeout:30000});await p.getByRole('button',{name:'Enter our kingdom'}).click();await p.getByRole('button',{name:'North · the knight',exact:true}).click();return {p,errors};
+  await prepare(p);await p.goto(url);await p.locator('#loading').waitFor({state:'hidden',timeout:30000});await p.getByRole('button',{name:'Enter our kingdom'}).click();await p.getByRole('button',{name:'North · the knight',exact:true}).click();return {p,errors};
 }
-async function journal(p,entry){if(await p.locator('#book').getAttribute('open')!==null)await p.getByRole('button',{name:'Close journal'}).click();await p.getByRole('button',{name:'Journal',exact:true}).click();await p.getByRole('button',{name:entry}).click();}
+async function journal(p,entry){if(await p.locator('#book').getAttribute('open')!==null)await p.getByRole('button',{name:'Close journal'}).click();await satchel(p,'Journal');await p.getByRole('button',{name:entry}).click();}
 async function home(p,name){await p.getByRole('button',{name:'Close journal'}).click();await p.getByRole('button',{name:'Open settings'}).click();await p.getByRole('button',{name:'Change home / sign out'}).click();await p.getByRole('button',{name,exact:true}).click();}
 async function shot(p,name){await p.screenshot({path:path.join(out,name+'.png')});}
 
@@ -40,7 +41,7 @@ test('Ruby plays in the world with controls, pauses while reading, saves once, a
     await p.getByRole('button',{name:'Let’s play fetch',exact:true}).click();await p.getByRole('button',{name:'Arrive now'}).click();await p.locator('#fetch-hud').waitFor({state:'visible'});
     await p.keyboard.down('d');await p.waitForFunction(()=>testScene.active.x>429);await p.keyboard.up('d');assert.ok(await p.evaluate(()=>testScene.life.game));
     await p.keyboard.press('e');await p.waitForFunction(()=>testScene.life.game.phase!=='ready');assert.equal(await p.locator('#interact').isDisabled(),true);
-    await p.getByRole('button',{name:'Journal',exact:true}).click();const paused=await p.evaluate(()=>testScene.life.game.time);await p.waitForTimeout(350);assert.equal(await p.evaluate(()=>testScene.life.game.time),paused);await p.getByRole('button',{name:'Close journal'}).click();
+    await satchel(p,'Journal');const paused=await p.evaluate(()=>testScene.life.game.time);await p.waitForTimeout(350);assert.equal(await p.evaluate(()=>testScene.life.game.time),paused);await p.getByRole('button',{name:'Close journal'}).click();
     await p.waitForFunction(()=>testScene.life.game?.phase==='ready',{},{timeout:15000});await shot(p,'life-ruby-meadow-desktop');
     const target=await p.evaluate(()=>{const r=KingdomFetch.ring(testScene.life.game),c=testScene.cameras.main;return {x:c.width/2+(r.x-c.midPoint.x)*c.zoom,y:c.height/2+(r.y-c.midPoint.y)*c.zoom};});await p.mouse.click(target.x,target.y);await p.waitForFunction(()=>testScene.life.game?.round===2&&testScene.life.game.phase==='ready',{},{timeout:15000});
     await p.getByRole('button',{name:/Throw ball ·/}).click();await p.getByRole('button',{name:'Keep Ruby’s rosette',exact:true}).waitFor({timeout:15000});await shot(p,'life-ruby-result-desktop');await p.getByRole('button',{name:'Keep Ruby’s rosette',exact:true}).click();

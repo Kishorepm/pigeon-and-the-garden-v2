@@ -63,3 +63,18 @@ The local preview successfully fetched real Auckland conditions through the publ
 Verification outcome: 56 logic/API checks passed. All 11 distinct WebKit flows passed across the weather, movement, guild and living-story suites, including focused reruns after fixes. Those reruns corrected a selector label, kept the character above controls on short phones, and made atmospheric timing independent of the movement clock. Weather refresh and the displayed clock also use wall time. Browser flows that hold input are run sequentially to avoid another test window interrupting their focus.
 
 Synthetic pinch coverage verifies the gesture logic; it does not replace a physical iPhone test. The Supabase connection, two-phone syncing and a full accessibility audit remain unverified. No claim of production readiness or real shared delivery is made.
+
+
+## 30 September — world-first controls and scenery
+
+The permanent HUD was competing with the game. This pass replaces the four-button dock and separate tool stacks with three main entries: Us today, Guild hall and Explore. The daily glance is a compact status strip; the nearby action disappears when there is nothing to interact with. Map, home, journal, pigeon post, zoom and preferences live in the Explore satchel. Every existing activity remains reachable.
+
+A floating controller appears only after dragging the left side of the canvas. A tap still selects scenery or walks to clear ground; a two-finger gesture cancels the pending tap and controller before zooming. Release, cancellation, blur, hidden pages and opening a journal reset movement. Keyboard controls remain available. People who prefer explicit direction buttons can enable a saved, labelled 44px pad from Explore.
+
+The optional, three-part character introduction explains the two homes, demonstrates controls in the real world, and offers a real walk to the guild hall. It waits for the reader, can be skipped, remembers each character's choice on this device, and can be replayed. It is not a separate tutorial world or a timed cutscene.
+
+Asset direction: keep the existing LPC artists' masonry, cliff and vegetation language. Rebuild both cottages with exposed stone, distinct slate/timber roofs, dormers, recessed doors, shutters, window boxes and brick chimneys. Give the guild hall ironwork, beams and posted scrolls. Add broad meadow variation, pebbled path shoulders, riverbank plants, lilies, rocky knolls, castle roses and workshop supplies. Water, butterflies and evening fireflies animate at a modest 12fps and pause during reading and reduced motion. Travel paths gain a subtle dotted trail. All new texture allocations stay small; there is no new remote image dependency.
+
+Consumer tradeoffs: the second tap to open less frequent tools buys a clearer playing area. The floating controller needs one initial instruction, so the introduction teaches it and the optional pad is easy to find. Physical iPhone testing remains necessary for thumb comfort, full pinch input and long-session performance. Shared accounts still require the prepared Supabase setup; this remains an on-device preview until configured.
+
+Validation for this pass: 56 model/API checks and 13 distinct WebKit flows pass, covering movement/collision, controller release and centre dead zone, pinch arbitration, resize, intro skip/replay, satchel navigation, independent moods/ratings, memory gardening, pet play and live/offline weather. Dedicated experience startup also enforces the iPhone per-canvas pixel budget. These are automated browser checks, not a claim of testing on a physical phone.

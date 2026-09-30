@@ -5,6 +5,11 @@ window.KingdomControls=class {
     this.abort=new AbortController();const on=(el,type,fn,options={})=>el.addEventListener(type,fn,{...options,signal:this.abort.signal});
     this.root=document.getElementById('movement-controls');this.pad=document.getElementById('walk-pad');this.action=document.getElementById('interact');
     this.knob=this.pad.querySelector('.pad-centre');this.label=document.getElementById('nearby-place');
+    this.stick=document.getElementById('floating-stick');this.touch=null;this.walkControl=this.pad.closest('.walk-control');
+    try{this.walkControl.hidden=localStorage.getItem('kingdom-direction-pad')!=='on';}catch{}
+    const padToggle=document.getElementById('pad-toggle');
+    const reflectPad=()=>{padToggle.setAttribute('aria-pressed',String(!this.walkControl.hidden));padToggle.textContent=this.walkControl.hidden?'Show direction pad':'Hide direction pad';document.querySelector('.adventure').classList.toggle('has-direction-pad',!this.walkControl.hidden);};
+    reflectPad();on(padToggle,'click',()=>{this.walkControl.hidden=!this.walkControl.hidden;try{localStorage.setItem('kingdom-direction-pad',this.walkControl.hidden?'off':'on');}catch{}reflectPad();this.reset();});
     // Phaser also listens at window level. A HUD press must not click the cottage
     // or another world object underneath the HTML control.
     for(const surface of document.querySelectorAll('.adventure,dialog,#toast')){
@@ -46,7 +51,24 @@ window.KingdomControls=class {
     this.knob.style.transform=`translate(${this.vector[0]*9}px,${this.vector[1]*9}px)`;
     this.pad.querySelectorAll('[data-walk]').forEach(b=>{const [x,y]=b.dataset.walk.split(',').map(Number);b.classList.toggle('is-held',x*this.vector[0]+y*this.vector[1]>.35);});
   }
-  release(){this.pointer=null;this.vector=[0,0];clearTimeout(this.nudge);this.paint();}
+  touchStart(e){
+    const canvas=e.target,r=canvas.getBoundingClientRect();
+    if(!this.allowed()||e.clientX>r.left+r.width*.68)return;
+    this.touch={id:e.pointerId,x:e.clientX,y:e.clientY,claimed:false};
+  }
+  touchMove(e){
+    const t=this.touch;if(!t||t.id!==e.pointerId||!this.allowed())return;
+    const dx=e.clientX-t.x,dy=e.clientY-t.y,d=Math.hypot(dx,dy);
+    if(!t.claimed&&d<12)return;
+    t.claimed=true;e.preventDefault();
+    const scale=Math.min(1,Math.max(0,(d-6)/32));this.vector=d<=6?[0,0]:[dx/d*scale,dy/d*scale];
+    const r=document.querySelector('.adventure').getBoundingClientRect();
+    this.stick.style.left=(t.x-r.left)+'px';this.stick.style.top=(t.y-r.top)+'px';this.stick.hidden=false;
+    this.stick.firstElementChild.style.transform=`translate(${this.vector[0]*29}px,${this.vector[1]*29}px)`;
+    document.getElementById('touch-cue').hidden=true;
+  }
+  touchEnd(e){if(this.touch?.id===e.pointerId){this.touch=null;this.vector=[0,0];this.stick.hidden=true;}}
+  release(){this.pointer=null;this.touch=null;this.vector=[0,0];this.stick.hidden=true;clearTimeout(this.nudge);this.paint();}
   reset(){this.keys.clear();this.release();}
   sample(){
     if(!this.allowed()){this.reset();return {x:0,y:0,fast:false};}
@@ -59,6 +81,7 @@ window.KingdomControls=class {
   nearby(place){
     const id=place?.id||'';if(this.nearbyId===id)return;this.nearbyId=id;
     this.label.textContent=place?.name||'A little world to wander';this.action.disabled=!place;
+    this.action.closest('.interaction-control').hidden=!place;
     this.action.querySelector('span').textContent=place?.action||'Explore';
     this.action.setAttribute('aria-label',place?place.action+' · '+place.name:'Walk closer to a place to interact');
   }
